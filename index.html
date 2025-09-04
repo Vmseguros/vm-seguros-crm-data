@@ -65,6 +65,10 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+
+        .modal-backdrop {
+            backdrop-filter: blur(4px);
+        }
     </style>
 </head>
 <body class="bg-gray-900 font-sans">
@@ -277,124 +281,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Advanced Dashboard Analytics -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Gráfico de Vendas da Semana -->
-                        <div class="lg:col-span-2 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 p-4 md:p-6 shadow-2xl">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-xl md:text-2xl font-bold text-white flex items-center">
-                                    <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-2 rounded-lg mr-3">
-                                        <i class="fas fa-chart-bar text-white"></i>
-                                    </div>
-                                    <span class="hidden md:inline">Vendas da Semana</span>
-                                    <span class="md:hidden">Vendas 7d</span>
-                                </h3>
-                                <div class="bg-green-600 text-white px-2 md:px-3 py-1 rounded-full text-xs font-medium">
-                                    Últimos 7 dias
-                                </div>
-                            </div>
-                            
-                            <!-- Gráfico de Barras -->
-                            <div class="relative h-48 md:h-64 mb-4">
-                                <div id="chartFallback" class="flex items-center justify-center h-full">
-                                    <div class="grid grid-cols-7 gap-1 md:gap-2 w-full h-full">
-                                        <!-- Barras do gráfico serão inseridas aqui -->
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Estatísticas da Semana -->
-                            <div class="grid grid-cols-3 gap-2 md:gap-4 pt-4 border-t border-gray-700">
-                                <div class="text-center">
-                                    <p class="text-gray-400 text-xs md:text-sm">Total da Semana</p>
-                                    <p class="text-lg md:text-2xl font-bold text-green-400" id="totalVendasSemana">0</p>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-gray-400 text-xs md:text-sm">Média Diária</p>
-                                    <p class="text-lg md:text-2xl font-bold text-blue-400" id="mediaVendasDiaria">0</p>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-gray-400 text-xs md:text-sm">Melhor Dia</p>
-                                    <p class="text-lg md:text-2xl font-bold text-yellow-400" id="melhorDiaSemana">-</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Top Vendedores da Semana -->
-                        <div class="bg-gradient-to-br from-blue-900 to-blue-800 rounded-xl border border-blue-600 p-4 md:p-6 shadow-2xl">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-lg md:text-xl font-bold text-white flex items-center">
-                                    <div class="bg-gradient-to-r from-yellow-500 to-orange-600 p-2 rounded-lg mr-3">
-                                        <i class="fas fa-trophy text-white text-sm"></i>
-                                    </div>
-                                    <span class="hidden md:inline">Top Semana</span>
-                                    <span class="md:hidden">Top 7d</span>
-                                </h3>
-                                <div class="bg-yellow-600 text-white px-2 py-1 rounded-full text-xs font-medium">
-                                    7 dias
-                                </div>
-                            </div>
-                            
-                            <div id="topVendedoresSemana" class="space-y-3">
-                                <!-- Top vendedores da semana serão inseridos aqui -->
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Top Vendedores do Mês -->
-                    <div class="mt-6 bg-gradient-to-br from-purple-900 to-indigo-900 rounded-xl border border-purple-600 p-4 md:p-6 shadow-2xl">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-xl md:text-2xl font-bold text-white flex items-center">
-                                <div class="bg-gradient-to-r from-purple-500 to-pink-600 p-2 rounded-lg mr-3">
-                                    <i class="fas fa-crown text-white"></i>
-                                </div>
-                                <span class="hidden md:inline">Top Vendedores do Mês</span>
-                                <span class="md:hidden">Top do Mês</span>
-                            </h3>
-                            <div class="bg-purple-600 text-white px-2 md:px-3 py-1 rounded-full text-xs font-medium">
-                                Mês Atual
-                            </div>
-                        </div>
-                        
-                        <div id="topVendedoresMes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <!-- Top vendedores do mês serão inseridos aqui -->
-                        </div>
-                        
-                        <!-- Estatísticas Gerais do Mês -->
-                        <div class="mt-6 pt-6 border-t border-purple-700">
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div class="text-center">
-                                    <div class="bg-gradient-to-br from-green-600 to-emerald-600 w-10 h-10 md:w-12 md:h-12 rounded-full mx-auto mb-2 flex items-center justify-center">
-                                        <i class="fas fa-chart-line text-white text-sm md:text-base"></i>
-                                    </div>
-                                    <p class="text-purple-300 text-xs md:text-sm">Vendas do Mês</p>
-                                    <p class="text-lg md:text-xl font-bold text-white" id="totalVendasMesStats">0</p>
-                                </div>
-                                <div class="text-center">
-                                    <div class="bg-gradient-to-br from-blue-600 to-cyan-600 w-10 h-10 md:w-12 md:h-12 rounded-full mx-auto mb-2 flex items-center justify-center">
-                                        <i class="fas fa-dollar-sign text-white text-sm md:text-base"></i>
-                                    </div>
-                                    <p class="text-purple-300 text-xs md:text-sm">Comissões Pagas</p>
-                                    <p class="text-lg md:text-xl font-bold text-white" id="totalComissoesMesStats">R$ 0</p>
-                                </div>
-                                <div class="text-center">
-                                    <div class="bg-gradient-to-br from-yellow-600 to-orange-600 w-10 h-10 md:w-12 md:h-12 rounded-full mx-auto mb-2 flex items-center justify-center">
-                                        <i class="fas fa-users text-white text-sm md:text-base"></i>
-                                    </div>
-                                    <p class="text-purple-300 text-xs md:text-sm">Vendedores Ativos</p>
-                                    <p class="text-lg md:text-xl font-bold text-white" id="vendedoresAtivosMes">0</p>
-                                </div>
-                                <div class="text-center">
-                                    <div class="bg-gradient-to-br from-red-600 to-pink-600 w-10 h-10 md:w-12 md:h-12 rounded-full mx-auto mb-2 flex items-center justify-center">
-                                        <i class="fas fa-percentage text-white text-sm md:text-base"></i>
-                                    </div>
-                                    <p class="text-purple-300 text-xs md:text-sm">Taxa Conversão</p>
-                                    <p class="text-lg md:text-xl font-bold text-white" id="taxaConversaoMes">0%</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Kanban Vendas Section -->
@@ -402,6 +288,12 @@
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Kanban Vendas</h2>
                         <p class="text-gray-400">Acompanhe o processo de vendas</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <button onclick="showNovaVendaModal()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center">
+                            <i class="fas fa-plus mr-2"></i>Nova Venda
+                        </button>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -412,32 +304,7 @@
                                 Fazer Vistoria
                             </h3>
                             <div id="fazerVistoriaContainer" class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
-                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
-                                    <h4 class="text-white font-semibold text-sm mb-2">João Silva</h4>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Premium</p>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-user mr-1 text-purple-400"></i>Rodrigo Mariano</p>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>Porto Seguro</p>
-                                    <p class="text-green-400 text-lg font-bold text-center mb-2">R$ 850,00</p>
-                                    
-                                    <!-- Lead Suhai Selection -->
-                                    <div class="mb-2">
-                                        <label class="flex items-center space-x-2 cursor-pointer bg-yellow-900 bg-opacity-30 p-2 rounded border border-yellow-600">
-                                            <input type="checkbox" class="lead-suhai-checkbox w-4 h-4 text-yellow-600 bg-gray-600 border-gray-500 rounded focus:ring-yellow-500" 
-                                                   data-cliente="João Silva" data-vendedor="Rodrigo Mariano" data-comissao="255.00" data-plano="Plano Premium" data-empresa="Porto Seguro" data-valor="850.00">
-                                            <span class="text-xs text-yellow-400 font-bold">LEAD SUHAI</span>
-                                        </label>
-                                    </div>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="flex space-x-1">
-                                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
-                                            <i class="fas fa-edit mr-1"></i>Editar
-                                        </button>
-                                        <button class="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
-                                            <i class="fas fa-arrow-right mr-1"></i>Próximo
-                                        </button>
-                                    </div>
-                                </div>
+                                <!-- Vendas serão inseridas aqui -->
                             </div>
                         </div>
 
@@ -447,33 +314,8 @@
                                 <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
                                 Mandar Boletos
                             </h3>
-                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
-                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
-                                    <h4 class="text-white font-semibold text-sm mb-2">Maria Santos</h4>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Básico</p>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-user mr-1 text-purple-400"></i>Jessica Regis</p>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>Bradesco</p>
-                                    <p class="text-green-400 text-lg font-bold text-center mb-2">R$ 650,00</p>
-                                    
-                                    <!-- Lead Suhai Selection -->
-                                    <div class="mb-2">
-                                        <label class="flex items-center space-x-2 cursor-pointer bg-yellow-900 bg-opacity-30 p-2 rounded border border-yellow-600">
-                                            <input type="checkbox" class="lead-suhai-checkbox w-4 h-4 text-yellow-600 bg-gray-600 border-gray-500 rounded focus:ring-yellow-500" 
-                                                   data-cliente="Maria Santos" data-vendedor="Jessica Regis" data-comissao="195.00" data-plano="Plano Básico" data-empresa="Bradesco" data-valor="650.00">
-                                            <span class="text-xs text-yellow-400 font-bold">LEAD SUHAI</span>
-                                        </label>
-                                    </div>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="flex space-x-1">
-                                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
-                                            <i class="fas fa-edit mr-1"></i>Editar
-                                        </button>
-                                        <button class="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
-                                            <i class="fas fa-arrow-right mr-1"></i>Próximo
-                                        </button>
-                                    </div>
-                                </div>
+                            <div id="mandarBoletosContainer" class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <!-- Vendas serão inseridas aqui -->
                             </div>
                         </div>
 
@@ -483,33 +325,8 @@
                                 <div class="w-3 h-3 bg-orange-500 rounded-full mr-2"></div>
                                 Falta Pagamento
                             </h3>
-                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
-                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
-                                    <h4 class="text-white font-semibold text-sm mb-2">Pedro Costa</h4>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Completo</p>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-user mr-1 text-purple-400"></i>Ana Beatriz</p>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>Azul Seguros</p>
-                                    <p class="text-green-400 text-lg font-bold text-center mb-2">R$ 1.200,00</p>
-                                    
-                                    <!-- Lead Suhai Selection -->
-                                    <div class="mb-2">
-                                        <label class="flex items-center space-x-2 cursor-pointer bg-yellow-900 bg-opacity-30 p-2 rounded border border-yellow-600">
-                                            <input type="checkbox" class="lead-suhai-checkbox w-4 h-4 text-yellow-600 bg-gray-600 border-gray-500 rounded focus:ring-yellow-500" 
-                                                   data-cliente="Pedro Costa" data-vendedor="Ana Beatriz" data-comissao="360.00" data-plano="Plano Completo" data-empresa="Azul Seguros" data-valor="1200.00">
-                                            <span class="text-xs text-yellow-400 font-bold">LEAD SUHAI</span>
-                                        </label>
-                                    </div>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="flex space-x-1">
-                                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
-                                            <i class="fas fa-edit mr-1"></i>Editar
-                                        </button>
-                                        <button class="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
-                                            <i class="fas fa-arrow-right mr-1"></i>Próximo
-                                        </button>
-                                    </div>
-                                </div>
+                            <div id="faltaPagamentoContainer" class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <!-- Vendas serão inseridas aqui -->
                             </div>
                         </div>
 
@@ -519,33 +336,8 @@
                                 <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
                                 Pagamento Efetuado
                             </h3>
-                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
-                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
-                                    <h4 class="text-white font-semibold text-sm mb-2">Ana Beatriz</h4>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Premium</p>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-user mr-1 text-purple-400"></i>Luana Vieira</p>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>Suhai</p>
-                                    <p class="text-green-400 text-lg font-bold text-center mb-2">R$ 950,00</p>
-                                    
-                                    <!-- Lead Suhai Selection -->
-                                    <div class="mb-2">
-                                        <label class="flex items-center space-x-2 cursor-pointer bg-yellow-900 bg-opacity-30 p-2 rounded border border-yellow-600">
-                                            <input type="checkbox" class="lead-suhai-checkbox w-4 h-4 text-yellow-600 bg-gray-600 border-gray-500 rounded focus:ring-yellow-500" 
-                                                   data-cliente="Ana Beatriz" data-vendedor="Luana Vieira" data-comissao="285.00" data-plano="Plano Premium" data-empresa="Suhai" data-valor="950.00">
-                                            <span class="text-xs text-yellow-400 font-bold">LEAD SUHAI</span>
-                                        </label>
-                                    </div>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="flex space-x-1">
-                                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
-                                            <i class="fas fa-edit mr-1"></i>Editar
-                                        </button>
-                                        <button class="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
-                                            <i class="fas fa-arrow-right mr-1"></i>Próximo
-                                        </button>
-                                    </div>
-                                </div>
+                            <div id="pagamentoEfetuadoContainer" class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <!-- Vendas serão inseridas aqui -->
                             </div>
                         </div>
                     </div>
@@ -558,6 +350,12 @@
                         <p class="text-gray-400">Acompanhe o processo de indicações</p>
                     </div>
 
+                    <div class="mb-4">
+                        <button onclick="showNovaIndicacaoModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center">
+                            <i class="fas fa-plus mr-2"></i>Nova Indicação
+                        </button>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                         <!-- Lead Novo -->
                         <div class="bg-gray-800 rounded-xl border border-gray-700 p-4">
@@ -566,28 +364,7 @@
                                 Lead Novo
                             </h3>
                             <div id="leadNovoContainer" class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
-                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
-                                    <h4 class="text-white font-semibold text-sm mb-2">Carlos Oliveira</h4>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>(11) 99999-9999</p>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>Honda Civic 2020</p>
-                                    <p class="text-gray-300 text-xs mb-2"><i class="fas fa-user mr-1 text-purple-400"></i>Rodrigo Mariano</p>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="space-y-2">
-                                        <button onclick="converterIndicacao('Carlos Oliveira', 'Rodrigo Mariano', 'Honda Civic 2020', '(11) 99999-9999')" 
-                                                class="w-full bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-2 rounded transition duration-200">
-                                            <i class="fas fa-check mr-1"></i>CONVERTER
-                                        </button>
-                                        <button onclick="semSucessoIndicacao('Carlos Oliveira', 'Rodrigo Mariano', 'Honda Civic 2020', '(11) 99999-9999')" 
-                                                class="w-full bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-2 rounded transition duration-200">
-                                            <i class="fas fa-times mr-1"></i>SEM SUCESSO
-                                        </button>
-                                        <div class="flex items-center space-x-2">
-                                            <input type="checkbox" id="naoAtendeu1" class="w-4 h-4 text-orange-600 bg-gray-600 border-gray-500 rounded focus:ring-orange-500">
-                                            <label for="naoAtendeu1" class="text-xs text-orange-400 font-medium cursor-pointer">NÃO ATENDEU</label>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!-- Indicações serão inseridas aqui -->
                             </div>
                         </div>
 
@@ -597,29 +374,8 @@
                                 <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
                                 WhatsApp
                             </h3>
-                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
-                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
-                                    <h4 class="text-white font-semibold text-sm mb-2">Fernanda Lima</h4>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>(11) 88888-8888</p>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>Toyota Corolla 2019</p>
-                                    <p class="text-gray-300 text-xs mb-2"><i class="fas fa-user mr-1 text-purple-400"></i>Jessica Regis</p>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="space-y-2">
-                                        <button onclick="converterIndicacao('Fernanda Lima', 'Jessica Regis', 'Toyota Corolla 2019', '(11) 88888-8888')" 
-                                                class="w-full bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-2 rounded transition duration-200">
-                                            <i class="fas fa-check mr-1"></i>CONVERTER
-                                        </button>
-                                        <button onclick="semSucessoIndicacao('Fernanda Lima', 'Jessica Regis', 'Toyota Corolla 2019', '(11) 88888-8888')" 
-                                                class="w-full bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-2 rounded transition duration-200">
-                                            <i class="fas fa-times mr-1"></i>SEM SUCESSO
-                                        </button>
-                                        <div class="flex items-center space-x-2">
-                                            <input type="checkbox" id="naoAtendeu2" class="w-4 h-4 text-orange-600 bg-gray-600 border-gray-500 rounded focus:ring-orange-500">
-                                            <label for="naoAtendeu2" class="text-xs text-orange-400 font-medium cursor-pointer">NÃO ATENDEU</label>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div id="whatsappContainer" class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <!-- Indicações serão inseridas aqui -->
                             </div>
                         </div>
 
@@ -629,29 +385,8 @@
                                 <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
                                 Negociando
                             </h3>
-                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
-                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
-                                    <h4 class="text-white font-semibold text-sm mb-2">Roberto Silva</h4>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>(11) 77777-7777</p>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>Volkswagen Jetta 2021</p>
-                                    <p class="text-gray-300 text-xs mb-2"><i class="fas fa-user mr-1 text-purple-400"></i>Ana Beatriz</p>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="space-y-2">
-                                        <button onclick="converterIndicacao('Roberto Silva', 'Ana Beatriz', 'Volkswagen Jetta 2021', '(11) 77777-7777')" 
-                                                class="w-full bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-2 rounded transition duration-200">
-                                            <i class="fas fa-check mr-1"></i>CONVERTER
-                                        </button>
-                                        <button onclick="semSucessoIndicacao('Roberto Silva', 'Ana Beatriz', 'Volkswagen Jetta 2021', '(11) 77777-7777')" 
-                                                class="w-full bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-2 rounded transition duration-200">
-                                            <i class="fas fa-times mr-1"></i>SEM SUCESSO
-                                        </button>
-                                        <div class="flex items-center space-x-2">
-                                            <input type="checkbox" id="naoAtendeu3" class="w-4 h-4 text-orange-600 bg-gray-600 border-gray-500 rounded focus:ring-orange-500">
-                                            <label for="naoAtendeu3" class="text-xs text-orange-400 font-medium cursor-pointer">NÃO ATENDEU</label>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div id="negociandoContainer" class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <!-- Indicações serão inseridas aqui -->
                             </div>
                         </div>
 
@@ -661,29 +396,8 @@
                                 <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
                                 Pedindo Dados
                             </h3>
-                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
-                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
-                                    <h4 class="text-white font-semibold text-sm mb-2">Luciana Santos</h4>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>(11) 66666-6666</p>
-                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>Nissan Sentra 2020</p>
-                                    <p class="text-gray-300 text-xs mb-2"><i class="fas fa-user mr-1 text-purple-400"></i>Luana Vieira</p>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="space-y-2">
-                                        <button onclick="converterIndicacao('Luciana Santos', 'Luana Vieira', 'Nissan Sentra 2020', '(11) 66666-6666')" 
-                                                class="w-full bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-2 rounded transition duration-200">
-                                            <i class="fas fa-check mr-1"></i>CONVERTER
-                                        </button>
-                                        <button onclick="semSucessoIndicacao('Luciana Santos', 'Luana Vieira', 'Nissan Sentra 2020', '(11) 66666-6666')" 
-                                                class="w-full bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-2 rounded transition duration-200">
-                                            <i class="fas fa-times mr-1"></i>SEM SUCESSO
-                                        </button>
-                                        <div class="flex items-center space-x-2">
-                                            <input type="checkbox" id="naoAtendeu4" class="w-4 h-4 text-orange-600 bg-gray-600 border-gray-500 rounded focus:ring-orange-500">
-                                            <label for="naoAtendeu4" class="text-xs text-orange-400 font-medium cursor-pointer">NÃO ATENDEU</label>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div id="pedindoDadosContainer" class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <!-- Indicações serão inseridas aqui -->
                             </div>
                         </div>
                     </div>
@@ -699,7 +413,7 @@
                     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
                         <div class="flex justify-between items-center mb-6">
                             <h3 class="text-xl font-bold text-white">Lista de Indicações</h3>
-                            <button class="bg-vm-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-200 flex items-center">
+                            <button onclick="showNovaIndicacaoModal()" class="bg-vm-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-200 flex items-center">
                                 <i class="fas fa-plus mr-2"></i>Nova Indicação
                             </button>
                         </div>
@@ -716,26 +430,8 @@
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-700">
-                                    <tr class="hover:bg-gray-700 transition duration-200">
-                                        <td class="px-6 py-4 text-white">Carlos Oliveira</td>
-                                        <td class="px-6 py-4 text-gray-300">(11) 99999-9999</td>
-                                        <td class="px-6 py-4 text-gray-300">Honda Civic 2020</td>
-                                        <td class="px-6 py-4 text-gray-300">Rodrigo Mariano</td>
-                                        <td class="px-6 py-4">
-                                            <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">Lead Novo</span>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <div class="flex space-x-2">
-                                                <button class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition duration-200" title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition duration-200" title="Excluir">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                <tbody id="indicacoesTableBody" class="divide-y divide-gray-700">
+                                    <!-- Indicações serão inseridas aqui -->
                                 </tbody>
                             </table>
                         </div>
@@ -752,7 +448,7 @@
                     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
                         <div class="flex justify-between items-center mb-6">
                             <h3 class="text-xl font-bold text-white">Lista de Vendas</h3>
-                            <button class="bg-vm-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-200 flex items-center">
+                            <button onclick="showNovaVendaModal()" class="bg-vm-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-200 flex items-center">
                                 <i class="fas fa-plus mr-2"></i>Nova Venda
                             </button>
                         </div>
@@ -762,35 +458,18 @@
                                 <thead class="bg-gray-700">
                                     <tr>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Cliente</th>
-                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Plano</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Produto</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Empresa</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendedor</th>
-                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Valor</th>
-                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Status</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Prêmio Líquido</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">% Comissão</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Comissão Total</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Comissão Vendedor</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-700">
-                                    <tr class="hover:bg-gray-700 transition duration-200">
-                                        <td class="px-6 py-4 text-white">João Silva</td>
-                                        <td class="px-6 py-4 text-gray-300">Premium</td>
-                                        <td class="px-6 py-4 text-gray-300">Porto Seguro</td>
-                                        <td class="px-6 py-4 text-gray-300">Rodrigo Mariano</td>
-                                        <td class="px-6 py-4 text-white">R$ 850,00</td>
-                                        <td class="px-6 py-4">
-                                            <span class="bg-yellow-600 text-white px-3 py-1 rounded-full text-sm">Fazer Vistoria</span>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <div class="flex space-x-2">
-                                                <button class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition duration-200" title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition duration-200" title="Excluir">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                <tbody id="vendasTableBody" class="divide-y divide-gray-700">
+                                    <!-- Vendas serão inseridas aqui -->
                                 </tbody>
                             </table>
                         </div>
@@ -807,7 +486,7 @@
                     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
                         <div class="flex justify-between items-center mb-6">
                             <h3 class="text-xl font-bold text-white">Lista de Vendedores</h3>
-                            <button class="bg-vm-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-200 flex items-center">
+                            <button onclick="showNovoVendedorModal()" class="bg-vm-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-200 flex items-center">
                                 <i class="fas fa-plus mr-2"></i>Novo Vendedor
                             </button>
                         </div>
@@ -817,31 +496,15 @@
                                 <thead class="bg-gray-700">
                                     <tr>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Nome</th>
-                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Email</th>
-                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendas do Mês</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Login</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Meta Mensal</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">% Comissão</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Status</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-700">
-                                    <tr class="hover:bg-gray-700 transition duration-200">
-                                        <td class="px-6 py-4 text-white">Rodrigo Mariano</td>
-                                        <td class="px-6 py-4 text-gray-300">rodrigo@vmseguros.com</td>
-                                        <td class="px-6 py-4 text-white">R$ 25.500,00</td>
-                                        <td class="px-6 py-4">
-                                            <span class="bg-green-600 text-white px-3 py-1 rounded-full text-sm">Ativo</span>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <div class="flex space-x-2">
-                                                <button class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition duration-200" title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition duration-200" title="Excluir">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                <tbody id="vendedoresTableBody" class="divide-y divide-gray-700">
+                                    <!-- Vendedores serão inseridos aqui -->
                                 </tbody>
                             </table>
                         </div>
@@ -851,70 +514,53 @@
                 <!-- Comissão Section -->
                 <div id="comissao" class="section hidden">
                     <div class="mb-6">
-                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Comissões</h2>
-                        <p class="text-gray-400">Acompanhe suas comissões de vendas</p>
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Comissão</h2>
+                        <p class="text-gray-400">Controle de comissões dos vendedores</p>
                     </div>
 
-                    <!-- Resumo de Comissões -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div class="bg-gradient-to-br from-green-900 to-green-800 border border-green-600 rounded-xl p-6">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h3 class="text-xl font-bold text-white mb-2">Total de Comissões</h3>
-                                    <p class="text-green-300">Valor total recebido</p>
-                                </div>
-                                <div class="bg-green-600 p-3 rounded-lg">
-                                    <i class="fas fa-dollar-sign text-white text-xl"></i>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <p class="text-3xl font-bold text-white">R$ 7.850,00</p>
-                            </div>
-                        </div>
-
-                        <div class="bg-gradient-to-br from-blue-900 to-blue-800 border border-blue-600 rounded-xl p-6">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h3 class="text-xl font-bold text-white mb-2">Vendas Pagas</h3>
-                                    <p class="text-blue-300">Quantidade de vendas</p>
-                                </div>
-                                <div class="bg-blue-600 p-3 rounded-lg">
-                                    <i class="fas fa-chart-bar text-white text-xl"></i>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <p class="text-3xl font-bold text-white">12</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Lista de Comissões -->
-                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <h3 class="text-xl font-bold text-white mb-6">Vendas com Pagamento Efetuado</h3>
+                    <!-- Lista Detalhada de Comissões -->
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-6">
+                        <h3 class="text-xl font-bold text-white mb-6">Lista Detalhada de Comissões</h3>
                         
                         <div class="overflow-x-auto">
                             <table class="w-full">
                                 <thead class="bg-gray-700">
                                     <tr>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Cliente</th>
-                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Plano</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendedor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Produto</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Empresa</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Prêmio Líquido</th>
-                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Sua Comissão</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Comissão</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Data</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-700">
-                                    <tr class="hover:bg-gray-700 transition duration-200">
-                                        <td class="px-6 py-4 text-white">Ana Beatriz</td>
-                                        <td class="px-6 py-4 text-gray-300">Premium</td>
-                                        <td class="px-6 py-4 text-gray-300">Suhai</td>
-                                        <td class="px-6 py-4 text-blue-400 font-medium">R$ 950,00</td>
-                                        <td class="px-6 py-4 text-yellow-400 font-bold">R$ 285,00</td>
-                                        <td class="px-6 py-4 text-gray-300">15/12/2024</td>
-                                    </tr>
+                                <tbody id="comissaoDetalhadaTableBody" class="divide-y divide-gray-700">
+                                    <!-- Comissões detalhadas serão inseridas aqui -->
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+
+                    <!-- Resumo Total -->
+                    <div class="bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl border border-gray-600 p-6 shadow-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="text-center">
+                                <div class="bg-blue-600 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                    <i class="fas fa-chart-line text-white text-2xl"></i>
+                                </div>
+                                <h4 class="text-lg font-bold text-white mb-2">Total de Vendas</h4>
+                                <p class="text-3xl font-bold text-blue-400" id="totalVendasComissao">0</p>
+                            </div>
+                            
+                            <div class="text-center">
+                                <div class="bg-green-600 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                    <i class="fas fa-dollar-sign text-white text-2xl"></i>
+                                </div>
+                                <h4 class="text-lg font-bold text-white mb-2">Comissão Total</h4>
+                                <p class="text-3xl font-bold text-green-400" id="totalComissaoGeral">R$ 0,00</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -923,10 +569,63 @@
                 <div id="cancelamentos" class="section hidden">
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Cancelamentos</h2>
-                        <p class="text-gray-400">Gerencie cancelamentos de seguros</p>
+                        <p class="text-gray-400">Controle de vendas canceladas</p>
                     </div>
+
+                    <!-- Formulário de Cancelamento -->
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-6">
+                        <h3 class="text-xl font-bold text-white mb-6">Registrar Cancelamento</h3>
+                        
+                        <form id="cancelamentoForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-gray-300 text-sm font-medium mb-2">Nome Completo</label>
+                                <input type="text" id="cancelamentoNome" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500" required>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-300 text-sm font-medium mb-2">Empresa</label>
+                                <select id="cancelamentoEmpresa" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500" required>
+                                    <option value="">Selecione uma empresa</option>
+                                    <option value="Porto Seguro">Porto Seguro</option>
+                                    <option value="Bradesco">Bradesco</option>
+                                    <option value="Azul Seguros">Azul Seguros</option>
+                                    <option value="Suhai">Suhai</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-300 text-sm font-medium mb-2">Valor de Estorno (R$)</label>
+                                <input type="number" step="0.01" id="cancelamentoValor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500" required>
+                            </div>
+                            
+                            <div class="md:col-span-3">
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition duration-200 flex items-center">
+                                    <i class="fas fa-plus mr-2"></i>Registrar Cancelamento
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
                     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <p class="text-gray-400 text-center py-8">Nenhum cancelamento registrado</p>
+                        <h3 class="text-xl font-bold text-white mb-6">Lista de Cancelamentos</h3>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Cliente</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Produto</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendedor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Motivo</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Data</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cancelamentosTableBody" class="divide-y divide-gray-700">
+                                    <!-- Cancelamentos serão inseridos aqui -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -934,10 +633,39 @@
                 <div id="relatorios" class="section hidden">
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Relatórios</h2>
-                        <p class="text-gray-400">Acompanhe o desempenho de todos os vendedores</p>
+                        <p class="text-gray-400">Relatórios e análises do sistema</p>
                     </div>
-                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <p class="text-gray-400 text-center py-8">Relatórios em desenvolvimento</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 hover-scale cursor-pointer">
+                            <div class="text-center">
+                                <div class="bg-blue-600 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                    <i class="fas fa-chart-bar text-white text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-white mb-2">Vendas por Período</h3>
+                                <p class="text-gray-400 text-sm">Relatório detalhado de vendas</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 hover-scale cursor-pointer">
+                            <div class="text-center">
+                                <div class="bg-green-600 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                    <i class="fas fa-users text-white text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-white mb-2">Performance Vendedores</h3>
+                                <p class="text-gray-400 text-sm">Análise de desempenho</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 hover-scale cursor-pointer">
+                            <div class="text-center">
+                                <div class="bg-purple-600 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                    <i class="fas fa-percentage text-white text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-white mb-2">Comissões</h3>
+                                <p class="text-gray-400 text-sm">Relatório de comissões</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -945,10 +673,54 @@
                 <div id="links-uteis" class="section hidden">
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Links Úteis</h2>
-                        <p class="text-gray-400">Gerencie links importantes</p>
+                        <p class="text-gray-400">Links importantes para o trabalho</p>
                     </div>
-                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <p class="text-gray-400 text-center py-8">Nenhum link cadastrado</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                            <h3 class="text-lg font-bold text-white mb-4">Seguradoras</h3>
+                            <div class="space-y-2">
+                                <a href="#" class="block text-blue-400 hover:text-blue-300 transition duration-200">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Porto Seguro
+                                </a>
+                                <a href="#" class="block text-blue-400 hover:text-blue-300 transition duration-200">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Bradesco Seguros
+                                </a>
+                                <a href="#" class="block text-blue-400 hover:text-blue-300 transition duration-200">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Azul Seguros
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                            <h3 class="text-lg font-bold text-white mb-4">Ferramentas</h3>
+                            <div class="space-y-2">
+                                <a href="#" class="block text-blue-400 hover:text-blue-300 transition duration-200">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Calculadora FIPE
+                                </a>
+                                <a href="#" class="block text-blue-400 hover:text-blue-300 transition duration-200">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Consulta CPF
+                                </a>
+                                <a href="#" class="block text-blue-400 hover:text-blue-300 transition duration-200">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Simulador Seguro
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                            <h3 class="text-lg font-bold text-white mb-4">Suporte</h3>
+                            <div class="space-y-2">
+                                <a href="#" class="block text-blue-400 hover:text-blue-300 transition duration-200">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Manual do Sistema
+                                </a>
+                                <a href="#" class="block text-blue-400 hover:text-blue-300 transition duration-200">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Suporte Técnico
+                                </a>
+                                <a href="#" class="block text-blue-400 hover:text-blue-300 transition duration-200">
+                                    <i class="fas fa-external-link-alt mr-2"></i>FAQ
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -956,13 +728,11 @@
                 <div id="sem-sucesso" class="section hidden">
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Sem Sucesso</h2>
-                        <p class="text-gray-400">Leads que não tiveram sucesso</p>
+                        <p class="text-gray-400">Leads que não resultaram em vendas</p>
                     </div>
-                    
+
                     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-xl font-bold text-white">Lista de Leads Sem Sucesso</h3>
-                        </div>
+                        <h3 class="text-xl font-bold text-white mb-6">Lista de Leads Sem Sucesso</h3>
                         
                         <div class="overflow-x-auto">
                             <table class="w-full">
@@ -970,8 +740,8 @@
                                     <tr>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Nome</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Telefone</th>
-                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Veículo</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendedor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Motivo</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Data</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Ações</th>
                                     </tr>
@@ -991,7 +761,7 @@
                         <p class="text-gray-400">Vendas enviadas para processamento Suhai</p>
                     </div>
                     
-                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-6">
                         <div class="flex justify-between items-center mb-6">
                             <h3 class="text-xl font-bold text-white">Lista de Leads Suhai</h3>
                             <div class="bg-yellow-600 text-white px-3 py-1 rounded-full text-sm font-medium">
@@ -1005,9 +775,9 @@
                                     <tr>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Cliente</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendedor</th>
-                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Plano</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Produto</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Empresa</th>
-                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Valor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Prêmio Líquido</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Comissão</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Data Envio</th>
                                     </tr>
@@ -1018,6 +788,58 @@
                             </table>
                         </div>
                     </div>
+
+                    <!-- Estatísticas Elegantes Lead Suhai -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Estatísticas Gerais -->
+                        <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Total de Vendas -->
+                            <div class="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 rounded-2xl p-6 border border-blue-600 shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="bg-blue-500 bg-opacity-30 p-3 rounded-full">
+                                        <i class="fas fa-chart-line text-blue-300 text-2xl"></i>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-blue-200 text-sm font-medium">Total de Vendas</div>
+                                        <div class="text-3xl font-bold text-white" id="totalVendasSuhai">0</div>
+                                    </div>
+                                </div>
+                                <div class="bg-blue-800 bg-opacity-50 rounded-lg p-2">
+                                    <div class="text-blue-200 text-xs">Leads processados Suhai</div>
+                                </div>
+                            </div>
+
+                            <!-- Total de Comissão -->
+                            <div class="bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-700 rounded-2xl p-6 border border-emerald-600 shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="bg-emerald-500 bg-opacity-30 p-3 rounded-full">
+                                        <i class="fas fa-dollar-sign text-emerald-300 text-2xl"></i>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-emerald-200 text-sm font-medium">Comissão Total</div>
+                                        <div class="text-3xl font-bold text-white" id="totalComissaoSuhai">R$ 0,00</div>
+                                    </div>
+                                </div>
+                                <div class="bg-emerald-800 bg-opacity-50 rounded-lg p-2">
+                                    <div class="text-emerald-200 text-xs">Valor total em comissões</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ranking Top 3 Vendedores -->
+                        <div class="bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 rounded-2xl p-6 border border-purple-600 shadow-2xl">
+                            <div class="flex items-center mb-6">
+                                <div class="bg-purple-500 bg-opacity-30 p-2 rounded-full mr-3">
+                                    <i class="fas fa-trophy text-purple-300 text-lg"></i>
+                                </div>
+                                <h4 class="text-lg font-bold text-white">Top 3 Vendedores</h4>
+                            </div>
+                            
+                            <div id="rankingVendedoresSuhai" class="space-y-3">
+                                <!-- Ranking será inserido aqui -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Configurações Section -->
@@ -1026,11 +848,299 @@
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Configurações</h2>
                         <p class="text-gray-400">Gerencie configurações do sistema</p>
                     </div>
-                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <p class="text-gray-400 text-center py-8">Configurações em desenvolvimento</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Adicionar Usuário -->
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                            <h3 class="text-xl font-bold text-white mb-6">Adicionar Usuário</h3>
+                            
+                            <form id="usuarioForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Nome Completo</label>
+                                    <input type="text" id="usuarioNome" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Login</label>
+                                    <input type="text" id="usuarioLogin" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Senha</label>
+                                    <input type="password" id="usuarioSenha" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Tipo</label>
+                                    <select id="usuarioTipo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                                        <option value="vendedor">Vendedor</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Comissão (%)</label>
+                                    <input type="number" id="usuarioComissao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Meta (R$)</label>
+                                    <input type="number" id="usuarioMeta" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                                </div>
+                                
+                                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition duration-200">
+                                    <i class="fas fa-plus mr-2"></i>Adicionar Usuário
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Nova Indicação Modal -->
+    <div id="novaIndicacaoModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 border border-gray-700">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Nova Indicação</h3>
+                <button onclick="closeModal('novaIndicacaoModal')" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="indicacaoForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Nome do Cliente</label>
+                        <input type="text" id="indicacaoNome" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Telefone</label>
+                        <input type="tel" id="indicacaoTelefone" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Veículo</label>
+                        <input type="text" id="indicacaoVeiculo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Vendedor</label>
+                        <select id="indicacaoVendedor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                            <option value="">Selecione um vendedor</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Observações</label>
+                    <textarea id="indicacaoObservacoes" rows="3" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="Observações sobre o cliente ou negociação..."></textarea>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button type="button" onclick="closeModal('novaIndicacaoModal')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg transition duration-200">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition duration-200">
+                        <i class="fas fa-plus mr-2"></i>Adicionar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Nova Venda Modal -->
+    <div id="novaVendaModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-2xl mx-4 border border-gray-700 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Nova Venda</h3>
+                <button onclick="closeModal('novaVendaModal')" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="vendaForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Nome Completo</label>
+                        <input type="text" id="vendaCliente" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Produto</label>
+                        <select id="vendaProduto" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                            <option value="">Selecione um produto</option>
+                            <option value="Seguro Auto">Seguro Auto</option>
+                            <option value="Seguro Residencial">Seguro Residencial</option>
+                            <option value="Seguro Vida">Seguro Vida</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Empresa</label>
+                        <select id="vendaEmpresa" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                            <option value="">Selecione uma empresa</option>
+                            <option value="Porto Seguro">Porto Seguro</option>
+                            <option value="Bradesco">Bradesco</option>
+                            <option value="Azul Seguros">Azul Seguros</option>
+                            <option value="Suhai">Suhai</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Vendedor</label>
+                        <select id="vendaVendedor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required onchange="calcularComissoes()">
+                            <option value="">Selecione um vendedor</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Prêmio Líquido (R$)</label>
+                        <input type="number" step="0.01" id="vendaPremio" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required oninput="calcularComissoes()">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">% de Comissão da Venda</label>
+                        <input type="number" step="0.01" id="vendaPercentualComissao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required oninput="calcularComissoes()">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Comissão Total (R$)</label>
+                        <input type="number" step="0.01" id="vendaComissaoTotal" class="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-gray-300" readonly>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Comissão Vendedor (R$)</label>
+                        <input type="number" step="0.01" id="vendaComissaoVendedor" class="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-gray-300" readonly>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-4 mt-6">
+                    <button type="button" onclick="closeModal('novaVendaModal')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg transition duration-200">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition duration-200">
+                        <i class="fas fa-plus mr-2"></i>Adicionar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Novo Vendedor Modal -->
+    <div id="novoVendedorModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 border border-gray-700">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Novo Vendedor</h3>
+                <button onclick="closeModal('novoVendedorModal')" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="novoVendedorForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Nome Completo</label>
+                    <input type="text" id="vendedorNome" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Usuário para Vincular</label>
+                    <select id="vendedorUsuario" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                        <option value="">Selecione um usuário</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Meta Mensal (R$)</label>
+                    <input type="number" step="0.01" id="vendedorMeta" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">% de Comissão</label>
+                    <input type="number" step="0.01" id="vendedorComissao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button type="button" onclick="closeModal('novoVendedorModal')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg transition duration-200">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition duration-200">
+                        <i class="fas fa-plus mr-2"></i>Adicionar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Editar Vendedor Modal -->
+    <div id="editarVendedorModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 border border-gray-700">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Editar Vendedor</h3>
+                <button onclick="closeModal('editarVendedorModal')" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="editarVendedorForm" class="space-y-4">
+                <input type="hidden" id="editVendedorId">
+                
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Nome Completo</label>
+                    <input type="text" id="editVendedorNome" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Usuário Vinculado</label>
+                    <select id="editVendedorUsuario" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                        <option value="">Selecione um usuário</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Meta Mensal (R$)</label>
+                    <input type="number" step="0.01" id="editVendedorMeta" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">% de Comissão</label>
+                    <input type="number" step="0.01" id="editVendedorComissao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button type="button" onclick="closeModal('editarVendedorModal')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg transition duration-200">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition duration-200">
+                        <i class="fas fa-save mr-2"></i>Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 border border-gray-700 shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="bg-red-600 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+                </div>
+                <h3 id="confirmTitle" class="text-xl font-bold text-white mb-2"></h3>
+                <p id="confirmMessage" class="text-gray-300 text-sm whitespace-pre-line"></p>
+            </div>
+            
+            <div class="flex space-x-4">
+                <button onclick="closeConfirmModal()" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg transition duration-200 font-medium">
+                    <i class="fas fa-times mr-2"></i>Cancelar
+                </button>
+                <button id="confirmButton" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg transition duration-200 font-medium">
+                    <i class="fas fa-check mr-2"></i>Confirmar
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1041,13 +1151,67 @@
         let onlineSystem = null;
         let leadsSemSucesso = [];
         let leadsSubai = [];
+        let indicacoes = [
+            { id: 1, nome: 'Carlos Oliveira', telefone: '(11) 99999-9999', veiculo: 'Honda Civic 2020', vendedor: 'Rodrigo Mariano', status: 'Lead Novo', data: new Date().toLocaleDateString('pt-BR') },
+            { id: 2, nome: 'Fernanda Lima', telefone: '(11) 88888-8888', veiculo: 'Toyota Corolla 2019', vendedor: 'Jessica Regis', status: 'WhatsApp', data: new Date().toLocaleDateString('pt-BR') },
+            { id: 3, nome: 'Roberto Silva', telefone: '(11) 77777-7777', veiculo: 'Volkswagen Jetta 2021', vendedor: 'Ana Beatriz', status: 'Negociando', data: new Date().toLocaleDateString('pt-BR') },
+            { id: 4, nome: 'Luciana Santos', telefone: '(11) 66666-6666', veiculo: 'Nissan Sentra 2020', vendedor: 'Luana Vieira', status: 'Pedindo Dados', data: new Date().toLocaleDateString('pt-BR') }
+        ];
+        let vendas = [
+            { id: 1, cliente: 'João Silva', produto: 'Seguro Auto', empresa: 'Porto Seguro', vendedor: 'Rodrigo Mariano', premioLiquido: 2500.00, percentualComissao: 30, comissaoTotal: 750.00, comissaoVendedor: 225.00, status: 'Fazer Vistoria', data: new Date().toLocaleDateString('pt-BR') },
+            { id: 2, cliente: 'Maria Santos', produto: 'Seguro Residencial', empresa: 'Bradesco', vendedor: 'Jessica Regis', premioLiquido: 1800.00, percentualComissao: 25, comissaoTotal: 450.00, comissaoVendedor: 112.50, status: 'Mandar Boletos', data: new Date().toLocaleDateString('pt-BR') }
+        ];
+        let comissoesPagas = [];
+        let cancelamentos = [];
+        let linksUteis = [];
+        let empresas = ['Porto Seguro', 'Bradesco', 'Azul Seguros', 'Suhai'];
+        let produtos = ['Seguro Auto', 'Seguro Residencial', 'Seguro Vida'];
         
         // Dados de demonstração
         const usuarios = [
-            { nome: 'Admin', login: 'admin', senha: 'admin123', tipo: 'admin', comissao: 0, fixoGarantido: 0 },
-            { nome: 'Rodrigo Mariano', login: 'rodrigo', senha: 'ninjinha10', tipo: 'vendedor', comissao: 30, fixoGarantido: 2000 },
-            { nome: 'Jessica Regis', login: 'jessica.regis', senha: 'jessica123', tipo: 'vendedor', comissao: 25, fixoGarantido: 1500 }
+            { id: 1, nome: 'Admin', login: 'admin', senha: 'admin123', tipo: 'admin', comissao: 0, fixoGarantido: 0, meta: 0 },
+            { id: 2, nome: 'Rodrigo Mariano', login: 'rodrigo', senha: 'ninjinha10', tipo: 'vendedor', comissao: 30, fixoGarantido: 2000, meta: 50000 },
+            { id: 3, nome: 'Jessica Regis', login: 'jessica.regis', senha: 'jessica123', tipo: 'vendedor', comissao: 25, fixoGarantido: 1500, meta: 40000 },
+            { id: 4, nome: 'Ana Beatriz', login: 'ana.beatriz', senha: 'ana123', tipo: 'vendedor', comissao: 28, fixoGarantido: 1800, meta: 45000 },
+            { id: 5, nome: 'Luana Vieira', login: 'luana.vieira', senha: 'luana123', tipo: 'vendedor', comissao: 26, fixoGarantido: 1600, meta: 42000 }
         ];
+        
+        let vendasSemSucesso = [];
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Login form handler
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                // Find user
+                const user = usuarios.find(u => u.login === username && u.senha === password);
+                
+                if (user) {
+                    currentUser = user;
+                    document.getElementById('currentUser').textContent = user.nome;
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('crmSystem').classList.remove('hidden');
+                    
+                    // Initialize system
+                    onlineSystem = new OnlineSystem();
+                    initializeSystem();
+                    
+                    // Show success message
+                    setTimeout(() => {
+                        onlineSystem.showNotification(`Bem-vindo, ${user.nome}!`, 'success');
+                    }, 500);
+                } else {
+                    alert('Usuário ou senha incorretos!');
+                }
+            });
+
+            // Initialize modal forms
+            initializeModalForms();
+        });
         
         // Sistema Online Simulado
         class OnlineSystem {
@@ -1090,22 +1254,84 @@
                 // Adicionar event listeners para checkboxes Lead Suhai
                 document.addEventListener('change', function(e) {
                     if (e.target.classList.contains('lead-suhai-checkbox')) {
-                        if (e.target.checked) {
-                            const data = {
-                                cliente: e.target.dataset.cliente,
-                                vendedor: e.target.dataset.vendedor,
-                                comissao: e.target.dataset.comissao,
-                                plano: e.target.dataset.plano,
-                                empresa: e.target.dataset.empresa,
-                                valor: e.target.dataset.valor,
-                                dataEnvio: new Date().toLocaleDateString('pt-BR')
-                            };
-                            
+                        const data = {
+                            cliente: e.target.dataset.cliente,
+                            vendedor: e.target.dataset.vendedor,
+                            comissao: e.target.dataset.comissao,
+                            produto: e.target.dataset.produto,
+                            empresa: e.target.dataset.empresa,
+                            premioLiquido: e.target.dataset.premioLiquido,
+                            dataEnvio: new Date().toLocaleDateString('pt-BR')
+                        };
+                        
+                        // Verificar se já existe (evitar duplicatas)
+                        const jaExiste = leadsSubai.some(lead => 
+                            lead.cliente === data.cliente && 
+                            lead.vendedor === data.vendedor && 
+                            lead.produto === data.produto
+                        );
+                        
+                        if (e.target.checked && !jaExiste) {
                             leadsSubai.push(data);
                             updateLeadSuhaiTable();
                             onlineSystem.showNotification(`${data.cliente} enviado para Lead Suhai!`, 'success');
+                        } else if (!e.target.checked) {
+                            // Remover do Lead Suhai
+                            leadsSubai = leadsSubai.filter(lead => 
+                                !(lead.cliente === data.cliente && 
+                                  lead.vendedor === data.vendedor && 
+                                  lead.produto === data.produto)
+                            );
+                            updateLeadSuhaiTable();
+                            onlineSystem.showNotification(`${data.cliente} removido do Lead Suhai!`, 'warning');
+                        } else if (jaExiste) {
+                            onlineSystem.showNotification(`${data.cliente} já está no Lead Suhai!`, 'warning');
+                            e.target.checked = true; // Manter marcado
                         }
                     }
+                });
+                
+                // Event listeners para formulários
+                this.initFormListeners();
+            }
+            
+            initFormListeners() {
+                // Formulário de usuário
+                document.getElementById('usuarioForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const novoUsuario = {
+                        id: Date.now(),
+                        nome: document.getElementById('usuarioNome').value,
+                        login: document.getElementById('usuarioLogin').value,
+                        senha: document.getElementById('usuarioSenha').value,
+                        tipo: document.getElementById('usuarioTipo').value,
+                        comissao: parseFloat(document.getElementById('usuarioComissao').value),
+                        meta: parseFloat(document.getElementById('usuarioMeta').value)
+                    };
+                    
+                    usuarios.push(novoUsuario);
+                    updateVendedoresTable();
+                    this.reset();
+                    onlineSystem.showNotification('Usuário adicionado!', 'success');
+                });
+                
+                // Formulário de cancelamento
+                document.getElementById('cancelamentoForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const novoCancelamento = {
+                        id: Date.now(),
+                        nome: document.getElementById('cancelamentoNome').value,
+                        empresa: document.getElementById('cancelamentoEmpresa').value,
+                        valorEstorno: parseFloat(document.getElementById('cancelamentoValor').value),
+                        data: new Date().toLocaleDateString('pt-BR')
+                    };
+                    
+                    cancelamentos.push(novoCancelamento);
+                    updateCancelamentosTable();
+                    this.reset();
+                    onlineSystem.showNotification('Cancelamento registrado!', 'success');
                 });
             }
             
@@ -1144,390 +1370,1191 @@
                 this.showNotification('Dados sincronizados!', 'success');
             }
         }
-        
-        // Função para converter indicação para venda
-        function converterIndicacao(nome, vendedor, veiculo, telefone) {
-            // Remover da lista de indicações (simulado)
-            const container = document.getElementById('fazerVistoriaContainer');
+
+        // Calculate commissions automatically
+        function calcularComissoes() {
+            const premioLiquido = parseFloat(document.getElementById('vendaPremio').value) || 0;
+            const percentualComissao = parseFloat(document.getElementById('vendaPercentualComissao').value) || 0;
+            const vendedorNome = document.getElementById('vendaVendedor').value;
             
-            // Criar novo item na coluna "Fazer Vistoria"
-            const novoItem = document.createElement('div');
-            novoItem.className = 'bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600';
-            novoItem.innerHTML = `
-                <h4 class="text-white font-semibold text-sm mb-2">${nome}</h4>
-                <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Básico</p>
-                <p class="text-gray-300 text-xs mb-1"><i class="fas fa-user mr-1 text-purple-400"></i>${vendedor}</p>
-                <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>A definir</p>
-                <p class="text-green-400 text-lg font-bold text-center mb-2">R$ 750,00</p>
+            // Calculate total commission
+            const comissaoTotal = (premioLiquido * percentualComissao) / 100;
+            document.getElementById('vendaComissaoTotal').value = comissaoTotal.toFixed(2);
+            
+            // Calculate vendor commission
+            if (vendedorNome) {
+                const vendedor = usuarios.find(u => u.nome === vendedorNome);
+                if (vendedor) {
+                    const comissaoVendedor = (comissaoTotal * vendedor.comissao) / 100;
+                    document.getElementById('vendaComissaoVendedor').value = comissaoVendedor.toFixed(2);
+                }
+            }
+        }
+
+        // Initialize modal forms
+        function initializeModalForms() {
+            // Indicação form
+            document.getElementById('indicacaoForm').addEventListener('submit', function(e) {
+                e.preventDefault();
                 
-                <!-- Lead Suhai Selection -->
-                <div class="mb-2">
-                    <label class="flex items-center space-x-2 cursor-pointer bg-yellow-900 bg-opacity-30 p-2 rounded border border-yellow-600">
-                        <input type="checkbox" class="lead-suhai-checkbox w-4 h-4 text-yellow-600 bg-gray-600 border-gray-500 rounded focus:ring-yellow-500" 
-                               data-cliente="${nome}" data-vendedor="${vendedor}" data-comissao="225.00" data-plano="Plano Básico" data-empresa="A definir" data-valor="750.00">
-                        <span class="text-xs text-yellow-400 font-bold">LEAD SUHAI</span>
-                    </label>
-                </div>
+                const editingId = this.dataset.editingId;
                 
-                <!-- Action Buttons -->
-                <div class="flex space-x-1">
-                    <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
-                        <i class="fas fa-edit mr-1"></i>Editar
-                    </button>
-                    <button class="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
-                        <i class="fas fa-arrow-right mr-1"></i>Próximo
-                    </button>
-                </div>
-            `;
-            
-            container.appendChild(novoItem);
-            
-            // Remover da indicação original (simulado - na prática removeria do DOM)
-            onlineSystem.showNotification(`${nome} convertido para venda!`, 'success');
+                if (editingId) {
+                    // Editando indicação existente
+                    const indicacaoIndex = indicacoes.findIndex(i => i.id == editingId);
+                    if (indicacaoIndex !== -1) {
+                        indicacoes[indicacaoIndex] = {
+                            ...indicacoes[indicacaoIndex],
+                            nome: document.getElementById('indicacaoNome').value,
+                            telefone: document.getElementById('indicacaoTelefone').value,
+                            veiculo: document.getElementById('indicacaoVeiculo').value,
+                            vendedor: document.getElementById('indicacaoVendedor').value,
+                            observacoes: document.getElementById('indicacaoObservacoes').value
+                        };
+                        onlineSystem.showNotification('Indicação atualizada!', 'success');
+                    }
+                    delete this.dataset.editingId;
+                } else {
+                    // Nova indicação
+                    const novaIndicacao = {
+                        id: Date.now(),
+                        nome: document.getElementById('indicacaoNome').value,
+                        telefone: document.getElementById('indicacaoTelefone').value,
+                        veiculo: document.getElementById('indicacaoVeiculo').value,
+                        vendedor: document.getElementById('indicacaoVendedor').value,
+                        observacoes: document.getElementById('indicacaoObservacoes').value,
+                        status: 'Lead Novo',
+                        data: new Date().toLocaleDateString('pt-BR')
+                    };
+                    
+                    indicacoes.push(novaIndicacao);
+                    onlineSystem.showNotification('Indicação adicionada!', 'success');
+                }
+                
+                updateKanbanIndicacoes();
+                updateIndicacoesTable();
+                updateDashboardStats();
+                
+                this.reset();
+                closeModal('novaIndicacaoModal');
+            });
+
+            // Venda form
+            document.getElementById('vendaForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const vendedor = usuarios.find(u => u.nome === document.getElementById('vendaVendedor').value);
+                const premioLiquido = parseFloat(document.getElementById('vendaPremio').value);
+                const percentualComissao = parseFloat(document.getElementById('vendaPercentualComissao').value);
+                const comissaoTotal = parseFloat(document.getElementById('vendaComissaoTotal').value);
+                const comissaoVendedor = parseFloat(document.getElementById('vendaComissaoVendedor').value);
+                
+                const editingId = this.dataset.editingId;
+                
+                if (editingId) {
+                    // Editando venda existente
+                    const vendaIndex = vendas.findIndex(v => v.id == editingId);
+                    if (vendaIndex !== -1) {
+                        vendas[vendaIndex] = {
+                            ...vendas[vendaIndex],
+                            cliente: document.getElementById('vendaCliente').value,
+                            produto: document.getElementById('vendaProduto').value,
+                            empresa: document.getElementById('vendaEmpresa').value,
+                            vendedor: document.getElementById('vendaVendedor').value,
+                            premioLiquido: premioLiquido,
+                            percentualComissao: percentualComissao,
+                            comissaoTotal: comissaoTotal,
+                            comissaoVendedor: comissaoVendedor
+                        };
+                        onlineSystem.showNotification('Venda atualizada!', 'success');
+                    }
+                    delete this.dataset.editingId;
+                } else {
+                    // Nova venda
+                    const novaVenda = {
+                        id: Date.now(),
+                        cliente: document.getElementById('vendaCliente').value,
+                        produto: document.getElementById('vendaProduto').value,
+                        empresa: document.getElementById('vendaEmpresa').value,
+                        vendedor: document.getElementById('vendaVendedor').value,
+                        premioLiquido: premioLiquido,
+                        percentualComissao: percentualComissao,
+                        comissaoTotal: comissaoTotal,
+                        comissaoVendedor: comissaoVendedor,
+                        status: 'Fazer Vistoria',
+                        data: new Date().toLocaleDateString('pt-BR')
+                    };
+                    
+                    vendas.push(novaVenda);
+                    onlineSystem.showNotification('Venda adicionada!', 'success');
+                }
+                
+                updateKanbanVendas();
+                updateVendasTable();
+                updateDashboardStats();
+                updateComissaoTable();
+                
+                this.reset();
+                closeModal('novaVendaModal');
+            });
+
+            // Novo Vendedor form
+            document.getElementById('novoVendedorForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const usuarioId = document.getElementById('vendedorUsuario').value;
+                const usuario = usuarios.find(u => u.id == usuarioId);
+                
+                if (usuario) {
+                    // Update existing user to be a vendor
+                    usuario.nome = document.getElementById('vendedorNome').value;
+                    usuario.meta = parseFloat(document.getElementById('vendedorMeta').value);
+                    usuario.comissao = parseFloat(document.getElementById('vendedorComissao').value);
+                    usuario.tipo = 'vendedor';
+                    
+                    updateVendedoresTable();
+                    populateVendedorSelects();
+                    populateUsuarioSelects();
+                    
+                    this.reset();
+                    closeModal('novoVendedorModal');
+                    onlineSystem.showNotification('Vendedor adicionado!', 'success');
+                }
+            });
+
+            // Editar Vendedor form
+            document.getElementById('editarVendedorForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const vendedorId = document.getElementById('editVendedorId').value;
+                const vendedor = usuarios.find(u => u.id == vendedorId);
+                
+                if (vendedor) {
+                    vendedor.nome = document.getElementById('editVendedorNome').value;
+                    vendedor.meta = parseFloat(document.getElementById('editVendedorMeta').value);
+                    vendedor.comissao = parseFloat(document.getElementById('editVendedorComissao').value);
+                    
+                    updateVendedoresTable();
+                    populateVendedorSelects();
+                    
+                    this.reset();
+                    closeModal('editarVendedorModal');
+                    onlineSystem.showNotification('Vendedor atualizado!', 'success');
+                }
+            });
         }
         
-        // Função para marcar indicação como sem sucesso
-        function semSucessoIndicacao(nome, vendedor, veiculo, telefone) {
-            const leadSemSucesso = {
-                nome: nome,
-                telefone: telefone,
-                veiculo: veiculo,
-                vendedor: vendedor,
-                data: new Date().toLocaleDateString('pt-BR')
+        // Initialize system
+        function initializeSystem() {
+            populateVendedorSelects();
+            populateUsuarioSelects();
+            updateKanbanIndicacoes();
+            updateKanbanVendas();
+            updateIndicacoesTable();
+            updateVendasTable();
+            updateVendedoresTable();
+            updateLeadSuhaiTable();
+            updateComissaoTable();
+            updateComissaoDetalhadaTable();
+            updateCancelamentosTable();
+            updateSemSucessoTable();
+            updateDashboardStats();
+            updateLeadSuhaiStats();
+        }
+
+        // Populate vendedor selects
+        function populateVendedorSelects() {
+            const vendedores = usuarios.filter(u => u.tipo === 'vendedor');
+            const selects = ['indicacaoVendedor', 'vendaVendedor'];
+            
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = '<option value="">Selecione um vendedor</option>';
+                vendedores.forEach(vendedor => {
+                    const option = document.createElement('option');
+                    option.value = vendedor.nome;
+                    option.textContent = vendedor.nome;
+                    select.appendChild(option);
+                });
+            });
+
+            // Restrict vendor selection for non-admin users
+            if (currentUser && currentUser.tipo === 'vendedor') {
+                const vendaVendedorSelect = document.getElementById('vendaVendedor');
+                if (vendaVendedorSelect) {
+                    vendaVendedorSelect.value = currentUser.nome;
+                    vendaVendedorSelect.disabled = true;
+                }
+            }
+        }
+
+        // Populate usuario selects for vendor creation
+        function populateUsuarioSelects() {
+            const usuarios_disponiveis = usuarios.filter(u => u.tipo !== 'vendedor' || u.tipo === 'admin');
+            const selects = ['vendedorUsuario', 'editVendedorUsuario'];
+            
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">Selecione um usuário</option>';
+                    usuarios_disponiveis.forEach(usuario => {
+                        const option = document.createElement('option');
+                        option.value = usuario.id;
+                        option.textContent = `${usuario.nome} (${usuario.login})`;
+                        select.appendChild(option);
+                    });
+                }
+            });
+        }
+        
+        // Update functions
+        function updateKanbanIndicacoes() {
+            const containers = {
+                'Lead Novo': document.getElementById('leadNovoContainer'),
+                'WhatsApp': document.getElementById('whatsappContainer'),
+                'Negociando': document.getElementById('negociandoContainer'),
+                'Pedindo Dados': document.getElementById('pedindoDadosContainer')
             };
             
-            leadsSemSucesso.push(leadSemSucesso);
-            updateSemSucessoTable();
+            // Limpar containers
+            Object.values(containers).forEach(container => {
+                if (container) container.innerHTML = '';
+            });
             
-            // Remover da indicação original (simulado)
-            onlineSystem.showNotification(`${nome} movido para Sem Sucesso`, 'warning');
+            // Adicionar indicações aos containers corretos
+            indicacoes.forEach(indicacao => {
+                const container = containers[indicacao.status];
+                if (container) {
+                    const item = document.createElement('div');
+                    item.className = 'bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600';
+                    item.innerHTML = `
+                        <h4 class="text-white font-semibold text-sm mb-2">${indicacao.nome}</h4>
+                        <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>${indicacao.telefone}</p>
+                        <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>${indicacao.veiculo}</p>
+                        <p class="text-gray-300 text-xs mb-2"><i class="fas fa-user mr-1 text-purple-400"></i>${indicacao.vendedor}</p>
+                        ${indicacao.observacoes ? `<p class="text-gray-400 text-xs mb-2 italic"><i class="fas fa-comment mr-1 text-green-400"></i>${indicacao.observacoes}</p>` : ''}
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex justify-between gap-1 mb-2">
+                            <button onclick="editarIndicacao(${indicacao.id})" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1.5 rounded transition duration-200 flex items-center justify-center" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="confirmarDeleteIndicacaoKanban(${indicacao.id}, '${indicacao.nome}')" class="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1.5 rounded transition duration-200 flex items-center justify-center" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button onclick="proximoStatusIndicacao(${indicacao.id})" class="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1.5 rounded transition duration-200 flex items-center justify-center" title="Próximo Status">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <button onclick="converterIndicacao('${indicacao.nome}', '${indicacao.vendedor}', '${indicacao.veiculo}', '${indicacao.telefone}')" 
+                                    class="w-full bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-2 rounded transition duration-200">
+                                <i class="fas fa-check mr-1"></i>CONVERTER
+                            </button>
+                            <button onclick="semSucessoIndicacao('${indicacao.nome}', '${indicacao.vendedor}', '${indicacao.veiculo}', '${indicacao.telefone}')" 
+                                    class="w-full bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-2 rounded transition duration-200">
+                                <i class="fas fa-times mr-1"></i>SEM SUCESSO
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                }
+            });
         }
         
-        // Função para reverter lead sem sucesso
-        function reverterSemSucesso(index) {
-            const lead = leadsSemSucesso[index];
-            leadsSemSucesso.splice(index, 1);
-            updateSemSucessoTable();
+        function updateKanbanVendas() {
+            const containers = {
+                'Fazer Vistoria': document.getElementById('fazerVistoriaContainer'),
+                'Mandar Boletos': document.getElementById('mandarBoletosContainer'),
+                'Falta Pagamento': document.getElementById('faltaPagamentoContainer'),
+                'Pagamento Efetuado': document.getElementById('pagamentoEfetuadoContainer')
+            };
             
-            onlineSystem.showNotification(`${lead.nome} revertido para indicações!`, 'success');
+            // Limpar containers
+            Object.values(containers).forEach(container => {
+                if (container) container.innerHTML = '';
+            });
+            
+            // Adicionar vendas aos containers corretos
+            vendas.forEach(venda => {
+                const container = containers[venda.status];
+                if (container) {
+                    // Verificar se já está no Lead Suhai
+                    const jaNoSuhai = leadsSubai.some(lead => 
+                        lead.cliente === venda.cliente && 
+                        lead.vendedor === venda.vendedor && 
+                        lead.produto === venda.produto
+                    );
+                    
+                    const item = document.createElement('div');
+                    item.className = 'bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600';
+                    item.innerHTML = `
+                        <h4 class="text-white font-semibold text-sm mb-2">${venda.cliente}</h4>
+                        <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>${venda.produto}</p>
+                        <p class="text-gray-300 text-xs mb-1"><i class="fas fa-user mr-1 text-purple-400"></i>${venda.vendedor}</p>
+                        <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>${venda.empresa}</p>
+                        <p class="text-green-400 text-lg font-bold text-center mb-2">R$ ${venda.premioLiquido.toFixed(2)}</p>
+                        
+                        <!-- Lead Suhai Selection -->
+                        <div class="mb-2">
+                            <label class="flex items-center space-x-2 cursor-pointer bg-yellow-900 bg-opacity-30 p-2 rounded border border-yellow-600">
+                                <input type="checkbox" class="lead-suhai-checkbox w-4 h-4 text-yellow-600 bg-gray-600 border-gray-500 rounded focus:ring-yellow-500" 
+                                       ${jaNoSuhai ? 'checked' : ''}
+                                       data-cliente="${venda.cliente}" 
+                                       data-vendedor="${venda.vendedor}" 
+                                       data-comissao="${venda.comissaoTotal.toFixed(2)}" 
+                                       data-produto="${venda.produto}" 
+                                       data-empresa="${venda.empresa}" 
+                                       data-premio-liquido="${venda.premioLiquido}">
+                                <span class="text-xs text-yellow-400 font-bold">LEAD SUHAI</span>
+                            </label>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex justify-between gap-1 mb-2">
+                            <button onclick="editarVenda(${venda.id})" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1.5 rounded transition duration-200 flex items-center justify-center" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="confirmarDeleteVendaKanban(${venda.id}, '${venda.cliente}', ${venda.premioLiquido})" class="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1.5 rounded transition duration-200 flex items-center justify-center" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="flex gap-1">
+                            <button onclick="proximoStatusVenda(${venda.id})" class="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs px-1 py-1 rounded transition duration-200">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                            <button onclick="semSucessoVenda('${venda.cliente}', '${venda.vendedor}', '${venda.produto}', '${venda.empresa}', ${venda.id})" 
+                                    class="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs px-1 py-1 rounded transition duration-200">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                }
+            });
         }
         
-        // Atualizar tabela de sem sucesso
-        function updateSemSucessoTable() {
-            const tbody = document.getElementById('semSucessoTableBody');
+        function updateIndicacoesTable() {
+            const tbody = document.getElementById('indicacoesTableBody');
             tbody.innerHTML = '';
             
-            leadsSemSucesso.forEach((lead, index) => {
+            indicacoes.forEach(indicacao => {
                 const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-700 transition duration-200';
+                row.className = 'hover:bg-gray-700';
                 row.innerHTML = `
-                    <td class="px-6 py-4 text-white">${lead.nome}</td>
-                    <td class="px-6 py-4 text-gray-300">${lead.telefone}</td>
-                    <td class="px-6 py-4 text-gray-300">${lead.veiculo}</td>
-                    <td class="px-6 py-4 text-gray-300">${lead.vendedor}</td>
-                    <td class="px-6 py-4 text-gray-300">${lead.data}</td>
+                    <td class="px-6 py-4 text-white">${indicacao.nome}</td>
+                    <td class="px-6 py-4 text-gray-300">${indicacao.telefone}</td>
+                    <td class="px-6 py-4 text-gray-300">${indicacao.veiculo}</td>
+                    <td class="px-6 py-4 text-gray-300">${indicacao.vendedor}</td>
                     <td class="px-6 py-4">
-                        <button onclick="reverterSemSucesso(${index})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded transition duration-200 text-sm">
-                            <i class="fas fa-undo mr-1"></i>Reverter
-                        </button>
+                        <span class="px-2 py-1 text-xs rounded-full bg-blue-600 text-white">${indicacao.status}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex space-x-2">
+                            <button onclick="editarIndicacao(${indicacao.id})" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm transition duration-200 flex items-center" title="Editar indicação">
+                                <i class="fas fa-edit mr-1"></i>Editar
+                            </button>
+                            <button onclick="confirmarDeleteIndicacao(${indicacao.id})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200 flex items-center" title="Excluir indicação">
+                                <i class="fas fa-trash mr-1"></i>Excluir
+                            </button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
         }
         
-        // Atualizar tabela de Lead Suhai
-        function updateLeadSuhaiTable() {
-            const tbody = document.getElementById('leadSuhaiTableBody');
+        function updateVendasTable() {
+            const tbody = document.getElementById('vendasTableBody');
             tbody.innerHTML = '';
             
-            leadsSubai.forEach((lead, index) => {
+            vendas.forEach(venda => {
                 const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-700 transition duration-200';
+                row.className = 'hover:bg-gray-700';
                 row.innerHTML = `
-                    <td class="px-6 py-4 text-white">${lead.cliente}</td>
-                    <td class="px-6 py-4 text-gray-300">${lead.vendedor}</td>
-                    <td class="px-6 py-4 text-gray-300">${lead.plano}</td>
-                    <td class="px-6 py-4 text-gray-300">${lead.empresa}</td>
-                    <td class="px-6 py-4 text-green-400 font-medium">R$ ${lead.valor}</td>
-                    <td class="px-6 py-4 text-yellow-400 font-bold">R$ ${lead.comissao}</td>
-                    <td class="px-6 py-4 text-gray-300">${lead.dataEnvio}</td>
+                    <td class="px-6 py-4 text-white">${venda.cliente}</td>
+                    <td class="px-6 py-4 text-gray-300">${venda.produto}</td>
+                    <td class="px-6 py-4 text-gray-300">${venda.empresa}</td>
+                    <td class="px-6 py-4 text-gray-300">${venda.vendedor}</td>
+                    <td class="px-6 py-4 text-green-400 font-bold">R$ ${venda.premioLiquido.toFixed(2)}</td>
+                    <td class="px-6 py-4 text-yellow-400 font-bold">${(venda.percentualComissao || 0).toFixed(2)}%</td>
+                    <td class="px-6 py-4 text-blue-400 font-bold">R$ ${(venda.comissaoTotal || 0).toFixed(2)}</td>
+                    <td class="px-6 py-4 text-purple-400 font-bold">R$ ${(venda.comissaoVendedor || 0).toFixed(2)}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex space-x-2">
+                            <button onclick="editarVenda(${venda.id})" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm transition duration-200 flex items-center" title="Editar venda">
+                                <i class="fas fa-edit mr-1"></i>Editar
+                            </button>
+                            <button onclick="confirmarDeleteVenda(${venda.id})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200 flex items-center" title="Excluir venda">
+                                <i class="fas fa-trash mr-1"></i>Excluir
+                            </button>
+                        </div>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
         }
         
-        // Login functionality
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+        function updateVendedoresTable() {
+            const tbody = document.getElementById('vendedoresTableBody');
+            tbody.innerHTML = '';
             
-            const user = usuarios.find(u => u.login === username && u.senha === password);
+            usuarios.filter(u => u.tipo === 'vendedor').forEach(vendedor => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-700';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-white">${vendedor.nome}</td>
+                    <td class="px-6 py-4 text-gray-300">${vendedor.login}</td>
+                    <td class="px-6 py-4 text-gray-300">R$ ${vendedor.meta.toLocaleString('pt-BR')}</td>
+                    <td class="px-6 py-4 text-gray-300">${vendedor.comissao}%</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full bg-green-600 text-white">Ativo</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex space-x-2">
+                            <button onclick="editarVendedor(${vendedor.id})" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm transition duration-200 flex items-center" title="Editar vendedor">
+                                <i class="fas fa-edit mr-1"></i>Editar
+                            </button>
+                            <button onclick="confirmarDeleteVendedor(${vendedor.id})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition duration-200 flex items-center" title="Excluir vendedor">
+                                <i class="fas fa-trash mr-1"></i>Excluir
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateComissaoTable() {
+            const tbody = document.getElementById('comissaoTableBody');
+            if (!tbody) return; // Verificar se o elemento existe
             
-            if (user) {
-                currentUser = user;
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('crmSystem').classList.remove('hidden');
-                document.getElementById('currentUser').textContent = user.nome;
+            tbody.innerHTML = '';
+            
+            const vendedores = usuarios.filter(u => u.tipo === 'vendedor');
+            
+            vendedores.forEach(vendedor => {
+                const vendasVendedor = vendas.filter(v => v.vendedor === vendedor.nome);
+                const totalVendas = vendasVendedor.length;
+                const premioTotal = vendasVendedor.reduce((sum, v) => sum + v.premioLiquido, 0);
+                const comissaoTotal = vendasVendedor.reduce((sum, v) => sum + (v.comissaoVendedor || 0), 0);
                 
-                // Inicializar sistema online
-                onlineSystem = new OnlineSystem();
-                
-                // Update dashboard
-                updateDashboardStats();
-                
-                // Show welcome notification
-                setTimeout(() => {
-                    onlineSystem.showNotification(`Bem-vindo, ${user.nome}! Sistema online ativo.`, 'success');
-                }, 1000);
-            } else {
-                alert('Usuário ou senha incorretos!');
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-700';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-white">${vendedor.nome}</td>
+                    <td class="px-6 py-4 text-gray-300">${totalVendas}</td>
+                    <td class="px-6 py-4 text-green-400 font-bold">R$ ${premioTotal.toFixed(2)}</td>
+                    <td class="px-6 py-4 text-blue-400 font-bold">R$ ${comissaoTotal.toFixed(2)}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full ${comissaoTotal > 0 ? 'bg-green-600' : 'bg-gray-600'} text-white">
+                            ${comissaoTotal > 0 ? 'Pendente' : 'Sem vendas'}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateCancelamentosTable() {
+            const tbody = document.getElementById('cancelamentosTableBody');
+            tbody.innerHTML = '';
+            
+            cancelamentos.forEach(cancelamento => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-700';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-white">${cancelamento.nome}</td>
+                    <td class="px-6 py-4 text-gray-300">${cancelamento.empresa}</td>
+                    <td class="px-6 py-4 text-gray-300">Cancelamento</td>
+                    <td class="px-6 py-4 text-gray-300">Solicitação do cliente</td>
+                    <td class="px-6 py-4 text-gray-300">${cancelamento.data}</td>
+                    <td class="px-6 py-4 text-red-400 font-bold">R$ ${cancelamento.valorEstorno.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            if (cancelamentos.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                        <i class="fas fa-info-circle mr-2"></i>Nenhum cancelamento registrado
+                    </td>
+                `;
+                tbody.appendChild(row);
             }
-        });
+        }
         
-        // Navigation functionality
-        function showSection(sectionName) {
+        function updateComissaoDetalhadaTable() {
+            const tbody = document.getElementById('comissaoDetalhadaTableBody');
+            tbody.innerHTML = '';
+            
+            // Filtrar apenas vendas com status "Pagamento Efetuado"
+            const vendasPagas = vendas.filter(v => v.status === 'Pagamento Efetuado');
+            
+            vendasPagas.forEach(venda => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-700';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-white">${venda.cliente}</td>
+                    <td class="px-6 py-4 text-gray-300">${venda.vendedor}</td>
+                    <td class="px-6 py-4 text-gray-300">${venda.produto}</td>
+                    <td class="px-6 py-4 text-gray-300">${venda.empresa}</td>
+                    <td class="px-6 py-4 text-green-400 font-bold">R$ ${venda.premioLiquido.toFixed(2)}</td>
+                    <td class="px-6 py-4 text-blue-400 font-bold">R$ ${venda.comissaoVendedor.toFixed(2)}</td>
+                    <td class="px-6 py-4 text-gray-300">${venda.data}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full bg-green-600 text-white">Pago</span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Atualizar totais
+            const totalVendas = vendasPagas.length;
+            const totalComissao = vendasPagas.reduce((sum, v) => sum + v.comissaoVendedor, 0);
+            
+            document.getElementById('totalVendasComissao').textContent = totalVendas;
+            document.getElementById('totalComissaoGeral').textContent = `R$ ${totalComissao.toFixed(2)}`;
+            
+            if (vendasPagas.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="8" class="px-6 py-8 text-center text-gray-400">
+                        <i class="fas fa-info-circle mr-2"></i>Nenhuma comissão paga ainda
+                    </td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+        
+        function updateLeadSuhaiStats() {
+            const totalVendas = leadsSubai.length;
+            const totalComissao = leadsSubai.reduce((sum, lead) => sum + parseFloat(lead.comissao), 0);
+            
+            document.getElementById('totalVendasSuhai').textContent = totalVendas;
+            document.getElementById('totalComissaoSuhai').textContent = `R$ ${totalComissao.toFixed(2)}`;
+            
+            // Ranking de vendedores
+            const vendedoresRanking = {};
+            leadsSubai.forEach(lead => {
+                if (!vendedoresRanking[lead.vendedor]) {
+                    vendedoresRanking[lead.vendedor] = { vendas: 0, comissao: 0 };
+                }
+                vendedoresRanking[lead.vendedor].vendas++;
+                vendedoresRanking[lead.vendedor].comissao += parseFloat(lead.comissao);
+            });
+            
+            const ranking = Object.entries(vendedoresRanking)
+                .sort((a, b) => b[1].vendas - a[1].vendas)
+                .slice(0, 3);
+            
+            const rankingContainer = document.getElementById('rankingVendedoresSuhai');
+            rankingContainer.innerHTML = '';
+            
+            if (ranking.length === 0) {
+                rankingContainer.innerHTML = '<p class="text-gray-400 text-sm text-center">Nenhum dado disponível</p>';
+            } else {
+                ranking.forEach((item, index) => {
+                    const [vendedor, dados] = item;
+                    const medalha = index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉';
+                    
+                    const rankItem = document.createElement('div');
+                    rankItem.className = 'flex items-center justify-between bg-gradient-to-r from-gray-700 to-gray-600 p-3 rounded-lg border border-gray-500 shadow-md hover:shadow-lg transition-all duration-300';
+                    rankItem.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl">${medalha}</span>
+                            <span class="text-white text-sm font-bold">${vendedor}</span>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-yellow-400 text-sm font-bold">${dados.vendas} vendas</div>
+                            <div class="text-green-400 text-xs font-medium">R$ ${dados.comissao.toFixed(2)}</div>
+                        </div>
+                    `;
+                    rankingContainer.appendChild(rankItem);
+                });
+            }
+        }
+
+        function updateSemSucessoTable() {
+            const tbody = document.getElementById('semSucessoTableBody');
+            tbody.innerHTML = '';
+            
+            leadsSemSucesso.forEach(lead => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-700';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-white">${lead.nome}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.telefone || 'N/A'}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.vendedor}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.motivo || 'Não informado'}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.data}</td>
+                    <td class="px-6 py-4">
+                        <button onclick="reverterSemSucesso(${lead.id})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition duration-200">
+                            <i class="fas fa-undo mr-1"></i>Reverter
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Adicionar vendas sem sucesso também
+            vendasSemSucesso.forEach(venda => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-700';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-white">${venda.cliente}</td>
+                    <td class="px-6 py-4 text-gray-300">N/A</td>
+                    <td class="px-6 py-4 text-gray-300">${venda.vendedor}</td>
+                    <td class="px-6 py-4 text-gray-300">${venda.motivo || 'Venda sem sucesso'}</td>
+                    <td class="px-6 py-4 text-gray-300">${venda.data}</td>
+                    <td class="px-6 py-4">
+                        <button onclick="reverterVendaSemSucesso(${venda.id})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition duration-200">
+                            <i class="fas fa-undo mr-1"></i>Reverter
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            if (leadsSemSucesso.length === 0 && vendasSemSucesso.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                        <i class="fas fa-info-circle mr-2"></i>Nenhum lead sem sucesso registrado
+                    </td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+        
+        function updateLeadSuhaiTable() {
+            const tbody = document.getElementById('leadSuhaiTableBody');
+            tbody.innerHTML = '';
+            
+            leadsSubai.forEach(lead => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-700';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-white">${lead.cliente}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.vendedor}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.produto}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.empresa}</td>
+                    <td class="px-6 py-4 text-green-400 font-bold">R$ ${parseFloat(lead.premioLiquido).toFixed(2)}</td>
+                    <td class="px-6 py-4 text-blue-400 font-bold">R$ ${parseFloat(lead.comissao).toFixed(2)}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.dataEnvio}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            if (leadsSubai.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="7" class="px-6 py-8 text-center text-gray-400">
+                        <i class="fas fa-info-circle mr-2"></i>Nenhum lead enviado para Suhai
+                    </td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+        
+        function updateDashboardStats() {
+            const hoje = new Date().toLocaleDateString('pt-BR');
+            
+            // Leads do dia (indicações criadas hoje)
+            const leadsHoje = indicacoes.filter(i => i.data === hoje).length;
+            document.getElementById('leadsDoDia').textContent = leadsHoje;
+            
+            // Vendas do dia
+            const vendasHoje = vendas.filter(v => v.data === hoje).length;
+            document.getElementById('vendasDoDia').textContent = vendasHoje;
+            
+            // Prêmio líquido do dia
+            const premioHoje = vendas
+                .filter(v => v.data === hoje)
+                .reduce((sum, v) => sum + v.premioLiquido, 0);
+            document.getElementById('premioLiquidoDia').textContent = `R$ ${premioHoje.toFixed(2)}`;
+            
+            // Prêmio líquido do mês
+            const mesAtual = new Date().getMonth();
+            const premioMes = vendas
+                .filter(v => {
+                    const dataVenda = v.data.split('/');
+                    const mesVenda = parseInt(dataVenda[1]) - 1;
+                    return mesVenda === mesAtual;
+                })
+                .reduce((sum, v) => sum + v.premioLiquido, 0);
+            document.getElementById('premioLiquidoMes').textContent = `R$ ${premioMes.toFixed(2)}`;
+        }
+        
+        // Navigation functions
+        function showSection(sectionId) {
             // Hide all sections
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => section.classList.add('hidden'));
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
             
             // Show selected section
-            const targetSection = document.getElementById(sectionName);
-            if (targetSection) {
-                targetSection.classList.remove('hidden');
-            }
+            document.getElementById(sectionId).classList.remove('hidden');
             
-            // Update nav active state
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.classList.remove('bg-vm-blue', 'text-white');
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('bg-gray-700', 'text-white');
                 item.classList.add('text-gray-300');
             });
             
-            // Find and activate the clicked nav item
-            const clickedNavItem = document.querySelector(`[onclick="showSection('${sectionName}')"]`);
-            if (clickedNavItem) {
-                clickedNavItem.classList.add('bg-vm-blue', 'text-white');
-                clickedNavItem.classList.remove('text-gray-300');
-            }
+            // Highlight active nav item
+            event.target.classList.add('bg-gray-700', 'text-white');
+            event.target.classList.remove('text-gray-300');
             
             // Close mobile menu
-            closeMobileMenu();
+            if (window.innerWidth < 768) {
+                toggleMobileMenu();
+            }
         }
         
-        // Mobile menu functionality
         function toggleMobileMenu() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobileOverlay');
             
-            if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            }
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
         }
         
-        function closeMobileMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('mobileOverlay');
-            
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        }
-        
-        // Dashboard stats
-        function updateDashboardStats() {
-            if (!currentUser) return;
-            
-            // Dados simulados
-            document.getElementById('leadsDoDia').textContent = Math.floor(Math.random() * 10) + 1;
-            document.getElementById('vendasDoDia').textContent = Math.floor(Math.random() * 5) + 1;
-            document.getElementById('premioLiquidoDia').textContent = `R$ ${(Math.random() * 5000 + 1000).toFixed(2)}`;
-            document.getElementById('premioLiquidoMes').textContent = `R$ ${(Math.random() * 50000 + 10000).toFixed(2)}`;
-            
-            updateVendasSemanaisChart();
-            updateTopVendedoresSemana();
-            updateTopVendedoresMes();
-            updateEstatisticasGeraisMes();
-        }
-        
-        function updateVendasSemanaisChart() {
-            const chartContainer = document.getElementById('chartFallback').querySelector('.grid');
-            chartContainer.innerHTML = '';
-            
-            const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-            const vendasPorDia = [];
-            let totalSemana = 0;
-            let melhorDia = { nome: '-', vendas: 0 };
-            
-            for (let i = 0; i < 7; i++) {
-                const vendas = Math.floor(Math.random() * 8);
-                vendasPorDia.push({
-                    dia: diasSemana[i],
-                    vendas: vendas
-                });
-                
-                totalSemana += vendas;
-                
-                if (vendas > melhorDia.vendas) {
-                    melhorDia = { nome: diasSemana[i], vendas: vendas };
-                }
-            }
-            
-            const maxVendas = Math.max(...vendasPorDia.map(d => d.vendas), 1);
-            
-            vendasPorDia.forEach(dia => {
-                const altura = (dia.vendas / maxVendas) * 100;
-                const cor = dia.vendas === melhorDia.vendas && dia.vendas > 0 ? 'from-yellow-500 to-orange-500' : 'from-green-500 to-emerald-500';
-                
-                const barra = document.createElement('div');
-                barra.className = 'flex flex-col items-center justify-end h-full';
-                barra.innerHTML = `
-                    <div class="bg-gradient-to-t ${cor} rounded-t-lg transition-all duration-500 hover:scale-110 cursor-pointer relative group" 
-                         style="height: ${altura}%; min-height: 8px; width: 100%;">
-                        <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                            ${dia.vendas} vendas
-                        </div>
-                    </div>
-                    <div class="text-xs text-gray-400 mt-2 font-medium">${dia.dia}</div>
-                `;
-                chartContainer.appendChild(barra);
-            });
-            
-            document.getElementById('totalVendasSemana').textContent = totalSemana;
-            document.getElementById('mediaVendasDiaria').textContent = (totalSemana / 7).toFixed(1);
-            document.getElementById('melhorDiaSemana').textContent = melhorDia.nome;
-        }
-        
-        function updateTopVendedoresSemana() {
-            const container = document.getElementById('topVendedoresSemana');
-            container.innerHTML = '';
-            
-            const vendedores = [
-                { nome: 'Rodrigo Mariano', vendas: 8, comissao: 2400 },
-                { nome: 'Jessica Regis', vendas: 6, comissao: 1800 },
-                { nome: 'Ana Beatriz', vendas: 4, comissao: 1200 }
-            ];
-            
-            vendedores.forEach((vendedor, index) => {
-                const posicao = index + 1;
-                const medalha = posicao === 1 ? '🥇' : posicao === 2 ? '🥈' : '🥉';
-                const corBorda = posicao === 1 ? 'border-yellow-500' : posicao === 2 ? 'border-gray-400' : 'border-orange-500';
-                
-                const item = document.createElement('div');
-                item.className = `bg-gradient-to-r from-blue-800 to-blue-700 border-l-4 ${corBorda} p-3 rounded-lg hover:shadow-lg transition-all duration-200`;
-                item.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <span class="text-lg">${medalha}</span>
-                            <div>
-                                <p class="text-white font-bold text-sm">${vendedor.nome}</p>
-                                <p class="text-blue-300 text-xs">${vendedor.vendas} vendas</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-green-400 font-bold text-sm">R$ ${vendedor.comissao}</p>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-        }
-        
-        function updateTopVendedoresMes() {
-            const container = document.getElementById('topVendedoresMes');
-            container.innerHTML = '';
-            
-            const vendedores = [
-                { nome: 'Rodrigo Mariano', vendas: 25, comissao: 7500 },
-                { nome: 'Jessica Regis', vendas: 20, comissao: 6000 },
-                { nome: 'Ana Beatriz', vendas: 15, comissao: 4500 },
-                { nome: 'Luana Vieira', vendas: 12, comissao: 3600 }
-            ];
-            
-            vendedores.forEach((vendedor, index) => {
-                const posicao = index + 1;
-                const medalha = posicao === 1 ? '👑' : posicao === 2 ? '🥈' : posicao === 3 ? '🥉' : '🏆';
-                const corFundo = posicao === 1 ? 'from-yellow-600 to-yellow-700' : 
-                                posicao === 2 ? 'from-gray-600 to-gray-700' : 
-                                posicao === 3 ? 'from-orange-600 to-orange-700' : 'from-purple-600 to-purple-700';
-                
-                const item = document.createElement('div');
-                item.className = `bg-gradient-to-br ${corFundo} p-4 md:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105`;
-                item.innerHTML = `
-                    <div class="text-center">
-                        <div class="text-3xl md:text-4xl mb-3">${medalha}</div>
-                        <h4 class="text-white font-bold text-base md:text-lg mb-2">${vendedor.nome}</h4>
-                        <div class="space-y-2">
-                            <div class="bg-black bg-opacity-20 rounded-lg p-2">
-                                <p class="text-white text-xl md:text-2xl font-bold">${vendedor.vendas}</p>
-                                <p class="text-gray-200 text-xs">Vendas</p>
-                            </div>
-                            <div class="bg-black bg-opacity-20 rounded-lg p-2">
-                                <p class="text-green-300 text-base md:text-lg font-bold">R$ ${vendedor.comissao}</p>
-                                <p class="text-gray-200 text-xs">Comissão</p>
-                            </div>
-                        </div>
-                        <div class="mt-3 text-xs text-gray-200">
-                            ${posicao}º lugar do mês
-                        </div>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-        }
-        
-        function updateEstatisticasGeraisMes() {
-            document.getElementById('totalVendasMesStats').textContent = Math.floor(Math.random() * 100) + 50;
-            document.getElementById('totalComissoesMesStats').textContent = `R$ ${(Math.random() * 50000 + 20000).toFixed(0)}`;
-            document.getElementById('vendedoresAtivosMes').textContent = Math.floor(Math.random() * 10) + 5;
-            document.getElementById('taxaConversaoMes').textContent = `${(Math.random() * 30 + 15).toFixed(1)}%`;
-        }
-        
-        // Logout functionality
         function logout() {
             currentUser = null;
-            onlineSystem = null;
-            document.getElementById('crmSystem').classList.add('hidden');
             document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('crmSystem').classList.add('hidden');
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
-            closeMobileMenu();
         }
         
-        // Force sync functionality
         function forceSync() {
             if (onlineSystem) {
                 onlineSystem.forceSync();
+            }
+        }
+        
+        // Modal functions
+        function showNovaIndicacaoModal() {
+            document.getElementById('novaIndicacaoModal').classList.remove('hidden');
+        }
+        
+        function showNovaVendaModal() {
+            document.getElementById('novaVendaModal').classList.remove('hidden');
+        }
+        
+        function showNovoVendedorModal() {
+            populateUsuarioSelects();
+            document.getElementById('novoVendedorModal').classList.remove('hidden');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Funções do modal de confirmação
+        function showConfirmModal(title, message, onConfirm) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            
+            const confirmButton = document.getElementById('confirmButton');
+            
+            // Remover listeners anteriores
+            const newButton = confirmButton.cloneNode(true);
+            confirmButton.parentNode.replaceChild(newButton, confirmButton);
+            
+            // Adicionar novo listener
+            newButton.addEventListener('click', function() {
+                onConfirm();
+                closeConfirmModal();
+            });
+            
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+        
+        // Placeholder functions for missing functionality
+        function converterIndicacao(nome, vendedor, veiculo, telefone) {
+            // Encontrar o vendedor para calcular comissão
+            const vendedorObj = usuarios.find(u => u.nome === vendedor);
+            if (!vendedorObj) {
+                onlineSystem.showNotification('Vendedor não encontrado!', 'warning');
+                return;
+            }
+            
+            // Criar venda automaticamente
+            const premioLiquido = 2000.00; // Valor padrão
+            const comissaoVendedor = (premioLiquido * vendedorObj.comissao) / 100;
+            
+            const novaVenda = {
+                id: Date.now(),
+                cliente: nome,
+                produto: 'Seguro Auto',
+                empresa: 'Porto Seguro',
+                vendedor: vendedor,
+                premioLiquido: premioLiquido,
+                comissaoVendedor: comissaoVendedor,
+                comissaoTotal: comissaoVendedor,
+                status: 'Fazer Vistoria',
+                data: new Date().toLocaleDateString('pt-BR')
+            };
+            
+            // Adicionar à lista de vendas
+            vendas.push(novaVenda);
+            
+            // Remover da lista de indicações
+            const indicacaoIndex = indicacoes.findIndex(i => i.nome === nome && i.vendedor === vendedor);
+            if (indicacaoIndex !== -1) {
+                indicacoes.splice(indicacaoIndex, 1);
+            }
+            
+            // Atualizar todas as tabelas
+            updateKanbanVendas();
+            updateKanbanIndicacoes();
+            updateVendasTable();
+            updateIndicacoesTable();
+            updateDashboardStats();
+            updateComissaoTable();
+            
+            onlineSystem.showNotification(`${nome} convertido em venda com sucesso!`, 'success');
+        }
+        
+        function semSucessoIndicacao(nome, vendedor, veiculo, telefone) {
+            // Encontrar a indicação pelo nome e vendedor
+            const indicacaoIndex = indicacoes.findIndex(i => i.nome === nome && i.vendedor === vendedor);
+            
+            if (indicacaoIndex !== -1) {
+                const indicacao = indicacoes[indicacaoIndex];
                 
-                const syncBtn = document.querySelector('[onclick="forceSync()"] i');
-                if (syncBtn) {
-                    syncBtn.classList.add('animate-spin');
-                    setTimeout(() => {
-                        syncBtn.classList.remove('animate-spin');
-                    }, 1000);
+                const leadSemSucesso = {
+                    id: Date.now(),
+                    nome: nome,
+                    telefone: telefone,
+                    vendedor: vendedor,
+                    veiculo: veiculo,
+                    motivo: 'Cliente não interessado',
+                    data: new Date().toLocaleDateString('pt-BR'),
+                    dadosOriginais: { ...indicacao }
+                };
+                
+                // Remover do kanban de indicações
+                indicacoes.splice(indicacaoIndex, 1);
+                
+                // Adicionar à lista sem sucesso
+                leadsSemSucesso.push(leadSemSucesso);
+                
+                // Atualizar as tabelas
+                updateKanbanIndicacoes();
+                updateIndicacoesTable();
+                updateSemSucessoTable();
+                updateDashboardStats();
+                
+                onlineSystem.showNotification(`${nome} movido para Sem Sucesso`, 'warning');
+            }
+        }
+        
+        function editarIndicacao(id) {
+            const indicacao = indicacoes.find(i => i.id === id);
+            if (indicacao) {
+                // Preencher modal com dados da indicação
+                document.getElementById('indicacaoNome').value = indicacao.nome;
+                document.getElementById('indicacaoTelefone').value = indicacao.telefone;
+                document.getElementById('indicacaoVeiculo').value = indicacao.veiculo;
+                document.getElementById('indicacaoVendedor').value = indicacao.vendedor;
+                document.getElementById('indicacaoObservacoes').value = indicacao.observacoes || '';
+                
+                // Marcar como edição
+                document.getElementById('indicacaoForm').dataset.editingId = id;
+                
+                // Mostrar modal
+                showNovaIndicacaoModal();
+                
+                onlineSystem.showNotification('Editando indicação - faça as alterações e salve', 'info');
+            }
+        }
+        
+        function confirmarDeleteIndicacao(id) {
+            const indicacao = indicacoes.find(i => i.id === id);
+            if (indicacao) {
+                showConfirmModal(
+                    '🗑️ CONFIRMAR EXCLUSÃO',
+                    `Deseja realmente excluir a indicação de:\n"${indicacao.nome}"?\n\nEsta ação não pode ser desfeita.`,
+                    () => {
+                        indicacoes = indicacoes.filter(i => i.id !== id);
+                        updateKanbanIndicacoes();
+                        updateIndicacoesTable();
+                        updateDashboardStats();
+                        onlineSystem.showNotification('Indicação excluída com sucesso!', 'success');
+                    }
+                );
+            }
+        }
+
+        function confirmarDeleteIndicacaoKanban(id, nome) {
+            const indicacao = indicacoes.find(i => i.id === id);
+            if (indicacao) {
+                showConfirmModal(
+                    '🗑️ CONFIRMAR EXCLUSÃO',
+                    `Deseja realmente excluir a indicação de:\n"${indicacao.nome}"?\n\nEsta ação não pode ser desfeita.`,
+                    () => {
+                        indicacoes = indicacoes.filter(i => i.id !== id);
+                        updateKanbanIndicacoes();
+                        updateIndicacoesTable();
+                        updateDashboardStats();
+                        onlineSystem.showNotification('Indicação excluída com sucesso!', 'success');
+                    }
+                );
+            }
+        }
+        
+        function proximoStatusIndicacao(id) {
+            const indicacao = indicacoes.find(i => i.id === id);
+            if (indicacao) {
+                const statusOrder = ['Lead Novo', 'WhatsApp', 'Negociando', 'Pedindo Dados'];
+                const currentIndex = statusOrder.indexOf(indicacao.status);
+                if (currentIndex < statusOrder.length - 1) {
+                    indicacao.status = statusOrder[currentIndex + 1];
+                    updateKanbanIndicacoes();
+                    updateIndicacoesTable();
+                    onlineSystem.showNotification(`${indicacao.nome} movido para ${indicacao.status}`, 'success');
                 }
             }
         }
         
-        // Initialize dashboard as active
-        document.addEventListener('DOMContentLoaded', function() {
-            const dashboardBtn = document.querySelector('[onclick="showSection(\'dashboard\')"]');
-            if (dashboardBtn) {
-                dashboardBtn.classList.add('bg-vm-blue', 'text-white');
-                dashboardBtn.classList.remove('text-gray-300');
+        function editarVenda(id) {
+            const venda = vendas.find(v => v.id === id);
+            if (venda) {
+                // Preencher modal com dados da venda
+                document.getElementById('vendaCliente').value = venda.cliente;
+                document.getElementById('vendaProduto').value = venda.produto;
+                document.getElementById('vendaEmpresa').value = venda.empresa;
+                document.getElementById('vendaVendedor').value = venda.vendedor;
+                document.getElementById('vendaPremio').value = venda.premioLiquido;
+                document.getElementById('vendaPercentualComissao').value = venda.percentualComissao || 0;
+                document.getElementById('vendaComissaoTotal').value = (venda.comissaoTotal || 0).toFixed(2);
+                document.getElementById('vendaComissaoVendedor').value = (venda.comissaoVendedor || 0).toFixed(2);
+                
+                // Marcar como edição
+                document.getElementById('vendaForm').dataset.editingId = id;
+                
+                // Mostrar modal
+                showNovaVendaModal();
+                
+                onlineSystem.showNotification('Editando venda - faça as alterações e salve', 'info');
             }
-        });
+        }
         
-        // Handle window resize for mobile menu
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 768) {
-                closeMobileMenu();
+        function confirmarDeleteVenda(id) {
+            const venda = vendas.find(v => v.id === id);
+            if (venda) {
+                showConfirmModal(
+                    '🗑️ CONFIRMAR EXCLUSÃO',
+                    `Deseja realmente excluir a venda de:\n"${venda.cliente}"\nValor: R$ ${venda.premioLiquido.toFixed(2)}\n\nEsta ação não pode ser desfeita.`,
+                    () => {
+                        // Remover do Lead Suhai se estiver lá
+                        leadsSubai = leadsSubai.filter(lead => 
+                            !(lead.cliente === venda.cliente && 
+                              lead.vendedor === venda.vendedor && 
+                              lead.produto === venda.produto)
+                        );
+                        
+                        vendas = vendas.filter(v => v.id !== id);
+                        updateKanbanVendas();
+                        updateVendasTable();
+                        updateDashboardStats();
+                        updateComissaoTable();
+                        updateComissaoDetalhadaTable();
+                        updateLeadSuhaiTable();
+                        updateLeadSuhaiStats();
+                        onlineSystem.showNotification('Venda excluída com sucesso!', 'success');
+                    }
+                );
             }
-        });
+        }
+
+        function confirmarDeleteVendaKanban(id, cliente, valor) {
+            const venda = vendas.find(v => v.id === id);
+            if (venda) {
+                showConfirmModal(
+                    '🗑️ CONFIRMAR EXCLUSÃO',
+                    `Deseja realmente excluir a venda de:\n"${venda.cliente}"\nValor: R$ ${venda.premioLiquido.toFixed(2)}\n\nEsta ação não pode ser desfeita.`,
+                    () => {
+                        // Remover do Lead Suhai se estiver lá
+                        leadsSubai = leadsSubai.filter(lead => 
+                            !(lead.cliente === venda.cliente && 
+                              lead.vendedor === venda.vendedor && 
+                              lead.produto === venda.produto)
+                        );
+                        
+                        vendas = vendas.filter(v => v.id !== id);
+                        updateKanbanVendas();
+                        updateVendasTable();
+                        updateDashboardStats();
+                        updateComissaoTable();
+                        updateComissaoDetalhadaTable();
+                        updateLeadSuhaiTable();
+                        updateLeadSuhaiStats();
+                        onlineSystem.showNotification('Venda excluída com sucesso!', 'success');
+                    }
+                );
+            }
+        }
+        
+        function proximoStatusVenda(id) {
+            const venda = vendas.find(v => v.id === id);
+            if (venda) {
+                const statusOrder = ['Fazer Vistoria', 'Mandar Boletos', 'Falta Pagamento', 'Pagamento Efetuado'];
+                const currentIndex = statusOrder.indexOf(venda.status);
+                if (currentIndex < statusOrder.length - 1) {
+                    venda.status = statusOrder[currentIndex + 1];
+                    updateKanbanVendas();
+                    updateVendasTable();
+                    
+                    // Se chegou em "Pagamento Efetuado", atualizar comissões
+                    if (venda.status === 'Pagamento Efetuado') {
+                        updateComissaoDetalhadaTable();
+                        onlineSystem.showNotification(`${venda.cliente} - Comissão liberada!`, 'success');
+                    } else {
+                        onlineSystem.showNotification(`${venda.cliente} movido para ${venda.status}`, 'success');
+                    }
+                }
+            }
+        }
+        
+        function editarVendedor(id) {
+            const vendedor = usuarios.find(u => u.id == id);
+            if (vendedor) {
+                // Preencher modal com dados do vendedor
+                document.getElementById('editVendedorId').value = vendedor.id;
+                document.getElementById('editVendedorNome').value = vendedor.nome;
+                document.getElementById('editVendedorMeta').value = vendedor.meta || 0;
+                document.getElementById('editVendedorComissao').value = vendedor.comissao || 0;
+                
+                // Populate and select current user
+                populateUsuarioSelects();
+                document.getElementById('editVendedorUsuario').value = vendedor.id;
+                
+                // Show modal
+                document.getElementById('editarVendedorModal').classList.remove('hidden');
+            }
+        }
+        
+        function confirmarDeleteVendedor(id) {
+            const vendedor = usuarios.find(u => u.id == id);
+            if (vendedor) {
+                showConfirmModal(
+                    '🗑️ CONFIRMAR EXCLUSÃO',
+                    `Deseja realmente excluir o vendedor:\n"${vendedor.nome}"\nLogin: ${vendedor.login}\n\nEsta ação não pode ser desfeita.`,
+                    () => {
+                        // Remover vendedor da lista
+                        const index = usuarios.findIndex(u => u.id == id);
+                        if (index !== -1) {
+                            usuarios.splice(index, 1);
+                            updateVendedoresTable();
+                            populateVendedorSelects();
+                            populateUsuarioSelects();
+                            onlineSystem.showNotification(`Vendedor "${vendedor.nome}" excluído com sucesso!`, 'success');
+                        }
+                    }
+                );
+            }
+        }
+        
+        // Nova função para sem sucesso de vendas
+        function semSucessoVenda(cliente, vendedor, produto, empresa, id) {
+            const venda = vendas.find(v => v.id === id);
+            if (venda) {
+                const vendaSemSucesso = {
+                    id: venda.id,
+                    cliente: cliente,
+                    vendedor: vendedor,
+                    produto: produto,
+                    empresa: empresa,
+                    motivo: 'Venda sem sucesso',
+                    data: new Date().toLocaleDateString('pt-BR'),
+                    dadosOriginais: { ...venda }
+                };
+                
+                vendasSemSucesso.push(vendaSemSucesso);
+                vendas = vendas.filter(v => v.id !== id);
+                
+                updateKanbanVendas();
+                updateVendasTable();
+                updateSemSucessoTable();
+                updateDashboardStats();
+                updateComissaoDetalhadaTable();
+                
+                onlineSystem.showNotification(`${cliente} movido para Sem Sucesso`, 'warning');
+            }
+        }
+        
+        // Função para reverter vendas sem sucesso
+        function reverterVendaSemSucesso(id) {
+            const vendaSemSucesso = vendasSemSucesso.find(v => v.id === id);
+            if (vendaSemSucesso) {
+                showConfirmModal(
+                    '🔄 CONFIRMAR REVERSÃO',
+                    `Deseja reverter "${vendaSemSucesso.cliente}" para o Kanban de Vendas?\n\nA venda voltará para o status original.`,
+                    () => {
+                        // Restaurar venda original
+                        vendas.push(vendaSemSucesso.dadosOriginais);
+                        vendasSemSucesso = vendasSemSucesso.filter(v => v.id !== id);
+                        
+                        updateKanbanVendas();
+                        updateVendasTable();
+                        updateSemSucessoTable();
+                        updateDashboardStats();
+                        updateComissaoDetalhadaTable();
+                        
+                        onlineSystem.showNotification(`${vendaSemSucesso.cliente} revertido para Kanban de Vendas!`, 'success');
+                    }
+                );
+            }
+        }
+        
+        // Função para reverter indicações sem sucesso
+        function reverterSemSucesso(id) {
+            const leadSemSucesso = leadsSemSucesso.find(l => l.id === id);
+            if (leadSemSucesso) {
+                showConfirmModal(
+                    '🔄 CONFIRMAR REVERSÃO',
+                    `Deseja reverter "${leadSemSucesso.nome}" para o Kanban de Indicações?\n\nO lead voltará para o status "Lead Novo".`,
+                    () => {
+                        // Restaurar indicação original se existir
+                        if (leadSemSucesso.dadosOriginais) {
+                            indicacoes.push(leadSemSucesso.dadosOriginais);
+                        } else {
+                            // Criar nova indicação
+                            const novaIndicacao = {
+                                id: Date.now(),
+                                nome: leadSemSucesso.nome,
+                                telefone: leadSemSucesso.telefone || '',
+                                veiculo: leadSemSucesso.veiculo || 'Não informado',
+                                vendedor: leadSemSucesso.vendedor,
+                                status: 'Lead Novo',
+                                data: new Date().toLocaleDateString('pt-BR')
+                            };
+                            indicacoes.push(novaIndicacao);
+                        }
+                        
+                        leadsSemSucesso = leadsSemSucesso.filter(l => l.id !== id);
+                        
+                        updateKanbanIndicacoes();
+                        updateIndicacoesTable();
+                        updateSemSucessoTable();
+                        updateDashboardStats();
+                        
+                        onlineSystem.showNotification(`${leadSemSucesso.nome} revertido para Kanban de Indicações!`, 'success');
+                    }
+                );
+            }
+        }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979e4a8b7636cada',t:'MTc1Njk5NzM0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979fa65be3f2cada',t:'MTc1NzAxMTU4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
