@@ -1191,7 +1191,10 @@
         
         // Sistema de Sincronização Online Real com GitHub
         let syncInterval = null;
+        let onlineSyncInterval = null;
         let lastUpdateTime = Date.now();
+        let lastGitHubSync = 0;
+        let isInitialLoad = true;
         let githubConfig = {
             owner: 'seu-usuario-github', // Substitua pelo seu usuário do GitHub
             repo: 'vm-seguros-data', // Nome do repositório para dados
@@ -1220,7 +1223,7 @@
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
             // Login form handler
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 const username = document.getElementById('username').value;
@@ -1235,13 +1238,33 @@
                     document.getElementById('loginScreen').classList.add('hidden');
                     document.getElementById('crmSystem').classList.remove('hidden');
                     
-                    // Initialize system
+                    // Initialize system with loading
+                    showLoadingMessage('Carregando dados...');
+                    
+                    // Initialize online system first
                     onlineSystem = new OnlineSystem();
+                    
+                    // Load data from GitHub first, then initialize
+                    try {
+                        await loadDataFromGitHub();
+                        console.log('✅ Dados carregados do GitHub');
+                        onlineSystem.updateConnectionStatus('online');
+                    } catch (error) {
+                        console.log('⚠️ Carregando dados locais como fallback');
+                        loadDataFromStorage();
+                        onlineSystem.updateConnectionStatus('offline');
+                    }
+                    
+                    // Initialize system after data is loaded
                     initializeSystem();
+                    hideLoadingMessage();
                     
                     // Show success message
                     setTimeout(() => {
                         onlineSystem.showNotification(`Bem-vindo, ${user.nome}!`, 'success');
+                        if (user.tipo === 'vendedor') {
+                            onlineSystem.showNotification('Dados sincronizados com o servidor!', 'info');
+                        }
                     }, 500);
                 } else {
                     alert('Usuário ou senha incorretos!');
@@ -1251,29 +1274,34 @@
             // Initialize modal forms
             initializeModalForms();
             
-            // Initialize online sync with GitHub (fallback to local)
-            initializeOnlineSync();
+            // Pre-load GitHub config
+            loadGitHubConfig();
         });
+        
+        // Funções de Loading
+        function showLoadingMessage(message) {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loadingMessage';
+            loadingDiv.className = 'fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center';
+            loadingDiv.innerHTML = `
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 text-center">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-white text-lg">${message}</p>
+                    <p class="text-gray-400 text-sm mt-2">Sincronizando com servidor...</p>
+                </div>
+            `;
+            document.body.appendChild(loadingDiv);
+        }
+        
+        function hideLoadingMessage() {
+            const loadingDiv = document.getElementById('loadingMessage');
+            if (loadingDiv) {
+                document.body.removeChild(loadingDiv);
+            }
+        }
         
         // Sistema de Sincronização Online com GitHub
         function initializeOnlineSync() {
-            // Carregar configuração GitHub salva
-            loadGitHubConfig();
-            
-            // Carregar dados do GitHub primeiro, depois localStorage como fallback
-            loadDataFromGitHub().then(() => {
-                console.log('Dados carregados do GitHub com sucesso');
-                if (onlineSystem) {
-                    onlineSystem.updateConnectionStatus('online');
-                }
-            }).catch(() => {
-                console.log('Carregando dados do localStorage como fallback');
-                loadDataFromStorage();
-                if (onlineSystem) {
-                    onlineSystem.updateConnectionStatus('offline');
-                }
-            });
-            
             // Configurar salvamento automático online
             setupOnlineAutoSave();
             
@@ -1312,38 +1340,60 @@
         
         function loadDataFromStorage() {
             try {
+                console.log('📂 Carregando dados do localStorage...');
+                
                 const storedIndicacoes = localStorage.getItem('vm_indicacoes');
                 const storedVendas = localStorage.getItem('vm_vendas');
                 const storedLeadsSemSucesso = localStorage.getItem('vm_leadsSemSucesso');
                 const storedLeadsSubai = localStorage.getItem('vm_leadsSubai');
                 const storedCancelamentos = localStorage.getItem('vm_cancelamentos');
+                const storedVendasSemSucesso = localStorage.getItem('vm_vendasSemSucesso');
                 
                 if (storedIndicacoes) {
+                    const data = JSON.parse(storedIndicacoes);
                     indicacoes.length = 0;
-                    indicacoes.push(...JSON.parse(storedIndicacoes));
+                    indicacoes.push(...data);
+                    console.log(`📋 ${data.length} indicações carregadas do localStorage`);
                 }
                 
                 if (storedVendas) {
+                    const data = JSON.parse(storedVendas);
                     vendas.length = 0;
-                    vendas.push(...JSON.parse(storedVendas));
+                    vendas.push(...data);
+                    console.log(`💰 ${data.length} vendas carregadas do localStorage`);
                 }
                 
                 if (storedLeadsSemSucesso) {
+                    const data = JSON.parse(storedLeadsSemSucesso);
                     leadsSemSucesso.length = 0;
-                    leadsSemSucesso.push(...JSON.parse(storedLeadsSemSucesso));
+                    leadsSemSucesso.push(...data);
+                    console.log(`❌ ${data.length} leads sem sucesso carregados do localStorage`);
                 }
                 
                 if (storedLeadsSubai) {
+                    const data = JSON.parse(storedLeadsSubai);
                     leadsSubai.length = 0;
-                    leadsSubai.push(...JSON.parse(storedLeadsSubai));
+                    leadsSubai.push(...data);
+                    console.log(`⭐ ${data.length} leads Suhai carregados do localStorage`);
                 }
                 
                 if (storedCancelamentos) {
+                    const data = JSON.parse(storedCancelamentos);
                     cancelamentos.length = 0;
-                    cancelamentos.push(...JSON.parse(storedCancelamentos));
+                    cancelamentos.push(...data);
+                    console.log(`🚫 ${data.length} cancelamentos carregados do localStorage`);
                 }
+                
+                if (storedVendasSemSucesso) {
+                    const data = JSON.parse(storedVendasSemSucesso);
+                    vendasSemSucesso.length = 0;
+                    vendasSemSucesso.push(...data);
+                    console.log(`💔 ${data.length} vendas sem sucesso carregadas do localStorage`);
+                }
+                
+                console.log('✅ Dados carregados do localStorage com sucesso');
             } catch (error) {
-                console.log('Erro ao carregar dados do storage:', error);
+                console.log('❌ Erro ao carregar dados do storage:', error);
             }
         }
         
@@ -1354,19 +1404,26 @@
                 localStorage.setItem('vm_leadsSemSucesso', JSON.stringify(leadsSemSucesso));
                 localStorage.setItem('vm_leadsSubai', JSON.stringify(leadsSubai));
                 localStorage.setItem('vm_cancelamentos', JSON.stringify(cancelamentos));
+                localStorage.setItem('vm_vendasSemSucesso', JSON.stringify(vendasSemSucesso));
                 localStorage.setItem('vm_lastUpdate', Date.now().toString());
+                localStorage.setItem('vm_lastUser', currentUser ? currentUser.nome : '');
+                
+                console.log('💾 Dados salvos localmente');
             } catch (error) {
-                console.log('Erro ao salvar dados no storage:', error);
+                console.log('❌ Erro ao salvar dados no storage:', error);
             }
         }
         
         // Funções de Sincronização com GitHub
         async function loadDataFromGitHub() {
             try {
-                const response = await fetch(`${githubConfig.apiUrl}/repos/${githubConfig.owner}/${githubConfig.repo}/contents/data.json?ref=${githubConfig.branch}`, {
+                console.log(`🔄 Carregando dados do GitHub: ${githubConfig.owner}/${githubConfig.repo}`);
+                
+                const response = await fetch(`${githubConfig.apiUrl}/repos/${githubConfig.owner}/${githubConfig.repo}/contents/data.json?ref=${githubConfig.branch}&t=${Date.now()}`, {
                     headers: {
                         'Accept': 'application/vnd.github.v3+json',
-                        'User-Agent': 'VM-Seguros-CRM'
+                        'User-Agent': 'VM-Seguros-CRM',
+                        'Cache-Control': 'no-cache'
                     }
                 });
                 
@@ -1374,35 +1431,57 @@
                     const data = await response.json();
                     const content = JSON.parse(atob(data.content));
                     
-                    // Carregar dados do GitHub
-                    if (content.indicacoes) {
+                    console.log('📦 Dados recebidos do GitHub:', content);
+                    
+                    // Carregar dados do GitHub com verificação
+                    if (content.indicacoes && Array.isArray(content.indicacoes)) {
                         indicacoes.length = 0;
                         indicacoes.push(...content.indicacoes);
+                        console.log(`✅ ${content.indicacoes.length} indicações carregadas`);
                     }
-                    if (content.vendas) {
+                    if (content.vendas && Array.isArray(content.vendas)) {
                         vendas.length = 0;
                         vendas.push(...content.vendas);
+                        console.log(`✅ ${content.vendas.length} vendas carregadas`);
                     }
-                    if (content.leadsSemSucesso) {
+                    if (content.leadsSemSucesso && Array.isArray(content.leadsSemSucesso)) {
                         leadsSemSucesso.length = 0;
                         leadsSemSucesso.push(...content.leadsSemSucesso);
+                        console.log(`✅ ${content.leadsSemSucesso.length} leads sem sucesso carregados`);
                     }
-                    if (content.leadsSubai) {
+                    if (content.leadsSubai && Array.isArray(content.leadsSubai)) {
                         leadsSubai.length = 0;
                         leadsSubai.push(...content.leadsSubai);
+                        console.log(`✅ ${content.leadsSubai.length} leads Suhai carregados`);
                     }
-                    if (content.cancelamentos) {
+                    if (content.cancelamentos && Array.isArray(content.cancelamentos)) {
                         cancelamentos.length = 0;
                         cancelamentos.push(...content.cancelamentos);
+                        console.log(`✅ ${content.cancelamentos.length} cancelamentos carregados`);
                     }
+                    if (content.vendasSemSucesso && Array.isArray(content.vendasSemSucesso)) {
+                        vendasSemSucesso.length = 0;
+                        vendasSemSucesso.push(...content.vendasSemSucesso);
+                        console.log(`✅ ${content.vendasSemSucesso.length} vendas sem sucesso carregadas`);
+                    }
+                    
+                    // Atualizar timestamp da última sincronização
+                    lastGitHubSync = Date.now();
                     
                     // Salvar também no localStorage como backup
                     saveDataToStorage();
                     
                     return true;
+                } else if (response.status === 404) {
+                    console.log('📄 Arquivo data.json não existe ainda no GitHub');
+                    // Criar arquivo inicial
+                    await saveDataToGitHub();
+                    return true;
+                } else {
+                    throw new Error(`GitHub API retornou status ${response.status}`);
                 }
             } catch (error) {
-                console.log('Erro ao carregar do GitHub:', error);
+                console.log('❌ Erro ao carregar do GitHub:', error);
                 throw error;
             }
         }
@@ -1415,31 +1494,37 @@
                     leadsSemSucesso,
                     leadsSubai,
                     cancelamentos,
+                    vendasSemSucesso,
                     lastUpdate: new Date().toISOString(),
-                    version: Date.now()
+                    version: Date.now(),
+                    updatedBy: currentUser ? currentUser.nome : 'Sistema'
                 };
+                
+                console.log(`💾 Salvando dados no GitHub (${Object.keys(dataToSave).length} propriedades)`);
                 
                 // Primeiro, tentar obter o arquivo atual para pegar o SHA
                 let sha = null;
                 try {
-                    const currentFile = await fetch(`${githubConfig.apiUrl}/repos/${githubConfig.owner}/${githubConfig.repo}/contents/data.json?ref=${githubConfig.branch}`, {
+                    const currentFile = await fetch(`${githubConfig.apiUrl}/repos/${githubConfig.owner}/${githubConfig.repo}/contents/data.json?ref=${githubConfig.branch}&t=${Date.now()}`, {
                         headers: {
                             'Accept': 'application/vnd.github.v3+json',
-                            'User-Agent': 'VM-Seguros-CRM'
+                            'User-Agent': 'VM-Seguros-CRM',
+                            'Cache-Control': 'no-cache'
                         }
                     });
                     
                     if (currentFile.ok) {
                         const currentData = await currentFile.json();
                         sha = currentData.sha;
+                        console.log('📄 Arquivo existente encontrado, atualizando...');
                     }
                 } catch (e) {
-                    console.log('Arquivo não existe ainda, será criado');
+                    console.log('📄 Arquivo não existe ainda, será criado');
                 }
                 
                 // Criar ou atualizar o arquivo
                 const updateData = {
-                    message: `Atualização automática CRM - ${new Date().toLocaleString('pt-BR')}`,
+                    message: `🔄 CRM Update by ${currentUser ? currentUser.nome : 'Sistema'} - ${new Date().toLocaleString('pt-BR')}`,
                     content: btoa(JSON.stringify(dataToSave, null, 2)),
                     branch: githubConfig.branch
                 };
@@ -1459,14 +1544,17 @@
                 });
                 
                 if (response.ok) {
-                    console.log('Dados salvos no GitHub com sucesso');
+                    const result = await response.json();
+                    console.log('✅ Dados salvos no GitHub com sucesso');
+                    lastGitHubSync = Date.now();
                     return true;
                 } else {
-                    console.log('Erro ao salvar no GitHub:', response.status);
+                    const errorText = await response.text();
+                    console.log('❌ Erro ao salvar no GitHub:', response.status, errorText);
                     return false;
                 }
             } catch (error) {
-                console.log('Erro ao salvar no GitHub:', error);
+                console.log('❌ Erro ao salvar no GitHub:', error);
                 return false;
             }
         }
@@ -1474,31 +1562,60 @@
         function setupOnlineAutoSave() {
             // Salvar dados automaticamente online e localmente
             setInterval(async () => {
-                // Sempre salvar localmente
+                if (!currentUser) return;
+                
+                // Sempre salvar localmente primeiro
                 saveDataToStorage();
                 
                 // Tentar salvar online (sem bloquear se falhar)
                 try {
-                    await saveDataToGitHub();
+                    const success = await saveDataToGitHub();
+                    if (success && onlineSystem) {
+                        onlineSystem.updateConnectionStatus('online');
+                    }
                 } catch (error) {
-                    console.log('Salvamento online falhou, dados mantidos localmente');
+                    console.log('💾 Salvamento online falhou, dados mantidos localmente');
+                    if (onlineSystem) {
+                        onlineSystem.updateConnectionStatus('offline');
+                    }
                 }
-            }, 5000); // Salvar a cada 5 segundos
+            }, 3000); // Salvar a cada 3 segundos
         }
         
         function setupGitHubSync() {
-            // Sincronização periódica com GitHub
-            setInterval(async () => {
+            // Sincronização periódica com GitHub para receber atualizações
+            onlineSyncInterval = setInterval(async () => {
+                if (!currentUser) return;
+                
                 try {
+                    // Verificar se há atualizações no GitHub
+                    const oldDataLength = indicacoes.length + vendas.length + leadsSemSucesso.length + leadsSubai.length + cancelamentos.length;
+                    
                     await loadDataFromGitHub();
+                    
+                    const newDataLength = indicacoes.length + vendas.length + leadsSemSucesso.length + leadsSubai.length + cancelamentos.length;
+                    
                     if (onlineSystem && currentUser) {
                         onlineSystem.updateAllInterfaces();
-                        onlineSystem.showSyncNotification('Sincronizado com servidor', 'success');
+                        
+                        // Mostrar notificação apenas se houve mudanças significativas
+                        if (Math.abs(newDataLength - oldDataLength) > 0) {
+                            if (currentUser.tipo === 'vendedor') {
+                                onlineSystem.showSyncNotification('📥 Dados atualizados pelo admin', 'success');
+                            } else {
+                                onlineSystem.showSyncNotification('🔄 Dados sincronizados', 'success');
+                            }
+                        }
+                        
+                        onlineSystem.updateConnectionStatus('online');
                     }
                 } catch (error) {
-                    console.log('Sincronização com GitHub falhou');
+                    console.log('🔄 Sincronização com GitHub falhou');
+                    if (onlineSystem) {
+                        onlineSystem.updateConnectionStatus('offline');
+                    }
                 }
-            }, 10000); // Sincronizar a cada 10 segundos
+            }, 5000); // Sincronizar a cada 5 segundos
         }
         
         function setupAutoSave() {
@@ -1511,15 +1628,25 @@
         function setupCrossTabSync() {
             // Sincronizar entre abas/janelas abertas
             window.addEventListener('storage', function(e) {
-                if (e.key && e.key.startsWith('vm_') && e.key !== 'vm_lastUpdate') {
+                if (e.key && e.key.startsWith('vm_') && e.key !== 'vm_lastUpdate' && e.key !== 'vm_github_config') {
+                    console.log('🔄 Sincronização entre abas detectada:', e.key);
+                    
                     // Recarregar dados quando outra aba fizer alterações
                     loadDataFromStorage();
                     
                     // Atualizar interface se o sistema estiver inicializado
                     if (onlineSystem && currentUser) {
                         onlineSystem.updateAllInterfaces();
-                        onlineSystem.showSyncNotification('Dados sincronizados entre abas', 'success');
+                        onlineSystem.showSyncNotification('📱 Sincronizado entre abas', 'info');
                     }
+                }
+            });
+            
+            // Broadcast de mudanças para outras abas
+            window.addEventListener('beforeunload', function() {
+                // Salvar dados antes de fechar a aba
+                if (currentUser) {
+                    saveDataToStorage();
                 }
             });
         }
@@ -1538,6 +1665,9 @@
                 this.startRealTimeSync();
                 this.initLeadSuhaiCheckboxes();
                 this.initDataChangeTracking();
+                
+                // Inicializar sincronização online
+                initializeOnlineSync();
             }
             
             showConnectionStatus() {
@@ -2014,17 +2144,21 @@
                     saveDataToGitHub().then(() => {
                         if (onlineSystem) {
                             onlineSystem.updateConnectionStatus('online');
+                            console.log('✅ Indicação salva no GitHub');
                         }
                     }).catch(() => {
-                        console.log('Salvamento online falhou para indicação');
+                        console.log('⚠️ Salvamento online falhou para indicação, mantido localmente');
+                        if (onlineSystem) {
+                            onlineSystem.updateConnectionStatus('offline');
+                        }
                     });
                     
                     // Notificação especial para admin
                     if (currentUser.tipo === 'admin') {
                         onlineSystem.showNotification(`✅ Indicação "${novaIndicacao.nome}" atribuída ao vendedor "${novaIndicacao.vendedor}"`, 'success');
-                        onlineSystem.showSyncNotification('Sincronizando online...', 'success');
+                        onlineSystem.showSyncNotification('📤 Enviando para servidor...', 'info');
                     } else {
-                        onlineSystem.showNotification('Indicação adicionada!', 'success');
+                        onlineSystem.showNotification('Indicação adicionada e sincronizada!', 'success');
                     }
                 }
                 
@@ -2089,17 +2223,21 @@
                     saveDataToGitHub().then(() => {
                         if (onlineSystem) {
                             onlineSystem.updateConnectionStatus('online');
+                            console.log('✅ Venda salva no GitHub');
                         }
                     }).catch(() => {
-                        console.log('Salvamento online falhou para venda');
+                        console.log('⚠️ Salvamento online falhou para venda, mantido localmente');
+                        if (onlineSystem) {
+                            onlineSystem.updateConnectionStatus('offline');
+                        }
                     });
                     
                     // Notificação especial para admin
                     if (currentUser.tipo === 'admin') {
                         onlineSystem.showNotification(`💰 Venda "${novaVenda.cliente}" registrada para "${novaVenda.vendedor}" - R$ ${novaVenda.premioLiquido.toFixed(2)}`, 'success');
-                        onlineSystem.showSyncNotification('Sincronizando online...', 'success');
+                        onlineSystem.showSyncNotification('📤 Enviando para servidor...', 'info');
                     } else {
-                        onlineSystem.showNotification('Venda adicionada!', 'success');
+                        onlineSystem.showNotification('Venda adicionada e sincronizada!', 'success');
                     }
                 }
                 
@@ -2738,11 +2876,38 @@
         }
         
         function logout() {
+            // Salvar dados antes de fazer logout
+            if (currentUser) {
+                saveDataToStorage();
+                
+                // Tentar salvar no GitHub uma última vez
+                saveDataToGitHub().then(() => {
+                    console.log('✅ Dados salvos no GitHub antes do logout');
+                }).catch(() => {
+                    console.log('⚠️ Não foi possível salvar no GitHub antes do logout');
+                });
+            }
+            
+            // Limpar intervalos de sincronização
+            if (syncInterval) {
+                clearInterval(syncInterval);
+                syncInterval = null;
+            }
+            if (onlineSyncInterval) {
+                clearInterval(onlineSyncInterval);
+                onlineSyncInterval = null;
+            }
+            
+            // Reset user and UI
             currentUser = null;
+            onlineSystem = null;
+            
             document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('crmSystem').classList.add('hidden');
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
+            
+            console.log('👋 Logout realizado com sucesso');
         }
         
         function forceSync() {
@@ -3193,5 +3358,5 @@
             }
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979fcc2dd711cada',t:'MTc1NzAxMzEzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979fdf8f545dcada',t:'MTc1NzAxMzkzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
