@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VM SEGUROS - CRM</title>
+    <meta name="description" content="Sistema de Gestão CRM - VM Seguros">
+    <meta name="author" content="VM Seguros">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'vm-blue': '#1e3a8a',
+                        'vm-blue-dark': '#1e2a5a',
+                        'vm-gray': '#374151',
+                        'vm-gray-light': '#4b5563'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <style>
+        .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #1f2937; border-radius: 2px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 2px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        .scrollbar-thin { scrollbar-width: thin; scrollbar-color: #4b5563 #1f2937; }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hover-scale:hover { transform: scale(1.05); transition: transform 0.2s ease; }
+    </style>
+</head>
+<body class="bg-gray-900 font-sans">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-vm-blue-dark to-gray-900">
+        <div class="bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md border border-gray-700 fade-in">
+            <div class="text-center mb-8">
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-shield-alt text-white text-3xl"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-white mb-2">VM SEGUROS</h1>
+                <p class="text-gray-400">Sistema de Gestão CRM</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Usuário</label>
+                    <input type="text" id="username" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200" placeholder="Digite seu usuário" required>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Senha</label>
+                    <input type="password" id="password" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200" placeholder="Digite sua senha" required>
+                </div>
+                
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Entrar
+                </button>
+            </form>
+            
+            <!-- Demo Credentials -->
+            <div class="mt-6 p-4 bg-gray-700 rounded-lg">
+                <h3 class="text-white font-medium mb-2">Credenciais de Teste:</h3>
+                <div class="text-sm text-gray-300 space-y-1">
+                    <p><strong>Admin:</strong> admin / admin123</p>
+                    <p><strong>Vendedor:</strong> rodrigo / ninjinha10</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main CRM System -->
+    <div id="crmSystem" class="hidden">
+        <!-- Header -->
+        <header class="bg-gray-800 border-b border-gray-700 px-6 py-4 sticky top-0 z-40">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 w-10 h-10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-white">VM SEGUROS</h1>
+                        <span class="text-xs text-gray-400">Sistema CRM</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-300 hidden md:block">Bem-vindo, <span id="currentUser" class="font-medium text-white">Admin</span></span>
+                    <button onclick="forceSync()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition duration-200" title="Sincronizar dados">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Sair
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Mobile Menu Toggle -->
+        <div class="md:hidden bg-gray-800 px-6 py-2">
+            <button onclick="toggleMobileMenu()" class="text-white">
+                <i class="fas fa-bars"></i> Menu
+            </button>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="flex">
+            <!-- Sidebar -->
+            <aside id="sidebar" class="w-64 bg-gray-800 min-h-screen border-r border-gray-700 fixed md:relative z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+                <nav class="p-4">
+                    <ul class="space-y-2">
+                        <li>
+                            <button onclick="showSection('dashboard')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="showSection('kanban-vendas')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-columns mr-3"></i>Kanban Vendas
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="showSection('kanban-indicacoes')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-columns mr-3"></i>Kanban Indicações
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="showSection('indicacoes')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-handshake mr-3"></i>Indicações
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="showSection('vendas')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-chart-line mr-3"></i>Vendas
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="showSection('vendedores')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-users mr-3"></i>Vendedores
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="showSection('comissao')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-percentage mr-3"></i>Comissão
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="showSection('cancelamentos')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-times-circle mr-3"></i>Cancelamentos
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="showSection('relatorios')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-file-alt mr-3"></i>Relatórios
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="showSection('links-uteis')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-link mr-3"></i>Links Úteis
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="showSection('sem-sucesso')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-exclamation-triangle mr-3"></i>Sem Sucesso
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="showSection('lead-suhai')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-star mr-3"></i>Lead Suhai
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="showSection('configuracoes')" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-cog mr-3"></i>Configurações
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Mobile Overlay -->
+            <div id="mobileOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden" onclick="toggleMobileMenu()"></div>
+
+            <!-- Main Content -->
+            <main class="flex-1 p-4 md:p-6 bg-gray-900 min-h-screen">
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="section">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Dashboard</h2>
+                        <p class="text-gray-400">Visão geral do seu negócio</p>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+                        <div class="bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 hover-scale">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Leads do Dia</p>
+                                    <p class="text-xl md:text-2xl font-bold text-white" id="leadsDoDia">0</p>
+                                </div>
+                                <div class="bg-blue-600 p-3 rounded-lg">
+                                    <i class="fas fa-user-plus text-white text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 hover-scale">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Vendas do Dia</p>
+                                    <p class="text-xl md:text-2xl font-bold text-white" id="vendasDoDia">0</p>
+                                </div>
+                                <div class="bg-green-600 p-3 rounded-lg">
+                                    <i class="fas fa-chart-line text-white text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 hover-scale">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Prêmio Líquido do Dia</p>
+                                    <p class="text-lg md:text-2xl font-bold text-white" id="premioLiquidoDia">R$ 0,00</p>
+                                </div>
+                                <div class="bg-yellow-600 p-3 rounded-lg">
+                                    <i class="fas fa-dollar-sign text-white text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 hover-scale">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Prêmio Líquido do Mês</p>
+                                    <p class="text-lg md:text-2xl font-bold text-white" id="premioLiquidoMes">R$ 0,00</p>
+                                </div>
+                                <div class="bg-purple-600 p-3 rounded-lg">
+                                    <i class="fas fa-trophy text-white text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Dashboard Analytics -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Gráfico de Vendas da Semana -->
+                        <div class="lg:col-span-2 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 p-4 md:p-6 shadow-2xl">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl md:text-2xl font-bold text-white flex items-center">
+                                    <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-2 rounded-lg mr-3">
+                                        <i class="fas fa-chart-bar text-white"></i>
+                                    </div>
+                                    <span class="hidden md:inline">Vendas da Semana</span>
+                                    <span class="md:hidden">Vendas 7d</span>
+                                </h3>
+                                <div class="bg-green-600 text-white px-2 md:px-3 py-1 rounded-full text-xs font-medium">
+                                    Últimos 7 dias
+                                </div>
+                            </div>
+                            
+                            <!-- Gráfico de Barras -->
+                            <div class="relative h-48 md:h-64 mb-4">
+                                <div id="chartFallback" class="flex items-center justify-center h-full">
+                                    <div class="grid grid-cols-7 gap-1 md:gap-2 w-full h-full">
+                                        <!-- Barras do gráfico serão inseridas aqui -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Estatísticas da Semana -->
+                            <div class="grid grid-cols-3 gap-2 md:gap-4 pt-4 border-t border-gray-700">
+                                <div class="text-center">
+                                    <p class="text-gray-400 text-xs md:text-sm">Total da Semana</p>
+                                    <p class="text-lg md:text-2xl font-bold text-green-400" id="totalVendasSemana">0</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-gray-400 text-xs md:text-sm">Média Diária</p>
+                                    <p class="text-lg md:text-2xl font-bold text-blue-400" id="mediaVendasDiaria">0</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-gray-400 text-xs md:text-sm">Melhor Dia</p>
+                                    <p class="text-lg md:text-2xl font-bold text-yellow-400" id="melhorDiaSemana">-</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Top Vendedores da Semana -->
+                        <div class="bg-gradient-to-br from-blue-900 to-blue-800 rounded-xl border border-blue-600 p-4 md:p-6 shadow-2xl">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg md:text-xl font-bold text-white flex items-center">
+                                    <div class="bg-gradient-to-r from-yellow-500 to-orange-600 p-2 rounded-lg mr-3">
+                                        <i class="fas fa-trophy text-white text-sm"></i>
+                                    </div>
+                                    <span class="hidden md:inline">Top Semana</span>
+                                    <span class="md:hidden">Top 7d</span>
+                                </h3>
+                                <div class="bg-yellow-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                    7 dias
+                                </div>
+                            </div>
+                            
+                            <div id="topVendedoresSemana" class="space-y-3">
+                                <!-- Top vendedores da semana serão inseridos aqui -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Top Vendedores do Mês -->
+                    <div class="mt-6 bg-gradient-to-br from-purple-900 to-indigo-900 rounded-xl border border-purple-600 p-4 md:p-6 shadow-2xl">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl md:text-2xl font-bold text-white flex items-center">
+                                <div class="bg-gradient-to-r from-purple-500 to-pink-600 p-2 rounded-lg mr-3">
+                                    <i class="fas fa-crown text-white"></i>
+                                </div>
+                                <span class="hidden md:inline">Top Vendedores do Mês</span>
+                                <span class="md:hidden">Top do Mês</span>
+                            </h3>
+                            <div class="bg-purple-600 text-white px-2 md:px-3 py-1 rounded-full text-xs font-medium">
+                                Mês Atual
+                            </div>
+                        </div>
+                        
+                        <div id="topVendedoresMes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- Top vendedores do mês serão inseridos aqui -->
+                        </div>
+                        
+                        <!-- Estatísticas Gerais do Mês -->
+                        <div class="mt-6 pt-6 border-t border-purple-700">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="text-center">
+                                    <div class="bg-gradient-to-br from-green-600 to-emerald-600 w-10 h-10 md:w-12 md:h-12 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                        <i class="fas fa-chart-line text-white text-sm md:text-base"></i>
+                                    </div>
+                                    <p class="text-purple-300 text-xs md:text-sm">Vendas do Mês</p>
+                                    <p class="text-lg md:text-xl font-bold text-white" id="totalVendasMesStats">0</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="bg-gradient-to-br from-blue-600 to-cyan-600 w-10 h-10 md:w-12 md:h-12 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                        <i class="fas fa-dollar-sign text-white text-sm md:text-base"></i>
+                                    </div>
+                                    <p class="text-purple-300 text-xs md:text-sm">Comissões Pagas</p>
+                                    <p class="text-lg md:text-xl font-bold text-white" id="totalComissoesMesStats">R$ 0</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="bg-gradient-to-br from-yellow-600 to-orange-600 w-10 h-10 md:w-12 md:h-12 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                        <i class="fas fa-users text-white text-sm md:text-base"></i>
+                                    </div>
+                                    <p class="text-purple-300 text-xs md:text-sm">Vendedores Ativos</p>
+                                    <p class="text-lg md:text-xl font-bold text-white" id="vendedoresAtivosMes">0</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="bg-gradient-to-br from-red-600 to-pink-600 w-10 h-10 md:w-12 md:h-12 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                        <i class="fas fa-percentage text-white text-sm md:text-base"></i>
+                                    </div>
+                                    <p class="text-purple-300 text-xs md:text-sm">Taxa Conversão</p>
+                                    <p class="text-lg md:text-xl font-bold text-white" id="taxaConversaoMes">0%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kanban Vendas Section -->
+                <div id="kanban-vendas" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Kanban Vendas</h2>
+                        <p class="text-gray-400">Acompanhe o processo de vendas</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                        <!-- Fazer Vistoria -->
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-4">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+                                Fazer Vistoria
+                            </h3>
+                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                                    <h4 class="text-white font-semibold text-sm mb-2">João Silva</h4>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Premium</p>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>Porto Seguro</p>
+                                    <p class="text-green-400 text-lg font-bold text-center">R$ 850,00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mandar Boletos -->
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-4">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                                Mandar Boletos
+                            </h3>
+                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                                    <h4 class="text-white font-semibold text-sm mb-2">Maria Santos</h4>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Básico</p>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>Bradesco</p>
+                                    <p class="text-green-400 text-lg font-bold text-center">R$ 650,00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Falta Pagamento -->
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-4">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                                <div class="w-3 h-3 bg-orange-500 rounded-full mr-2"></div>
+                                Falta Pagamento
+                            </h3>
+                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                                    <h4 class="text-white font-semibold text-sm mb-2">Pedro Costa</h4>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Completo</p>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>Azul Seguros</p>
+                                    <p class="text-green-400 text-lg font-bold text-center">R$ 1.200,00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pagamento Efetuado -->
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-4">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                                <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                                Pagamento Efetuado
+                            </h3>
+                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                                    <h4 class="text-white font-semibold text-sm mb-2">Ana Beatriz</h4>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Premium</p>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>Suhai</p>
+                                    <p class="text-green-400 text-lg font-bold text-center">R$ 950,00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kanban Indicações Section -->
+                <div id="kanban-indicacoes" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Kanban Indicações</h2>
+                        <p class="text-gray-400">Acompanhe o processo de indicações</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                        <!-- Lead Novo -->
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-4">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                                Lead Novo
+                            </h3>
+                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                                    <h4 class="text-white font-semibold text-sm mb-2">Carlos Oliveira</h4>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>(11) 99999-9999</p>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>Honda Civic 2020</p>
+                                    <p class="text-gray-300 text-xs"><i class="fas fa-user mr-1 text-purple-400"></i>Rodrigo Mariano</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- WhatsApp -->
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-4">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                                <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                                WhatsApp
+                            </h3>
+                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                                    <h4 class="text-white font-semibold text-sm mb-2">Fernanda Lima</h4>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>(11) 88888-8888</p>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>Toyota Corolla 2019</p>
+                                    <p class="text-gray-300 text-xs"><i class="fas fa-user mr-1 text-purple-400"></i>Jessica Regis</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Negociando -->
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-4">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+                                Negociando
+                            </h3>
+                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                                    <h4 class="text-white font-semibold text-sm mb-2">Roberto Silva</h4>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>(11) 77777-7777</p>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>Volkswagen Jetta 2021</p>
+                                    <p class="text-gray-300 text-xs"><i class="fas fa-user mr-1 text-purple-400"></i>Ana Beatriz</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pedindo Dados -->
+                        <div class="bg-gray-800 rounded-xl border border-gray-700 p-4">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                                <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                                Pedindo Dados
+                            </h3>
+                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                                <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                                    <h4 class="text-white font-semibold text-sm mb-2">Luciana Santos</h4>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>(11) 66666-6666</p>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>Nissan Sentra 2020</p>
+                                    <p class="text-gray-300 text-xs"><i class="fas fa-user mr-1 text-purple-400"></i>Luana Vieira</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicações Section -->
+                <div id="indicacoes" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Indicações</h2>
+                        <p class="text-gray-400">Gerencie suas indicações de clientes</p>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Lista de Indicações</h3>
+                            <button class="bg-vm-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-plus mr-2"></i>Nova Indicação
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Nome</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Telefone</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Veículo</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendedor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Status</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700">
+                                    <tr class="hover:bg-gray-700 transition duration-200">
+                                        <td class="px-6 py-4 text-white">Carlos Oliveira</td>
+                                        <td class="px-6 py-4 text-gray-300">(11) 99999-9999</td>
+                                        <td class="px-6 py-4 text-gray-300">Honda Civic 2020</td>
+                                        <td class="px-6 py-4 text-gray-300">Rodrigo Mariano</td>
+                                        <td class="px-6 py-4">
+                                            <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">Lead Novo</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex space-x-2">
+                                                <button class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition duration-200" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition duration-200" title="Excluir">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vendas Section -->
+                <div id="vendas" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Vendas</h2>
+                        <p class="text-gray-400">Gerencie suas vendas realizadas</p>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Lista de Vendas</h3>
+                            <button class="bg-vm-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-plus mr-2"></i>Nova Venda
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Cliente</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Plano</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Empresa</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendedor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Valor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Status</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700">
+                                    <tr class="hover:bg-gray-700 transition duration-200">
+                                        <td class="px-6 py-4 text-white">João Silva</td>
+                                        <td class="px-6 py-4 text-gray-300">Premium</td>
+                                        <td class="px-6 py-4 text-gray-300">Porto Seguro</td>
+                                        <td class="px-6 py-4 text-gray-300">Rodrigo Mariano</td>
+                                        <td class="px-6 py-4 text-white">R$ 850,00</td>
+                                        <td class="px-6 py-4">
+                                            <span class="bg-yellow-600 text-white px-3 py-1 rounded-full text-sm">Fazer Vistoria</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex space-x-2">
+                                                <button class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition duration-200" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition duration-200" title="Excluir">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vendedores Section -->
+                <div id="vendedores" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Vendedores</h2>
+                        <p class="text-gray-400">Gerencie sua equipe de vendas</p>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Lista de Vendedores</h3>
+                            <button class="bg-vm-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-plus mr-2"></i>Novo Vendedor
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Nome</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Email</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendas do Mês</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Status</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700">
+                                    <tr class="hover:bg-gray-700 transition duration-200">
+                                        <td class="px-6 py-4 text-white">Rodrigo Mariano</td>
+                                        <td class="px-6 py-4 text-gray-300">rodrigo@vmseguros.com</td>
+                                        <td class="px-6 py-4 text-white">R$ 25.500,00</td>
+                                        <td class="px-6 py-4">
+                                            <span class="bg-green-600 text-white px-3 py-1 rounded-full text-sm">Ativo</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex space-x-2">
+                                                <button class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition duration-200" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition duration-200" title="Excluir">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comissão Section -->
+                <div id="comissao" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Comissões</h2>
+                        <p class="text-gray-400">Acompanhe suas comissões de vendas</p>
+                    </div>
+
+                    <!-- Resumo de Comissões -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-gradient-to-br from-green-900 to-green-800 border border-green-600 rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Total de Comissões</h3>
+                                    <p class="text-green-300">Valor total recebido</p>
+                                </div>
+                                <div class="bg-green-600 p-3 rounded-lg">
+                                    <i class="fas fa-dollar-sign text-white text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <p class="text-3xl font-bold text-white">R$ 7.850,00</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-blue-900 to-blue-800 border border-blue-600 rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Vendas Pagas</h3>
+                                    <p class="text-blue-300">Quantidade de vendas</p>
+                                </div>
+                                <div class="bg-blue-600 p-3 rounded-lg">
+                                    <i class="fas fa-chart-bar text-white text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <p class="text-3xl font-bold text-white">12</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Comissões -->
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                        <h3 class="text-xl font-bold text-white mb-6">Vendas com Pagamento Efetuado</h3>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Cliente</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Plano</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Empresa</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Prêmio Líquido</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Sua Comissão</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Data</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700">
+                                    <tr class="hover:bg-gray-700 transition duration-200">
+                                        <td class="px-6 py-4 text-white">Ana Beatriz</td>
+                                        <td class="px-6 py-4 text-gray-300">Premium</td>
+                                        <td class="px-6 py-4 text-gray-300">Suhai</td>
+                                        <td class="px-6 py-4 text-blue-400 font-medium">R$ 950,00</td>
+                                        <td class="px-6 py-4 text-yellow-400 font-bold">R$ 285,00</td>
+                                        <td class="px-6 py-4 text-gray-300">15/12/2024</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outras seções com conteúdo básico -->
+                <div id="cancelamentos" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Cancelamentos</h2>
+                        <p class="text-gray-400">Gerencie cancelamentos de seguros</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                        <p class="text-gray-400 text-center py-8">Nenhum cancelamento registrado</p>
+                    </div>
+                </div>
+
+                <div id="relatorios" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Relatórios</h2>
+                        <p class="text-gray-400">Acompanhe o desempenho de todos os vendedores</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                        <p class="text-gray-400 text-center py-8">Relatórios em desenvolvimento</p>
+                    </div>
+                </div>
+
+                <div id="links-uteis" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Links Úteis</h2>
+                        <p class="text-gray-400">Gerencie links importantes</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                        <p class="text-gray-400 text-center py-8">Nenhum link cadastrado</p>
+                    </div>
+                </div>
+
+                <div id="sem-sucesso" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Sem Sucesso</h2>
+                        <p class="text-gray-400">Leads que não tiveram sucesso</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                        <p class="text-gray-400 text-center py-8">Nenhum lead sem sucesso</p>
+                    </div>
+                </div>
+
+                <div id="lead-suhai" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Lead Suhai</h2>
+                        <p class="text-gray-400">Vendas enviadas para processamento Suhai</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                        <p class="text-gray-400 text-center py-8">Nenhum lead Suhai</p>
+                    </div>
+                </div>
+
+                <div id="configuracoes" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Configurações</h2>
+                        <p class="text-gray-400">Gerencie configurações do sistema</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                        <p class="text-gray-400 text-center py-8">Configurações em desenvolvimento</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Sistema básico para demonstração
+        let currentUser = null;
+        let onlineSystem = null;
+        
+        // Dados de demonstração
+        const usuarios = [
+            { nome: 'Admin', login: 'admin', senha: 'admin123', tipo: 'admin', comissao: 0, fixoGarantido: 0 },
+            { nome: 'Rodrigo Mariano', login: 'rodrigo', senha: 'ninjinha10', tipo: 'vendedor', comissao: 30, fixoGarantido: 2000 },
+            { nome: 'Jessica Regis', login: 'jessica.regis', senha: 'jessica123', tipo: 'vendedor', comissao: 25, fixoGarantido: 1500 }
+        ];
+        
+        // Sistema Online Simulado
+        class OnlineSystem {
+            constructor() {
+                this.isOnline = true;
+                this.init();
+            }
+            
+            init() {
+                this.showConnectionStatus();
+                this.startSync();
+            }
+            
+            showConnectionStatus() {
+                const header = document.querySelector('header .flex');
+                const statusDiv = document.createElement('div');
+                statusDiv.id = 'connectionStatus';
+                statusDiv.className = 'flex items-center space-x-1 bg-green-600 px-2 py-1 rounded text-xs';
+                statusDiv.innerHTML = `
+                    <div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                    <span class="text-white font-medium">Online</span>
+                `;
+                header.insertBefore(statusDiv, header.lastElementChild);
+            }
+            
+            startSync() {
+                setInterval(() => {
+                    this.syncData();
+                }, 5000);
+            }
+            
+            syncData() {
+                if (this.isOnline && currentUser) {
+                    updateDashboardStats();
+                }
+            }
+            
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
+                
+                const bgColor = type === 'success' ? 'bg-green-600' : type === 'warning' ? 'bg-yellow-600' : 'bg-blue-600';
+                notification.className += ` ${bgColor} text-white`;
+                
+                notification.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation-triangle' : 'info'}-circle"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.classList.remove('translate-x-full');
+                }, 100);
+                
+                setTimeout(() => {
+                    notification.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+            
+            forceSync() {
+                this.syncData();
+                this.showNotification('Dados sincronizados!', 'success');
+            }
+        }
+        
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const user = usuarios.find(u => u.login === username && u.senha === password);
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('crmSystem').classList.remove('hidden');
+                document.getElementById('currentUser').textContent = user.nome;
+                
+                // Inicializar sistema online
+                onlineSystem = new OnlineSystem();
+                
+                // Update dashboard
+                updateDashboardStats();
+                
+                // Show welcome notification
+                setTimeout(() => {
+                    onlineSystem.showNotification(`Bem-vindo, ${user.nome}! Sistema online ativo.`, 'success');
+                }, 1000);
+            } else {
+                alert('Usuário ou senha incorretos!');
+            }
+        });
+        
+        // Navigation functionality - CORRIGIDO
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.add('hidden'));
+            
+            // Show selected section
+            const targetSection = document.getElementById(sectionName);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+            
+            // Update nav active state
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('bg-vm-blue', 'text-white');
+                item.classList.add('text-gray-300');
+            });
+            
+            // Find and activate the clicked nav item
+            const clickedNavItem = document.querySelector(`[onclick="showSection('${sectionName}')"]`);
+            if (clickedNavItem) {
+                clickedNavItem.classList.add('bg-vm-blue', 'text-white');
+                clickedNavItem.classList.remove('text-gray-300');
+            }
+            
+            // Close mobile menu
+            closeMobileMenu();
+        }
+        
+        // Mobile menu functionality
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+        
+        function closeMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        }
+        
+        // Dashboard stats
+        function updateDashboardStats() {
+            if (!currentUser) return;
+            
+            // Dados simulados
+            document.getElementById('leadsDoDia').textContent = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('vendasDoDia').textContent = Math.floor(Math.random() * 5) + 1;
+            document.getElementById('premioLiquidoDia').textContent = `R$ ${(Math.random() * 5000 + 1000).toFixed(2)}`;
+            document.getElementById('premioLiquidoMes').textContent = `R$ ${(Math.random() * 50000 + 10000).toFixed(2)}`;
+            
+            updateVendasSemanaisChart();
+            updateTopVendedoresSemana();
+            updateTopVendedoresMes();
+            updateEstatisticasGeraisMes();
+        }
+        
+        function updateVendasSemanaisChart() {
+            const chartContainer = document.getElementById('chartFallback').querySelector('.grid');
+            chartContainer.innerHTML = '';
+            
+            const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            const vendasPorDia = [];
+            let totalSemana = 0;
+            let melhorDia = { nome: '-', vendas: 0 };
+            
+            for (let i = 0; i < 7; i++) {
+                const vendas = Math.floor(Math.random() * 8);
+                vendasPorDia.push({
+                    dia: diasSemana[i],
+                    vendas: vendas
+                });
+                
+                totalSemana += vendas;
+                
+                if (vendas > melhorDia.vendas) {
+                    melhorDia = { nome: diasSemana[i], vendas: vendas };
+                }
+            }
+            
+            const maxVendas = Math.max(...vendasPorDia.map(d => d.vendas), 1);
+            
+            vendasPorDia.forEach(dia => {
+                const altura = (dia.vendas / maxVendas) * 100;
+                const cor = dia.vendas === melhorDia.vendas && dia.vendas > 0 ? 'from-yellow-500 to-orange-500' : 'from-green-500 to-emerald-500';
+                
+                const barra = document.createElement('div');
+                barra.className = 'flex flex-col items-center justify-end h-full';
+                barra.innerHTML = `
+                    <div class="bg-gradient-to-t ${cor} rounded-t-lg transition-all duration-500 hover:scale-110 cursor-pointer relative group" 
+                         style="height: ${altura}%; min-height: 8px; width: 100%;">
+                        <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                            ${dia.vendas} vendas
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-2 font-medium">${dia.dia}</div>
+                `;
+                chartContainer.appendChild(barra);
+            });
+            
+            document.getElementById('totalVendasSemana').textContent = totalSemana;
+            document.getElementById('mediaVendasDiaria').textContent = (totalSemana / 7).toFixed(1);
+            document.getElementById('melhorDiaSemana').textContent = melhorDia.nome;
+        }
+        
+        function updateTopVendedoresSemana() {
+            const container = document.getElementById('topVendedoresSemana');
+            container.innerHTML = '';
+            
+            const vendedores = [
+                { nome: 'Rodrigo Mariano', vendas: 8, comissao: 2400 },
+                { nome: 'Jessica Regis', vendas: 6, comissao: 1800 },
+                { nome: 'Ana Beatriz', vendas: 4, comissao: 1200 }
+            ];
+            
+            vendedores.forEach((vendedor, index) => {
+                const posicao = index + 1;
+                const medalha = posicao === 1 ? '🥇' : posicao === 2 ? '🥈' : '🥉';
+                const corBorda = posicao === 1 ? 'border-yellow-500' : posicao === 2 ? 'border-gray-400' : 'border-orange-500';
+                
+                const item = document.createElement('div');
+                item.className = `bg-gradient-to-r from-blue-800 to-blue-700 border-l-4 ${corBorda} p-3 rounded-lg hover:shadow-lg transition-all duration-200`;
+                item.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-lg">${medalha}</span>
+                            <div>
+                                <p class="text-white font-bold text-sm">${vendedor.nome}</p>
+                                <p class="text-blue-300 text-xs">${vendedor.vendas} vendas</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-green-400 font-bold text-sm">R$ ${vendedor.comissao}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        function updateTopVendedoresMes() {
+            const container = document.getElementById('topVendedoresMes');
+            container.innerHTML = '';
+            
+            const vendedores = [
+                { nome: 'Rodrigo Mariano', vendas: 25, comissao: 7500 },
+                { nome: 'Jessica Regis', vendas: 20, comissao: 6000 },
+                { nome: 'Ana Beatriz', vendas: 15, comissao: 4500 },
+                { nome: 'Luana Vieira', vendas: 12, comissao: 3600 }
+            ];
+            
+            vendedores.forEach((vendedor, index) => {
+                const posicao = index + 1;
+                const medalha = posicao === 1 ? '👑' : posicao === 2 ? '🥈' : posicao === 3 ? '🥉' : '🏆';
+                const corFundo = posicao === 1 ? 'from-yellow-600 to-yellow-700' : 
+                                posicao === 2 ? 'from-gray-600 to-gray-700' : 
+                                posicao === 3 ? 'from-orange-600 to-orange-700' : 'from-purple-600 to-purple-700';
+                
+                const item = document.createElement('div');
+                item.className = `bg-gradient-to-br ${corFundo} p-4 md:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105`;
+                item.innerHTML = `
+                    <div class="text-center">
+                        <div class="text-3xl md:text-4xl mb-3">${medalha}</div>
+                        <h4 class="text-white font-bold text-base md:text-lg mb-2">${vendedor.nome}</h4>
+                        <div class="space-y-2">
+                            <div class="bg-black bg-opacity-20 rounded-lg p-2">
+                                <p class="text-white text-xl md:text-2xl font-bold">${vendedor.vendas}</p>
+                                <p class="text-gray-200 text-xs">Vendas</p>
+                            </div>
+                            <div class="bg-black bg-opacity-20 rounded-lg p-2">
+                                <p class="text-green-300 text-base md:text-lg font-bold">R$ ${vendedor.comissao}</p>
+                                <p class="text-gray-200 text-xs">Comissão</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-xs text-gray-200">
+                            ${posicao}º lugar do mês
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        function updateEstatisticasGeraisMes() {
+            document.getElementById('totalVendasMesStats').textContent = Math.floor(Math.random() * 100) + 50;
+            document.getElementById('totalComissoesMesStats').textContent = `R$ ${(Math.random() * 50000 + 20000).toFixed(0)}`;
+            document.getElementById('vendedoresAtivosMes').textContent = Math.floor(Math.random() * 10) + 5;
+            document.getElementById('taxaConversaoMes').textContent = `${(Math.random() * 30 + 15).toFixed(1)}%`;
+        }
+        
+        // Logout functionality
+        function logout() {
+            currentUser = null;
+            onlineSystem = null;
+            document.getElementById('crmSystem').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            closeMobileMenu();
+        }
+        
+        // Force sync functionality
+        function forceSync() {
+            if (onlineSystem) {
+                onlineSystem.forceSync();
+                
+                const syncBtn = document.querySelector('[onclick="forceSync()"] i');
+                if (syncBtn) {
+                    syncBtn.classList.add('animate-spin');
+                    setTimeout(() => {
+                        syncBtn.classList.remove('animate-spin');
+                    }, 1000);
+                }
+            }
+        }
+        
+        // Initialize dashboard as active
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboardBtn = document.querySelector('[onclick="showSection(\'dashboard\')"]');
+            if (dashboardBtn) {
+                dashboardBtn.classList.add('bg-vm-blue', 'text-white');
+                dashboardBtn.classList.remove('text-gray-300');
+            }
+        });
+        
+        // Handle window resize for mobile menu
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) {
+                closeMobileMenu();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979dc26eb132cada',t:'MTc1Njk5MTc2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
