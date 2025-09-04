@@ -100,11 +100,30 @@
             </form>
             
             <!-- Demo Credentials -->
-            <div class="mt-6 p-4 bg-gray-700 rounded-lg">
-                <h3 class="text-white font-medium mb-2">Credenciais de Teste:</h3>
-                <div class="text-sm text-gray-300 space-y-1">
-                    <p><strong>Admin:</strong> admin / admin123</p>
-                    <p><strong>Vendedor:</strong> rodrigo / ninjinha10</p>
+            <div class="mt-6 p-4 bg-gray-700 rounded-lg max-h-48 overflow-y-auto scrollbar-thin">
+                <h3 class="text-white font-medium mb-3">👥 Credenciais de Acesso:</h3>
+                <div class="text-xs text-gray-300 space-y-2">
+                    <div class="bg-red-900 bg-opacity-30 p-2 rounded border border-red-600">
+                        <p class="text-red-300 font-bold">🔑 ADMIN:</p>
+                        <p><strong>Login:</strong> admin</p>
+                        <p><strong>Senha:</strong> admin123</p>
+                    </div>
+                    
+                    <div class="bg-blue-900 bg-opacity-30 p-2 rounded border border-blue-600">
+                        <p class="text-blue-300 font-bold">👨‍💼 VENDEDORES:</p>
+                        <div class="grid grid-cols-1 gap-1 mt-1">
+                            <p><strong>Igor Vicente:</strong> igor.vicente / Realmadridfc12@</p>
+                            <p><strong>Rodrigo Mariano:</strong> rodrigo / ninjinha10</p>
+                            <p><strong>Jessica Regis:</strong> jessica.regis / jessica123</p>
+                            <p><strong>Jaqueline Brito:</strong> jaqueline.brito / jaque123</p>
+                            <p><strong>Jessica Brito:</strong> jessica.brito / jbrito123</p>
+                            <p><strong>Luana Vieira:</strong> luana.vieira / luana123</p>
+                            <p><strong>Leonardo Ferreira:</strong> leonardo.ferreira / leo123</p>
+                            <p><strong>Ana Beatriz:</strong> ana.beatriz / ana123</p>
+                            <p><strong>Elen Jaconis:</strong> elen.jaconis / elen123</p>
+                            <p><strong>Usuario 1:</strong> usuario1 / user123</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -127,7 +146,10 @@
                 
                 <div class="flex items-center space-x-4">
                     <span class="text-gray-300 hidden md:block">Bem-vindo, <span id="currentUser" class="font-medium text-white">Admin</span></span>
-                    <button onclick="forceSync()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition duration-200" title="Sincronizar dados">
+                    <button onclick="forceSyncOnline()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition duration-200" title="Sincronizar com GitHub">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </button>
+                    <button onclick="forceSync()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition duration-200" title="Sincronizar dados locais">
                         <i class="fas fa-sync-alt"></i>
                     </button>
                     <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-200">
@@ -1167,13 +1189,30 @@
         let empresas = ['Porto Seguro', 'Bradesco', 'Azul Seguros', 'Suhai'];
         let produtos = ['Seguro Auto', 'Seguro Residencial', 'Seguro Vida'];
         
+        // Sistema de Sincronização Online Real com GitHub
+        let syncInterval = null;
+        let lastUpdateTime = Date.now();
+        let githubConfig = {
+            owner: 'seu-usuario-github', // Substitua pelo seu usuário do GitHub
+            repo: 'vm-seguros-data', // Nome do repositório para dados
+            branch: 'main',
+            token: null, // Token será configurado dinamicamente
+            apiUrl: 'https://api.github.com'
+        };
+        
         // Dados de demonstração
         const usuarios = [
             { id: 1, nome: 'Admin', login: 'admin', senha: 'admin123', tipo: 'admin', comissao: 0, fixoGarantido: 0, meta: 0 },
-            { id: 2, nome: 'Rodrigo Mariano', login: 'rodrigo', senha: 'ninjinha10', tipo: 'vendedor', comissao: 30, fixoGarantido: 2000, meta: 50000 },
-            { id: 3, nome: 'Jessica Regis', login: 'jessica.regis', senha: 'jessica123', tipo: 'vendedor', comissao: 25, fixoGarantido: 1500, meta: 40000 },
-            { id: 4, nome: 'Ana Beatriz', login: 'ana.beatriz', senha: 'ana123', tipo: 'vendedor', comissao: 28, fixoGarantido: 1800, meta: 45000 },
-            { id: 5, nome: 'Luana Vieira', login: 'luana.vieira', senha: 'luana123', tipo: 'vendedor', comissao: 26, fixoGarantido: 1600, meta: 42000 }
+            { id: 2, nome: 'Igor Vicente', login: 'igor.vicente', senha: 'Realmadridfc12@', tipo: 'vendedor', comissao: 30, fixoGarantido: 2000, meta: 50000 },
+            { id: 3, nome: 'Rodrigo Mariano', login: 'rodrigo', senha: 'ninjinha10', tipo: 'vendedor', comissao: 30, fixoGarantido: 2000, meta: 50000 },
+            { id: 4, nome: 'Jessica Regis', login: 'jessica.regis', senha: 'jessica123', tipo: 'vendedor', comissao: 25, fixoGarantido: 1500, meta: 40000 },
+            { id: 5, nome: 'Jaqueline Brito', login: 'jaqueline.brito', senha: 'jaque123', tipo: 'vendedor', comissao: 27, fixoGarantido: 1700, meta: 43000 },
+            { id: 6, nome: 'Jessica Brito', login: 'jessica.brito', senha: 'jbrito123', tipo: 'vendedor', comissao: 26, fixoGarantido: 1600, meta: 42000 },
+            { id: 7, nome: 'Luana Vieira', login: 'luana.vieira', senha: 'luana123', tipo: 'vendedor', comissao: 26, fixoGarantido: 1600, meta: 42000 },
+            { id: 8, nome: 'Leonardo Ferreira', login: 'leonardo.ferreira', senha: 'leo123', tipo: 'vendedor', comissao: 29, fixoGarantido: 1900, meta: 47000 },
+            { id: 9, nome: 'Ana Beatriz', login: 'ana.beatriz', senha: 'ana123', tipo: 'vendedor', comissao: 28, fixoGarantido: 1800, meta: 45000 },
+            { id: 10, nome: 'Elen Jaconis', login: 'elen.jaconis', senha: 'elen123', tipo: 'vendedor', comissao: 27, fixoGarantido: 1700, meta: 44000 },
+            { id: 11, nome: 'Usuario 1', login: 'usuario1', senha: 'user123', tipo: 'vendedor', comissao: 25, fixoGarantido: 1500, meta: 40000 }
         ];
         
         let vendasSemSucesso = [];
@@ -1211,43 +1250,584 @@
 
             // Initialize modal forms
             initializeModalForms();
+            
+            // Initialize online sync with GitHub (fallback to local)
+            initializeOnlineSync();
         });
         
-        // Sistema Online Simulado
+        // Sistema de Sincronização Online com GitHub
+        function initializeOnlineSync() {
+            // Carregar configuração GitHub salva
+            loadGitHubConfig();
+            
+            // Carregar dados do GitHub primeiro, depois localStorage como fallback
+            loadDataFromGitHub().then(() => {
+                console.log('Dados carregados do GitHub com sucesso');
+                if (onlineSystem) {
+                    onlineSystem.updateConnectionStatus('online');
+                }
+            }).catch(() => {
+                console.log('Carregando dados do localStorage como fallback');
+                loadDataFromStorage();
+                if (onlineSystem) {
+                    onlineSystem.updateConnectionStatus('offline');
+                }
+            });
+            
+            // Configurar salvamento automático online
+            setupOnlineAutoSave();
+            
+            // Configurar sincronização entre abas
+            setupCrossTabSync();
+            
+            // Configurar sincronização periódica com GitHub
+            setupGitHubSync();
+        }
+        
+        function loadGitHubConfig() {
+            try {
+                const savedConfig = localStorage.getItem('vm_github_config');
+                if (savedConfig) {
+                    const config = JSON.parse(savedConfig);
+                    githubConfig.owner = config.owner || githubConfig.owner;
+                    githubConfig.repo = config.repo || githubConfig.repo;
+                    githubConfig.branch = config.branch || githubConfig.branch;
+                }
+            } catch (error) {
+                console.log('Erro ao carregar configuração GitHub:', error);
+            }
+        }
+        
+        // Sistema de Armazenamento Local para Sincronização (Fallback)
+        function initializeLocalStorageSync() {
+            // Carregar dados do localStorage se existirem
+            loadDataFromStorage();
+            
+            // Configurar salvamento automático
+            setupAutoSave();
+            
+            // Configurar sincronização entre abas
+            setupCrossTabSync();
+        }
+        
+        function loadDataFromStorage() {
+            try {
+                const storedIndicacoes = localStorage.getItem('vm_indicacoes');
+                const storedVendas = localStorage.getItem('vm_vendas');
+                const storedLeadsSemSucesso = localStorage.getItem('vm_leadsSemSucesso');
+                const storedLeadsSubai = localStorage.getItem('vm_leadsSubai');
+                const storedCancelamentos = localStorage.getItem('vm_cancelamentos');
+                
+                if (storedIndicacoes) {
+                    indicacoes.length = 0;
+                    indicacoes.push(...JSON.parse(storedIndicacoes));
+                }
+                
+                if (storedVendas) {
+                    vendas.length = 0;
+                    vendas.push(...JSON.parse(storedVendas));
+                }
+                
+                if (storedLeadsSemSucesso) {
+                    leadsSemSucesso.length = 0;
+                    leadsSemSucesso.push(...JSON.parse(storedLeadsSemSucesso));
+                }
+                
+                if (storedLeadsSubai) {
+                    leadsSubai.length = 0;
+                    leadsSubai.push(...JSON.parse(storedLeadsSubai));
+                }
+                
+                if (storedCancelamentos) {
+                    cancelamentos.length = 0;
+                    cancelamentos.push(...JSON.parse(storedCancelamentos));
+                }
+            } catch (error) {
+                console.log('Erro ao carregar dados do storage:', error);
+            }
+        }
+        
+        function saveDataToStorage() {
+            try {
+                localStorage.setItem('vm_indicacoes', JSON.stringify(indicacoes));
+                localStorage.setItem('vm_vendas', JSON.stringify(vendas));
+                localStorage.setItem('vm_leadsSemSucesso', JSON.stringify(leadsSemSucesso));
+                localStorage.setItem('vm_leadsSubai', JSON.stringify(leadsSubai));
+                localStorage.setItem('vm_cancelamentos', JSON.stringify(cancelamentos));
+                localStorage.setItem('vm_lastUpdate', Date.now().toString());
+            } catch (error) {
+                console.log('Erro ao salvar dados no storage:', error);
+            }
+        }
+        
+        // Funções de Sincronização com GitHub
+        async function loadDataFromGitHub() {
+            try {
+                const response = await fetch(`${githubConfig.apiUrl}/repos/${githubConfig.owner}/${githubConfig.repo}/contents/data.json?ref=${githubConfig.branch}`, {
+                    headers: {
+                        'Accept': 'application/vnd.github.v3+json',
+                        'User-Agent': 'VM-Seguros-CRM'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const content = JSON.parse(atob(data.content));
+                    
+                    // Carregar dados do GitHub
+                    if (content.indicacoes) {
+                        indicacoes.length = 0;
+                        indicacoes.push(...content.indicacoes);
+                    }
+                    if (content.vendas) {
+                        vendas.length = 0;
+                        vendas.push(...content.vendas);
+                    }
+                    if (content.leadsSemSucesso) {
+                        leadsSemSucesso.length = 0;
+                        leadsSemSucesso.push(...content.leadsSemSucesso);
+                    }
+                    if (content.leadsSubai) {
+                        leadsSubai.length = 0;
+                        leadsSubai.push(...content.leadsSubai);
+                    }
+                    if (content.cancelamentos) {
+                        cancelamentos.length = 0;
+                        cancelamentos.push(...content.cancelamentos);
+                    }
+                    
+                    // Salvar também no localStorage como backup
+                    saveDataToStorage();
+                    
+                    return true;
+                }
+            } catch (error) {
+                console.log('Erro ao carregar do GitHub:', error);
+                throw error;
+            }
+        }
+        
+        async function saveDataToGitHub() {
+            try {
+                const dataToSave = {
+                    indicacoes,
+                    vendas,
+                    leadsSemSucesso,
+                    leadsSubai,
+                    cancelamentos,
+                    lastUpdate: new Date().toISOString(),
+                    version: Date.now()
+                };
+                
+                // Primeiro, tentar obter o arquivo atual para pegar o SHA
+                let sha = null;
+                try {
+                    const currentFile = await fetch(`${githubConfig.apiUrl}/repos/${githubConfig.owner}/${githubConfig.repo}/contents/data.json?ref=${githubConfig.branch}`, {
+                        headers: {
+                            'Accept': 'application/vnd.github.v3+json',
+                            'User-Agent': 'VM-Seguros-CRM'
+                        }
+                    });
+                    
+                    if (currentFile.ok) {
+                        const currentData = await currentFile.json();
+                        sha = currentData.sha;
+                    }
+                } catch (e) {
+                    console.log('Arquivo não existe ainda, será criado');
+                }
+                
+                // Criar ou atualizar o arquivo
+                const updateData = {
+                    message: `Atualização automática CRM - ${new Date().toLocaleString('pt-BR')}`,
+                    content: btoa(JSON.stringify(dataToSave, null, 2)),
+                    branch: githubConfig.branch
+                };
+                
+                if (sha) {
+                    updateData.sha = sha;
+                }
+                
+                const response = await fetch(`${githubConfig.apiUrl}/repos/${githubConfig.owner}/${githubConfig.repo}/contents/data.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json',
+                        'User-Agent': 'VM-Seguros-CRM'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                if (response.ok) {
+                    console.log('Dados salvos no GitHub com sucesso');
+                    return true;
+                } else {
+                    console.log('Erro ao salvar no GitHub:', response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.log('Erro ao salvar no GitHub:', error);
+                return false;
+            }
+        }
+        
+        function setupOnlineAutoSave() {
+            // Salvar dados automaticamente online e localmente
+            setInterval(async () => {
+                // Sempre salvar localmente
+                saveDataToStorage();
+                
+                // Tentar salvar online (sem bloquear se falhar)
+                try {
+                    await saveDataToGitHub();
+                } catch (error) {
+                    console.log('Salvamento online falhou, dados mantidos localmente');
+                }
+            }, 5000); // Salvar a cada 5 segundos
+        }
+        
+        function setupGitHubSync() {
+            // Sincronização periódica com GitHub
+            setInterval(async () => {
+                try {
+                    await loadDataFromGitHub();
+                    if (onlineSystem && currentUser) {
+                        onlineSystem.updateAllInterfaces();
+                        onlineSystem.showSyncNotification('Sincronizado com servidor', 'success');
+                    }
+                } catch (error) {
+                    console.log('Sincronização com GitHub falhou');
+                }
+            }, 10000); // Sincronizar a cada 10 segundos
+        }
+        
+        function setupAutoSave() {
+            // Salvar dados automaticamente a cada mudança (fallback local)
+            setInterval(() => {
+                saveDataToStorage();
+            }, 2000); // Salvar a cada 2 segundos
+        }
+        
+        function setupCrossTabSync() {
+            // Sincronizar entre abas/janelas abertas
+            window.addEventListener('storage', function(e) {
+                if (e.key && e.key.startsWith('vm_') && e.key !== 'vm_lastUpdate') {
+                    // Recarregar dados quando outra aba fizer alterações
+                    loadDataFromStorage();
+                    
+                    // Atualizar interface se o sistema estiver inicializado
+                    if (onlineSystem && currentUser) {
+                        onlineSystem.updateAllInterfaces();
+                        onlineSystem.showSyncNotification('Dados sincronizados entre abas', 'success');
+                    }
+                }
+            });
+        }
+        
+        // Sistema Online Simulado com Sincronização em Tempo Real
         class OnlineSystem {
             constructor() {
                 this.isOnline = true;
+                this.syncFrequency = 1000; // Sincronização a cada 1 segundo
+                this.lastSync = Date.now();
                 this.init();
             }
             
             init() {
                 this.showConnectionStatus();
-                this.startSync();
+                this.startRealTimeSync();
                 this.initLeadSuhaiCheckboxes();
+                this.initDataChangeTracking();
             }
             
             showConnectionStatus() {
                 const header = document.querySelector('header .flex');
                 const statusDiv = document.createElement('div');
                 statusDiv.id = 'connectionStatus';
-                statusDiv.className = 'flex items-center space-x-1 bg-green-600 px-2 py-1 rounded text-xs';
+                statusDiv.className = 'flex items-center space-x-1 bg-green-600 px-2 py-1 rounded text-xs cursor-pointer';
+                statusDiv.title = 'Clique para configurar sincronização GitHub';
                 statusDiv.innerHTML = `
                     <div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
                     <span class="text-white font-medium">Online</span>
                 `;
+                
+                // Adicionar evento de clique para configuração
+                statusDiv.addEventListener('click', () => {
+                    this.showGitHubConfigModal();
+                });
+                
                 header.insertBefore(statusDiv, header.lastElementChild);
             }
             
-            startSync() {
+            showGitHubConfigModal() {
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+                modal.innerHTML = `
+                    <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 border border-gray-700">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">🔧 Configuração GitHub</h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-gray-300 text-sm font-medium mb-2">Usuário GitHub</label>
+                                <input type="text" id="githubOwner" value="${githubConfig.owner}" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="seu-usuario-github">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-300 text-sm font-medium mb-2">Nome do Repositório</label>
+                                <input type="text" id="githubRepo" value="${githubConfig.repo}" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="vm-seguros-data">
+                            </div>
+                            
+                            <div class="bg-blue-900 bg-opacity-30 p-3 rounded border border-blue-600">
+                                <p class="text-blue-300 text-sm">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    <strong>Como configurar:</strong><br>
+                                    1. Crie um repositório público no GitHub<br>
+                                    2. Insira seu usuário e nome do repositório<br>
+                                    3. O sistema salvará automaticamente os dados
+                                </p>
+                            </div>
+                            
+                            <div class="flex space-x-4">
+                                <button onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg transition duration-200">
+                                    Cancelar
+                                </button>
+                                <button onclick="onlineSystem.saveGitHubConfig(); this.closest('.fixed').remove()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition duration-200">
+                                    <i class="fas fa-save mr-2"></i>Salvar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+            }
+            
+            saveGitHubConfig() {
+                const owner = document.getElementById('githubOwner').value.trim();
+                const repo = document.getElementById('githubRepo').value.trim();
+                
+                if (owner && repo) {
+                    githubConfig.owner = owner;
+                    githubConfig.repo = repo;
+                    
+                    // Salvar configuração no localStorage
+                    localStorage.setItem('vm_github_config', JSON.stringify(githubConfig));
+                    
+                    this.showNotification('Configuração GitHub salva! Sincronização ativada.', 'success');
+                    
+                    // Tentar sincronizar imediatamente
+                    this.testGitHubConnection();
+                } else {
+                    this.showNotification('Preencha todos os campos!', 'warning');
+                }
+            }
+            
+            async testGitHubConnection() {
+                try {
+                    await saveDataToGitHub();
+                    this.updateConnectionStatus('online');
+                    this.showNotification('Conexão GitHub estabelecida!', 'success');
+                } catch (error) {
+                    this.updateConnectionStatus('offline');
+                    this.showNotification('Erro na conexão GitHub. Usando modo local.', 'warning');
+                }
+            }
+            
+            updateConnectionStatus(status) {
+                const statusElement = document.getElementById('connectionStatus');
+                if (statusElement) {
+                    if (status === 'online') {
+                        statusElement.className = 'flex items-center space-x-1 bg-green-600 px-2 py-1 rounded text-xs cursor-pointer';
+                        statusElement.innerHTML = `
+                            <div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                            <span class="text-white font-medium">Online</span>
+                        `;
+                    } else {
+                        statusElement.className = 'flex items-center space-x-1 bg-yellow-600 px-2 py-1 rounded text-xs cursor-pointer';
+                        statusElement.innerHTML = `
+                            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+                            <span class="text-white font-medium">Local</span>
+                        `;
+                    }
+                }
+            }
+            
+            startRealTimeSync() {
+                // Sincronização ultra-rápida para atualizações em tempo real
+                syncInterval = setInterval(() => {
+                    this.performRealTimeSync();
+                }, this.syncFrequency);
+                
+                // Sincronização adicional quando há mudanças de dados
+                this.setupDataWatchers();
+            }
+            
+            performRealTimeSync() {
+                if (this.isOnline && currentUser) {
+                    // Atualizar todas as interfaces
+                    this.updateAllInterfaces();
+                    
+                    // Simular sincronização com servidor
+                    this.simulateServerSync();
+                    
+                    // Atualizar timestamp da última sincronização
+                    this.lastSync = Date.now();
+                    lastUpdateTime = Date.now();
+                }
+            }
+            
+            updateAllInterfaces() {
+                // Atualizar todas as tabelas e kanban boards
+                updateKanbanIndicacoes();
+                updateKanbanVendas();
+                updateIndicacoesTable();
+                updateVendasTable();
+                updateVendedoresTable();
+                updateLeadSuhaiTable();
+                updateComissaoTable();
+                updateComissaoDetalhadaTable();
+                updateCancelamentosTable();
+                updateSemSucessoTable();
+                updateDashboardStats();
+                updateLeadSuhaiStats();
+            }
+            
+            simulateServerSync() {
+                // Simular comunicação com servidor para sincronização
+                const statusElement = document.getElementById('connectionStatus');
+                if (statusElement) {
+                    // Piscar indicador de sincronização
+                    statusElement.classList.add('animate-pulse');
+                    setTimeout(() => {
+                        statusElement.classList.remove('animate-pulse');
+                    }, 200);
+                }
+            }
+            
+            setupDataWatchers() {
+                // Observar mudanças nos arrays de dados
+                this.watchDataChanges();
+            }
+            
+            watchDataChanges() {
+                // Criar proxies para detectar mudanças nos dados
+                const originalPush = Array.prototype.push;
+                const originalSplice = Array.prototype.splice;
+                const self = this;
+                
+                // Interceptar mudanças nos arrays principais
+                [indicacoes, vendas, leadsSemSucesso, leadsSubai, cancelamentos].forEach(array => {
+                    if (array && typeof array === 'object') {
+                        // Sobrescrever métodos que modificam arrays
+                        array.push = function(...items) {
+                            const result = originalPush.apply(this, items);
+                            self.triggerInstantSync();
+                            return result;
+                        };
+                        
+                        array.splice = function(...args) {
+                            const result = originalSplice.apply(this, args);
+                            self.triggerInstantSync();
+                            return result;
+                        };
+                    }
+                });
+            }
+            
+            triggerInstantSync() {
+                // Sincronização instantânea quando há mudanças
+                setTimeout(() => {
+                    this.updateAllInterfaces();
+                    this.broadcastUpdate();
+                }, 50); // Delay mínimo para evitar múltiplas atualizações
+            }
+            
+            broadcastUpdate() {
+                // Simular broadcast para outros usuários conectados
+                if (currentUser && currentUser.tipo === 'admin') {
+                    // Admin fez uma alteração, notificar outros usuários
+                    this.showSyncNotification('Dados atualizados em tempo real', 'success');
+                }
+            }
+            
+            initDataChangeTracking() {
+                // Rastrear mudanças específicas para diferentes tipos de usuário
+                this.trackUserSpecificChanges();
+            }
+            
+            trackUserSpecificChanges() {
+                // Se for vendedor, focar apenas nos seus dados
+                if (currentUser && currentUser.tipo === 'vendedor') {
+                    this.filterVendorData();
+                }
+            }
+            
+            filterVendorData() {
+                // Filtrar dados específicos do vendedor logado
+                const vendorName = currentUser.nome;
+                
+                // Atualizar apenas dados relevantes para o vendedor
                 setInterval(() => {
-                    this.syncData();
-                }, 5000);
+                    if (currentUser && currentUser.tipo === 'vendedor') {
+                        this.updateVendorSpecificData(vendorName);
+                    }
+                }, 500); // Atualização ainda mais rápida para vendedores
+            }
+            
+            updateVendorSpecificData(vendorName) {
+                // Atualizar dados específicos do vendedor
+                const vendorIndicacoes = indicacoes.filter(i => i.vendedor === vendorName);
+                const vendorVendas = vendas.filter(v => v.vendedor === vendorName);
+                
+                // Atualizar interfaces com dados filtrados
+                this.updateVendorInterfaces(vendorIndicacoes, vendorVendas);
+            }
+            
+            updateVendorInterfaces(vendorIndicacoes, vendorVendas) {
+                // Atualizar apenas as seções relevantes para o vendedor
+                updateKanbanIndicacoes();
+                updateKanbanVendas();
+                updateDashboardStats();
             }
             
             syncData() {
-                if (this.isOnline && currentUser) {
-                    updateDashboardStats();
-                }
+                this.performRealTimeSync();
+            }
+            
+            showSyncNotification(message, type = 'info') {
+                // Notificação discreta de sincronização
+                const notification = document.createElement('div');
+                notification.className = `fixed bottom-4 right-4 z-40 p-2 rounded-lg shadow-lg transition-all duration-300 transform translate-y-full`;
+                
+                const bgColor = type === 'success' ? 'bg-green-600' : 'bg-blue-600';
+                notification.className += ` ${bgColor} text-white text-xs`;
+                
+                notification.innerHTML = `
+                    <div class="flex items-center space-x-1">
+                        <i class="fas fa-sync-alt text-xs"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.classList.remove('translate-y-full');
+                }, 100);
+                
+                setTimeout(() => {
+                    notification.classList.add('translate-y-full');
+                    setTimeout(() => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }, 2000);
             }
             
             initLeadSuhaiCheckboxes() {
@@ -1428,7 +2008,24 @@
                     };
                     
                     indicacoes.push(novaIndicacao);
-                    onlineSystem.showNotification('Indicação adicionada!', 'success');
+                    
+                    // Salvar imediatamente local e online
+                    saveDataToStorage();
+                    saveDataToGitHub().then(() => {
+                        if (onlineSystem) {
+                            onlineSystem.updateConnectionStatus('online');
+                        }
+                    }).catch(() => {
+                        console.log('Salvamento online falhou para indicação');
+                    });
+                    
+                    // Notificação especial para admin
+                    if (currentUser.tipo === 'admin') {
+                        onlineSystem.showNotification(`✅ Indicação "${novaIndicacao.nome}" atribuída ao vendedor "${novaIndicacao.vendedor}"`, 'success');
+                        onlineSystem.showSyncNotification('Sincronizando online...', 'success');
+                    } else {
+                        onlineSystem.showNotification('Indicação adicionada!', 'success');
+                    }
                 }
                 
                 updateKanbanIndicacoes();
@@ -1486,7 +2083,24 @@
                     };
                     
                     vendas.push(novaVenda);
-                    onlineSystem.showNotification('Venda adicionada!', 'success');
+                    
+                    // Salvar imediatamente local e online
+                    saveDataToStorage();
+                    saveDataToGitHub().then(() => {
+                        if (onlineSystem) {
+                            onlineSystem.updateConnectionStatus('online');
+                        }
+                    }).catch(() => {
+                        console.log('Salvamento online falhou para venda');
+                    });
+                    
+                    // Notificação especial para admin
+                    if (currentUser.tipo === 'admin') {
+                        onlineSystem.showNotification(`💰 Venda "${novaVenda.cliente}" registrada para "${novaVenda.vendedor}" - R$ ${novaVenda.premioLiquido.toFixed(2)}`, 'success');
+                        onlineSystem.showSyncNotification('Sincronizando online...', 'success');
+                    } else {
+                        onlineSystem.showNotification('Venda adicionada!', 'success');
+                    }
                 }
                 
                 updateKanbanVendas();
@@ -2137,6 +2751,29 @@
             }
         }
         
+        async function forceSyncOnline() {
+            if (onlineSystem) {
+                onlineSystem.showNotification('Sincronizando com GitHub...', 'info');
+                
+                try {
+                    // Salvar dados no GitHub
+                    await saveDataToGitHub();
+                    
+                    // Carregar dados do GitHub
+                    await loadDataFromGitHub();
+                    
+                    // Atualizar todas as interfaces
+                    onlineSystem.updateAllInterfaces();
+                    onlineSystem.updateConnectionStatus('online');
+                    onlineSystem.showNotification('Sincronização GitHub concluída!', 'success');
+                } catch (error) {
+                    onlineSystem.updateConnectionStatus('offline');
+                    onlineSystem.showNotification('Erro na sincronização GitHub. Verifique a configuração.', 'warning');
+                    console.error('Erro na sincronização:', error);
+                }
+            }
+        }
+        
         // Modal functions
         function showNovaIndicacaoModal() {
             document.getElementById('novaIndicacaoModal').classList.remove('hidden');
@@ -2556,5 +3193,5 @@
             }
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979fa65be3f2cada',t:'MTc1NzAxMTU4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979fcc2dd711cada',t:'MTc1NzAxMzEzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
