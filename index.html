@@ -56,6 +56,15 @@
         }
         
         .hover-scale:hover { transform: scale(1.05); transition: transform 0.2s ease; }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
     </style>
 </head>
 <body class="bg-gray-900 font-sans">
@@ -402,12 +411,32 @@
                                 <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
                                 Fazer Vistoria
                             </h3>
-                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                            <div id="fazerVistoriaContainer" class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
                                 <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
                                     <h4 class="text-white font-semibold text-sm mb-2">João Silva</h4>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Premium</p>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-user mr-1 text-purple-400"></i>Rodrigo Mariano</p>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>Porto Seguro</p>
-                                    <p class="text-green-400 text-lg font-bold text-center">R$ 850,00</p>
+                                    <p class="text-green-400 text-lg font-bold text-center mb-2">R$ 850,00</p>
+                                    
+                                    <!-- Lead Suhai Selection -->
+                                    <div class="mb-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer bg-yellow-900 bg-opacity-30 p-2 rounded border border-yellow-600">
+                                            <input type="checkbox" class="lead-suhai-checkbox w-4 h-4 text-yellow-600 bg-gray-600 border-gray-500 rounded focus:ring-yellow-500" 
+                                                   data-cliente="João Silva" data-vendedor="Rodrigo Mariano" data-comissao="255.00" data-plano="Plano Premium" data-empresa="Porto Seguro" data-valor="850.00">
+                                            <span class="text-xs text-yellow-400 font-bold">LEAD SUHAI</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="flex space-x-1">
+                                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
+                                            <i class="fas fa-edit mr-1"></i>Editar
+                                        </button>
+                                        <button class="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
+                                            <i class="fas fa-arrow-right mr-1"></i>Próximo
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -422,8 +451,28 @@
                                 <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
                                     <h4 class="text-white font-semibold text-sm mb-2">Maria Santos</h4>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Básico</p>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-user mr-1 text-purple-400"></i>Jessica Regis</p>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>Bradesco</p>
-                                    <p class="text-green-400 text-lg font-bold text-center">R$ 650,00</p>
+                                    <p class="text-green-400 text-lg font-bold text-center mb-2">R$ 650,00</p>
+                                    
+                                    <!-- Lead Suhai Selection -->
+                                    <div class="mb-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer bg-yellow-900 bg-opacity-30 p-2 rounded border border-yellow-600">
+                                            <input type="checkbox" class="lead-suhai-checkbox w-4 h-4 text-yellow-600 bg-gray-600 border-gray-500 rounded focus:ring-yellow-500" 
+                                                   data-cliente="Maria Santos" data-vendedor="Jessica Regis" data-comissao="195.00" data-plano="Plano Básico" data-empresa="Bradesco" data-valor="650.00">
+                                            <span class="text-xs text-yellow-400 font-bold">LEAD SUHAI</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="flex space-x-1">
+                                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
+                                            <i class="fas fa-edit mr-1"></i>Editar
+                                        </button>
+                                        <button class="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
+                                            <i class="fas fa-arrow-right mr-1"></i>Próximo
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -438,8 +487,28 @@
                                 <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
                                     <h4 class="text-white font-semibold text-sm mb-2">Pedro Costa</h4>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Completo</p>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-user mr-1 text-purple-400"></i>Ana Beatriz</p>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>Azul Seguros</p>
-                                    <p class="text-green-400 text-lg font-bold text-center">R$ 1.200,00</p>
+                                    <p class="text-green-400 text-lg font-bold text-center mb-2">R$ 1.200,00</p>
+                                    
+                                    <!-- Lead Suhai Selection -->
+                                    <div class="mb-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer bg-yellow-900 bg-opacity-30 p-2 rounded border border-yellow-600">
+                                            <input type="checkbox" class="lead-suhai-checkbox w-4 h-4 text-yellow-600 bg-gray-600 border-gray-500 rounded focus:ring-yellow-500" 
+                                                   data-cliente="Pedro Costa" data-vendedor="Ana Beatriz" data-comissao="360.00" data-plano="Plano Completo" data-empresa="Azul Seguros" data-valor="1200.00">
+                                            <span class="text-xs text-yellow-400 font-bold">LEAD SUHAI</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="flex space-x-1">
+                                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
+                                            <i class="fas fa-edit mr-1"></i>Editar
+                                        </button>
+                                        <button class="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
+                                            <i class="fas fa-arrow-right mr-1"></i>Próximo
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -454,8 +523,28 @@
                                 <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
                                     <h4 class="text-white font-semibold text-sm mb-2">Ana Beatriz</h4>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Premium</p>
+                                    <p class="text-gray-300 text-xs mb-1"><i class="fas fa-user mr-1 text-purple-400"></i>Luana Vieira</p>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>Suhai</p>
-                                    <p class="text-green-400 text-lg font-bold text-center">R$ 950,00</p>
+                                    <p class="text-green-400 text-lg font-bold text-center mb-2">R$ 950,00</p>
+                                    
+                                    <!-- Lead Suhai Selection -->
+                                    <div class="mb-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer bg-yellow-900 bg-opacity-30 p-2 rounded border border-yellow-600">
+                                            <input type="checkbox" class="lead-suhai-checkbox w-4 h-4 text-yellow-600 bg-gray-600 border-gray-500 rounded focus:ring-yellow-500" 
+                                                   data-cliente="Ana Beatriz" data-vendedor="Luana Vieira" data-comissao="285.00" data-plano="Plano Premium" data-empresa="Suhai" data-valor="950.00">
+                                            <span class="text-xs text-yellow-400 font-bold">LEAD SUHAI</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="flex space-x-1">
+                                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
+                                            <i class="fas fa-edit mr-1"></i>Editar
+                                        </button>
+                                        <button class="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
+                                            <i class="fas fa-arrow-right mr-1"></i>Próximo
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -476,12 +565,28 @@
                                 <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
                                 Lead Novo
                             </h3>
-                            <div class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
+                            <div id="leadNovoContainer" class="space-y-2 min-h-[300px] max-h-[500px] overflow-y-auto scrollbar-thin">
                                 <div class="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
                                     <h4 class="text-white font-semibold text-sm mb-2">Carlos Oliveira</h4>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>(11) 99999-9999</p>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>Honda Civic 2020</p>
-                                    <p class="text-gray-300 text-xs"><i class="fas fa-user mr-1 text-purple-400"></i>Rodrigo Mariano</p>
+                                    <p class="text-gray-300 text-xs mb-2"><i class="fas fa-user mr-1 text-purple-400"></i>Rodrigo Mariano</p>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="space-y-2">
+                                        <button onclick="converterIndicacao('Carlos Oliveira', 'Rodrigo Mariano', 'Honda Civic 2020', '(11) 99999-9999')" 
+                                                class="w-full bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-2 rounded transition duration-200">
+                                            <i class="fas fa-check mr-1"></i>CONVERTER
+                                        </button>
+                                        <button onclick="semSucessoIndicacao('Carlos Oliveira', 'Rodrigo Mariano', 'Honda Civic 2020', '(11) 99999-9999')" 
+                                                class="w-full bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-2 rounded transition duration-200">
+                                            <i class="fas fa-times mr-1"></i>SEM SUCESSO
+                                        </button>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="naoAtendeu1" class="w-4 h-4 text-orange-600 bg-gray-600 border-gray-500 rounded focus:ring-orange-500">
+                                            <label for="naoAtendeu1" class="text-xs text-orange-400 font-medium cursor-pointer">NÃO ATENDEU</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -497,7 +602,23 @@
                                     <h4 class="text-white font-semibold text-sm mb-2">Fernanda Lima</h4>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>(11) 88888-8888</p>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>Toyota Corolla 2019</p>
-                                    <p class="text-gray-300 text-xs"><i class="fas fa-user mr-1 text-purple-400"></i>Jessica Regis</p>
+                                    <p class="text-gray-300 text-xs mb-2"><i class="fas fa-user mr-1 text-purple-400"></i>Jessica Regis</p>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="space-y-2">
+                                        <button onclick="converterIndicacao('Fernanda Lima', 'Jessica Regis', 'Toyota Corolla 2019', '(11) 88888-8888')" 
+                                                class="w-full bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-2 rounded transition duration-200">
+                                            <i class="fas fa-check mr-1"></i>CONVERTER
+                                        </button>
+                                        <button onclick="semSucessoIndicacao('Fernanda Lima', 'Jessica Regis', 'Toyota Corolla 2019', '(11) 88888-8888')" 
+                                                class="w-full bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-2 rounded transition duration-200">
+                                            <i class="fas fa-times mr-1"></i>SEM SUCESSO
+                                        </button>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="naoAtendeu2" class="w-4 h-4 text-orange-600 bg-gray-600 border-gray-500 rounded focus:ring-orange-500">
+                                            <label for="naoAtendeu2" class="text-xs text-orange-400 font-medium cursor-pointer">NÃO ATENDEU</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -513,7 +634,23 @@
                                     <h4 class="text-white font-semibold text-sm mb-2">Roberto Silva</h4>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>(11) 77777-7777</p>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>Volkswagen Jetta 2021</p>
-                                    <p class="text-gray-300 text-xs"><i class="fas fa-user mr-1 text-purple-400"></i>Ana Beatriz</p>
+                                    <p class="text-gray-300 text-xs mb-2"><i class="fas fa-user mr-1 text-purple-400"></i>Ana Beatriz</p>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="space-y-2">
+                                        <button onclick="converterIndicacao('Roberto Silva', 'Ana Beatriz', 'Volkswagen Jetta 2021', '(11) 77777-7777')" 
+                                                class="w-full bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-2 rounded transition duration-200">
+                                            <i class="fas fa-check mr-1"></i>CONVERTER
+                                        </button>
+                                        <button onclick="semSucessoIndicacao('Roberto Silva', 'Ana Beatriz', 'Volkswagen Jetta 2021', '(11) 77777-7777')" 
+                                                class="w-full bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-2 rounded transition duration-200">
+                                            <i class="fas fa-times mr-1"></i>SEM SUCESSO
+                                        </button>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="naoAtendeu3" class="w-4 h-4 text-orange-600 bg-gray-600 border-gray-500 rounded focus:ring-orange-500">
+                                            <label for="naoAtendeu3" class="text-xs text-orange-400 font-medium cursor-pointer">NÃO ATENDEU</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -529,7 +666,23 @@
                                     <h4 class="text-white font-semibold text-sm mb-2">Luciana Santos</h4>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-phone mr-1 text-blue-400"></i>(11) 66666-6666</p>
                                     <p class="text-gray-300 text-xs mb-1"><i class="fas fa-car mr-1 text-yellow-400"></i>Nissan Sentra 2020</p>
-                                    <p class="text-gray-300 text-xs"><i class="fas fa-user mr-1 text-purple-400"></i>Luana Vieira</p>
+                                    <p class="text-gray-300 text-xs mb-2"><i class="fas fa-user mr-1 text-purple-400"></i>Luana Vieira</p>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="space-y-2">
+                                        <button onclick="converterIndicacao('Luciana Santos', 'Luana Vieira', 'Nissan Sentra 2020', '(11) 66666-6666')" 
+                                                class="w-full bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-2 rounded transition duration-200">
+                                            <i class="fas fa-check mr-1"></i>CONVERTER
+                                        </button>
+                                        <button onclick="semSucessoIndicacao('Luciana Santos', 'Luana Vieira', 'Nissan Sentra 2020', '(11) 66666-6666')" 
+                                                class="w-full bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-2 rounded transition duration-200">
+                                            <i class="fas fa-times mr-1"></i>SEM SUCESSO
+                                        </button>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="checkbox" id="naoAtendeu4" class="w-4 h-4 text-orange-600 bg-gray-600 border-gray-500 rounded focus:ring-orange-500">
+                                            <label for="naoAtendeu4" class="text-xs text-orange-400 font-medium cursor-pointer">NÃO ATENDEU</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -766,7 +919,7 @@
                     </div>
                 </div>
 
-                <!-- Outras seções com conteúdo básico -->
+                <!-- Cancelamentos Section -->
                 <div id="cancelamentos" class="section hidden">
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Cancelamentos</h2>
@@ -777,6 +930,7 @@
                     </div>
                 </div>
 
+                <!-- Relatórios Section -->
                 <div id="relatorios" class="section hidden">
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Relatórios</h2>
@@ -787,6 +941,7 @@
                     </div>
                 </div>
 
+                <!-- Links Úteis Section -->
                 <div id="links-uteis" class="section hidden">
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Links Úteis</h2>
@@ -797,26 +952,75 @@
                     </div>
                 </div>
 
+                <!-- Sem Sucesso Section -->
                 <div id="sem-sucesso" class="section hidden">
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Sem Sucesso</h2>
                         <p class="text-gray-400">Leads que não tiveram sucesso</p>
                     </div>
+                    
                     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <p class="text-gray-400 text-center py-8">Nenhum lead sem sucesso</p>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Lista de Leads Sem Sucesso</h3>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Nome</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Telefone</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Veículo</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendedor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Data</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="semSucessoTableBody" class="divide-y divide-gray-700">
+                                    <!-- Leads sem sucesso serão inseridos aqui -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Lead Suhai Section -->
                 <div id="lead-suhai" class="section hidden">
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Lead Suhai</h2>
                         <p class="text-gray-400">Vendas enviadas para processamento Suhai</p>
                     </div>
+                    
                     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <p class="text-gray-400 text-center py-8">Nenhum lead Suhai</p>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Lista de Leads Suhai</h3>
+                            <div class="bg-yellow-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                <i class="fas fa-star mr-1"></i>Processamento Suhai
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Cliente</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendedor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Plano</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Empresa</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Valor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Comissão</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Data Envio</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leadSuhaiTableBody" class="divide-y divide-gray-700">
+                                    <!-- Leads Suhai serão inseridos aqui -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Configurações Section -->
                 <div id="configuracoes" class="section hidden">
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Configurações</h2>
@@ -835,6 +1039,8 @@
         // Sistema básico para demonstração
         let currentUser = null;
         let onlineSystem = null;
+        let leadsSemSucesso = [];
+        let leadsSubai = [];
         
         // Dados de demonstração
         const usuarios = [
@@ -853,6 +1059,7 @@
             init() {
                 this.showConnectionStatus();
                 this.startSync();
+                this.initLeadSuhaiCheckboxes();
             }
             
             showConnectionStatus() {
@@ -877,6 +1084,29 @@
                 if (this.isOnline && currentUser) {
                     updateDashboardStats();
                 }
+            }
+            
+            initLeadSuhaiCheckboxes() {
+                // Adicionar event listeners para checkboxes Lead Suhai
+                document.addEventListener('change', function(e) {
+                    if (e.target.classList.contains('lead-suhai-checkbox')) {
+                        if (e.target.checked) {
+                            const data = {
+                                cliente: e.target.dataset.cliente,
+                                vendedor: e.target.dataset.vendedor,
+                                comissao: e.target.dataset.comissao,
+                                plano: e.target.dataset.plano,
+                                empresa: e.target.dataset.empresa,
+                                valor: e.target.dataset.valor,
+                                dataEnvio: new Date().toLocaleDateString('pt-BR')
+                            };
+                            
+                            leadsSubai.push(data);
+                            updateLeadSuhaiTable();
+                            onlineSystem.showNotification(`${data.cliente} enviado para Lead Suhai!`, 'success');
+                        }
+                    }
+                });
             }
             
             showNotification(message, type = 'info') {
@@ -915,6 +1145,118 @@
             }
         }
         
+        // Função para converter indicação para venda
+        function converterIndicacao(nome, vendedor, veiculo, telefone) {
+            // Remover da lista de indicações (simulado)
+            const container = document.getElementById('fazerVistoriaContainer');
+            
+            // Criar novo item na coluna "Fazer Vistoria"
+            const novoItem = document.createElement('div');
+            novoItem.className = 'bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600';
+            novoItem.innerHTML = `
+                <h4 class="text-white font-semibold text-sm mb-2">${nome}</h4>
+                <p class="text-gray-300 text-xs mb-1"><i class="fas fa-shield-alt mr-1 text-blue-400"></i>Plano Básico</p>
+                <p class="text-gray-300 text-xs mb-1"><i class="fas fa-user mr-1 text-purple-400"></i>${vendedor}</p>
+                <p class="text-gray-300 text-xs mb-1"><i class="fas fa-building mr-1 text-green-400"></i>A definir</p>
+                <p class="text-green-400 text-lg font-bold text-center mb-2">R$ 750,00</p>
+                
+                <!-- Lead Suhai Selection -->
+                <div class="mb-2">
+                    <label class="flex items-center space-x-2 cursor-pointer bg-yellow-900 bg-opacity-30 p-2 rounded border border-yellow-600">
+                        <input type="checkbox" class="lead-suhai-checkbox w-4 h-4 text-yellow-600 bg-gray-600 border-gray-500 rounded focus:ring-yellow-500" 
+                               data-cliente="${nome}" data-vendedor="${vendedor}" data-comissao="225.00" data-plano="Plano Básico" data-empresa="A definir" data-valor="750.00">
+                        <span class="text-xs text-yellow-400 font-bold">LEAD SUHAI</span>
+                    </label>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex space-x-1">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
+                        <i class="fas fa-edit mr-1"></i>Editar
+                    </button>
+                    <button class="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded transition duration-200 flex-1">
+                        <i class="fas fa-arrow-right mr-1"></i>Próximo
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(novoItem);
+            
+            // Remover da indicação original (simulado - na prática removeria do DOM)
+            onlineSystem.showNotification(`${nome} convertido para venda!`, 'success');
+        }
+        
+        // Função para marcar indicação como sem sucesso
+        function semSucessoIndicacao(nome, vendedor, veiculo, telefone) {
+            const leadSemSucesso = {
+                nome: nome,
+                telefone: telefone,
+                veiculo: veiculo,
+                vendedor: vendedor,
+                data: new Date().toLocaleDateString('pt-BR')
+            };
+            
+            leadsSemSucesso.push(leadSemSucesso);
+            updateSemSucessoTable();
+            
+            // Remover da indicação original (simulado)
+            onlineSystem.showNotification(`${nome} movido para Sem Sucesso`, 'warning');
+        }
+        
+        // Função para reverter lead sem sucesso
+        function reverterSemSucesso(index) {
+            const lead = leadsSemSucesso[index];
+            leadsSemSucesso.splice(index, 1);
+            updateSemSucessoTable();
+            
+            onlineSystem.showNotification(`${lead.nome} revertido para indicações!`, 'success');
+        }
+        
+        // Atualizar tabela de sem sucesso
+        function updateSemSucessoTable() {
+            const tbody = document.getElementById('semSucessoTableBody');
+            tbody.innerHTML = '';
+            
+            leadsSemSucesso.forEach((lead, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-700 transition duration-200';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-white">${lead.nome}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.telefone}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.veiculo}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.vendedor}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.data}</td>
+                    <td class="px-6 py-4">
+                        <button onclick="reverterSemSucesso(${index})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded transition duration-200 text-sm">
+                            <i class="fas fa-undo mr-1"></i>Reverter
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Atualizar tabela de Lead Suhai
+        function updateLeadSuhaiTable() {
+            const tbody = document.getElementById('leadSuhaiTableBody');
+            tbody.innerHTML = '';
+            
+            leadsSubai.forEach((lead, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-700 transition duration-200';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-white">${lead.cliente}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.vendedor}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.plano}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.empresa}</td>
+                    <td class="px-6 py-4 text-green-400 font-medium">R$ ${lead.valor}</td>
+                    <td class="px-6 py-4 text-yellow-400 font-bold">R$ ${lead.comissao}</td>
+                    <td class="px-6 py-4 text-gray-300">${lead.dataEnvio}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
         // Login functionality
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -944,7 +1286,7 @@
             }
         });
         
-        // Navigation functionality - CORRIGIDO
+        // Navigation functionality
         function showSection(sectionName) {
             // Hide all sections
             const sections = document.querySelectorAll('.section');
@@ -1187,5 +1529,5 @@
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979dc26eb132cada',t:'MTc1Njk5MTc2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979e4a8b7636cada',t:'MTc1Njk5NzM0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
