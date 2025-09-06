@@ -116,6 +116,28 @@
                     <button onclick="refreshPage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition duration-200 flex items-center" title="Atualizar página">
                         <i class="fas fa-sync-alt text-sm"></i>
                     </button>
+                    
+                    <!-- Notification Bell -->
+                    <div class="relative">
+                        <button id="notificationBell" onclick="toggleNotifications()" class="relative bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg transition duration-200" title="Notificações">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                        </button>
+                        
+                        <!-- Notification Dropdown -->
+                        <div id="notificationDropdown" class="absolute right-0 mt-2 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50 hidden">
+                            <div class="p-4 border-b border-gray-700 flex items-center justify-between">
+                                <h3 class="text-white font-medium">Notificações</h3>
+                                <button onclick="clearAllNotifications()" class="text-blue-400 hover:text-blue-300 text-sm">
+                                    Marcar todas como lidas
+                                </button>
+                            </div>
+                            <div id="notificationsList" class="max-h-96 overflow-y-auto">
+                                <!-- Notifications will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div id="onlineUsers" class="text-sm text-gray-400 hidden md:block">
                         0 usuários online
                     </div>
@@ -151,6 +173,7 @@
                         <li><button onclick="showSection('relatorios', this)" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center"><i class="fas fa-file-alt mr-3"></i>Relatórios</button></li>
                         <li><button onclick="showSection('links-uteis', this)" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center"><i class="fas fa-link mr-3"></i>Links Úteis</button></li>
                         <li><button onclick="showSection('sem-sucesso', this)" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center"><i class="fas fa-exclamation-triangle mr-3"></i>Sem Sucesso</button></li>
+                        <li><button onclick="showSection('lembretes', this)" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center"><i class="fas fa-bell mr-3"></i>Lembretes</button></li>
                         <li><button onclick="showSection('lead-suhai', this)" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center"><i class="fas fa-star mr-3"></i>Lead Suhai</button></li>
                         <li><button onclick="showSection('configuracoes', this)" class="nav-item w-full text-left px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition duration-200 flex items-center"><i class="fas fa-cog mr-3"></i>Configurações</button></li>
                     </ul>
@@ -973,6 +996,82 @@
                     </div>
                 </div>
 
+                <div id="lembretes" class="section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Lembretes</h2>
+                        <p class="text-gray-400">Gerencie seus lembretes de contato com clientes</p>
+                    </div>
+
+                    <!-- Dashboard de Lembretes -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-gradient-to-br from-blue-900 to-indigo-900 rounded-xl border border-blue-600 p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-blue-600 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-clock text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">Lembretes Ativos</h3>
+                                    <p class="text-blue-200 text-sm">Agendados</p>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-white" id="lembretesAtivos">0</div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-yellow-900 to-orange-900 rounded-xl border border-yellow-600 p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-yellow-600 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">Para Hoje</h3>
+                                    <p class="text-yellow-200 text-sm">Vencendo hoje</p>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-white" id="lembretesHoje">0</div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-green-900 to-emerald-900 rounded-xl border border-green-600 p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-green-600 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-check-circle text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">Concluídos</h3>
+                                    <p class="text-green-200 text-sm">Este mês</p>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-white" id="lembretesConcluidos">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Lembretes -->
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Lista de Lembretes</h3>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-bell text-yellow-500"></i>
+                                <span class="text-yellow-400 font-medium" id="lembretesCount">0 lembretes</span>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Cliente</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Data</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Hora</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Observação</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Status</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lembretesTableBody" class="divide-y divide-gray-700"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="configuracoes" class="section hidden">
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Configurações</h2>
@@ -1427,6 +1526,44 @@
         </div>
     </div>
 
+    <!-- Modal de Lembrete -->
+    <div id="lembreteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 border border-gray-700">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Criar Lembrete</h3>
+                <button onclick="closeLembreteModal()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="lembreteForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Cliente</label>
+                    <input type="text" id="lembreteCliente" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" readonly>
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Data do Lembrete *</label>
+                    <input type="date" id="lembreteData" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Hora do Lembrete *</label>
+                    <input type="time" id="lembreteHora" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Observação</label>
+                    <textarea id="lembreteObservacao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" rows="3" placeholder="Ex: Ligar para negociar seguro auto..."></textarea>
+                </div>
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="closeLembreteModal()" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg transition duration-200">
+                        <i class="fas fa-times mr-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white py-3 rounded-lg transition duration-200">
+                        <i class="fas fa-bell mr-2"></i>Criar Lembrete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Modal de Prompt Personalizado -->
     <div id="customPromptModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
         <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 border border-gray-700">
@@ -1494,6 +1631,8 @@
         let comissoes = [];
         let cancelamentos = [];
         let linksUteis = [];
+        let lembretes = [];
+        let userNotifications = [];
 
         const usuarios = [
             { id: 1, nome: 'Admin', login: 'admin', senha: 'admin123', tipo: 'admin' },
@@ -2140,6 +2279,16 @@
                     }
                 }
             });
+            
+            // Fechar dropdown de notificações ao clicar fora
+            document.addEventListener('click', function(event) {
+                const dropdown = document.getElementById('notificationDropdown');
+                const bell = document.getElementById('notificationBell');
+                
+                if (dropdown && bell && !dropdown.contains(event.target) && !bell.contains(event.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
         });
 
         function checkExistingSession() {
@@ -2243,6 +2392,12 @@
                 updateVendaEmpresaSelect();
                 updateVendaProdutoSelect();
                 setupFiltrosIndicacoes();
+                initializeLembreteForm();
+                updateLembretesTable();
+                checkOverdueReminders();
+                
+                // Inicializar sistema de notificações
+                updateNotificationBadge();
                 
                 console.log('✅ Sistema inicializado com sucesso');
                 createRealtimeNotification('success', 'Sistema Pronto', 'CRM VM Seguros carregado com sucesso!');
@@ -2402,6 +2557,8 @@
                     comissoes = parsed.comissoes || [];
                     cancelamentos = parsed.cancelamentos || [];
                     linksUteis = parsed.linksUteis || [];
+                    lembretes = parsed.lembretes || [];
+                    userNotifications = parsed.userNotifications || [];
                     console.log('📱 Dados carregados do cache local:', parsed);
                 } else {
                     console.log('📱 Nenhum dado local encontrado, iniciando com arrays vazios');
@@ -2435,6 +2592,17 @@
             if (currentUser && currentUser.tipo === 'vendedor' && restrictedSections.includes(sectionId)) {
                 createRealtimeNotification('warning', 'Acesso Negado', 'Você não tem permissão para acessar esta seção');
                 return;
+            }
+            
+            // Limpar notificações de indicação ao entrar no kanban indicações
+            if (sectionId === 'kanban-indicacoes') {
+                clearIndicacaoNotifications();
+            }
+            
+            // Atualizar lembretes quando entrar na seção
+            if (sectionId === 'lembretes') {
+                updateLembretesTable();
+                checkOverdueReminders();
             }
             
             document.querySelectorAll('.section').forEach(section => {
@@ -2641,6 +2809,9 @@
                     
                     card.innerHTML = `
                         <div class="card-actions">
+                            <button onclick="showLembreteModal(${indicacao.id}, '${indicacao.nome}')" class="text-yellow-400 hover:text-yellow-300 text-xs mr-1" title="Criar Lembrete">
+                                <i class="fas fa-clock"></i>
+                            </button>
                             <button onclick="editarIndicacao(${indicacao.id})" class="text-blue-400 hover:text-blue-300 text-xs mr-1">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -3107,6 +3278,9 @@
                             'Indicação Criada', 
                             `Indicação de ${novaIndicacao.nome} foi enviada para ${novaIndicacao.vendedor}`
                         );
+                        
+                        // Enviar notificação para o vendedor
+                        await sendIndicacaoNotification(novaIndicacao);
                     }
                     
                     closeModal('novaIndicacaoModal');
@@ -3650,6 +3824,8 @@
                     comissoes,
                     cancelamentos,
                     linksUteis,
+                    lembretes,
+                    userNotifications,
                     timestamp: Date.now()
                 };
                 
@@ -5794,6 +5970,9 @@
                     
                     card.innerHTML = `
                         <div class="card-actions">
+                            <button onclick="showLembreteModal(${indicacao.id}, '${indicacao.nome}')" class="text-yellow-400 hover:text-yellow-300 text-xs mr-1" title="Criar Lembrete">
+                                <i class="fas fa-clock"></i>
+                            </button>
                             <button onclick="editarIndicacao(${indicacao.id})" class="text-blue-400 hover:text-blue-300 text-xs mr-1">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -5841,7 +6020,480 @@
             });
         }
 
+        // ===== SISTEMA DE LEMBRETES =====
+        
+        function showLembreteModal(clienteId, clienteNome) {
+            document.getElementById('lembreteCliente').value = clienteNome;
+            document.getElementById('lembreteModal').dataset.clienteId = clienteId;
+            document.getElementById('lembreteModal').classList.remove('hidden');
+            
+            // Definir data mínima como hoje
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('lembreteData').min = hoje;
+            document.getElementById('lembreteData').value = hoje;
+        }
+        
+        function closeLembreteModal() {
+            document.getElementById('lembreteModal').classList.add('hidden');
+            document.getElementById('lembreteForm').reset();
+        }
+        
+        function initializeLembreteForm() {
+            const form = document.getElementById('lembreteForm');
+            if (!form) return;
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const clienteId = document.getElementById('lembreteModal').dataset.clienteId;
+                const lembreteData = {
+                    clienteId: parseInt(clienteId),
+                    cliente: document.getElementById('lembreteCliente').value,
+                    data: document.getElementById('lembreteData').value,
+                    hora: document.getElementById('lembreteHora').value,
+                    observacao: document.getElementById('lembreteObservacao').value,
+                    status: 'ativo',
+                    criadoEm: new Date().toLocaleDateString('pt-BR'),
+                    criadoPor: currentUser.nome,
+                    timestamp: Date.now()
+                };
+                
+                try {
+                    const novoLembrete = {
+                        id: Date.now(),
+                        ...lembreteData
+                    };
+                    
+                    lembretes.push(novoLembrete);
+                    
+                    // Salvar no Firebase se disponível
+                    if (firebaseInitialized && database) {
+                        await database.ref(`lembretes/${novoLembrete.id}`).set(novoLembrete);
+                    }
+                    
+                    // Agendar notificação
+                    scheduleReminderNotification(novoLembrete);
+                    
+                    createRealtimeNotification('success', 
+                        'Lembrete Criado', 
+                        `Lembrete para ${lembreteData.cliente} agendado para ${lembreteData.data} às ${lembreteData.hora}`
+                    );
+                    
+                    updateLembretesTable();
+                    closeLembreteModal();
+                    saveData();
+                    
+                } catch (error) {
+                    console.error('Erro ao criar lembrete:', error);
+                    createRealtimeNotification('error', 'Erro', 'Não foi possível criar o lembrete');
+                }
+            });
+        }
+        
+        function scheduleReminderNotification(lembrete) {
+            const dataHora = new Date(`${lembrete.data}T${lembrete.hora}`);
+            const agora = new Date();
+            const tempoAteNotificacao = dataHora.getTime() - agora.getTime();
+            
+            if (tempoAteNotificacao > 0) {
+                setTimeout(() => {
+                    // Tocar som de notificação
+                    realtimeSystem.playNotificationSound();
+                    
+                    // Mostrar notificação
+                    createRealtimeNotification('warning', 
+                        '⏰ Lembrete!', 
+                        `Hora de entrar em contato com ${lembrete.cliente}! ${lembrete.observacao || ''}`,
+                        false // Não fechar automaticamente
+                    );
+                    
+                    // Notificação do navegador
+                    if (Notification.permission === 'granted') {
+                        new Notification('🔔 Lembrete VM Seguros', {
+                            body: `Hora de entrar em contato com ${lembrete.cliente}!`,
+                            icon: '/favicon.ico',
+                            requireInteraction: true
+                        });
+                    }
+                    
+                    // Adicionar à lista de notificações do usuário
+                    addUserNotification({
+                        tipo: 'lembrete',
+                        titulo: '⏰ Lembrete de Contato',
+                        mensagem: `${lembrete.cliente} - ${lembrete.observacao || 'Entrar em contato'}`,
+                        timestamp: Date.now(),
+                        lida: false
+                    });
+                    
+                }, tempoAteNotificacao);
+                
+                console.log(`📅 Lembrete agendado para ${dataHora.toLocaleString('pt-BR')}`);
+            }
+        }
+        
+        function updateLembretesTable() {
+            const tbody = document.getElementById('lembretesTableBody');
+            const countElement = document.getElementById('lembretesCount');
+            const ativosElement = document.getElementById('lembretesAtivos');
+            const hojeElement = document.getElementById('lembretesHoje');
+            const concluidosElement = document.getElementById('lembretesConcluidos');
+            
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            // Filtrar lembretes baseado no usuário
+            let lembretesFiltrados = [];
+            
+            if (currentUser.tipo === 'admin') {
+                // Admin vê todos os lembretes
+                lembretesFiltrados = lembretes;
+            } else {
+                // Vendedor vê apenas seus próprios lembretes (criados por ele)
+                lembretesFiltrados = lembretes.filter(l => l.criadoPor === currentUser.nome);
+            }
+            
+            // Calcular estatísticas
+            const hoje = new Date().toLocaleDateString('pt-BR');
+            const mesAtual = new Date().getMonth();
+            const anoAtual = new Date().getFullYear();
+            
+            const ativos = lembretesFiltrados.filter(l => l.status === 'ativo').length;
+            const paraHoje = lembretesFiltrados.filter(l => {
+                const lembreteData = new Date(l.data).toLocaleDateString('pt-BR');
+                return lembreteData === hoje && l.status === 'ativo';
+            }).length;
+            const concluidos = lembretesFiltrados.filter(l => {
+                const lembreteDate = new Date(l.criadoEm.split('/').reverse().join('-'));
+                return l.status === 'concluido' && 
+                       lembreteDate.getMonth() === mesAtual && 
+                       lembreteDate.getFullYear() === anoAtual;
+            }).length;
+            
+            // Atualizar elementos de estatísticas
+            if (countElement) countElement.textContent = `${lembretesFiltrados.length} lembretes`;
+            if (ativosElement) ativosElement.textContent = ativos;
+            if (hojeElement) hojeElement.textContent = paraHoje;
+            if (concluidosElement) concluidosElement.textContent = concluidos;
+            
+            // Ordenar por data e hora
+            lembretesFiltrados.sort((a, b) => {
+                const dataA = new Date(`${a.data}T${a.hora}`);
+                const dataB = new Date(`${b.data}T${b.hora}`);
+                return dataA - dataB;
+            });
+            
+            lembretesFiltrados.forEach(lembrete => {
+                const dataLembrete = new Date(`${lembrete.data}T${lembrete.hora}`);
+                const agora = new Date();
+                const isVencido = dataLembrete < agora && lembrete.status === 'ativo';
+                const isHoje = new Date(lembrete.data).toLocaleDateString('pt-BR') === hoje;
+                
+                let statusClass = 'bg-blue-600';
+                let statusText = 'Ativo';
+                
+                if (lembrete.status === 'concluido') {
+                    statusClass = 'bg-green-600';
+                    statusText = 'Concluído';
+                } else if (isVencido) {
+                    statusClass = 'bg-red-600';
+                    statusText = 'Vencido';
+                } else if (isHoje) {
+                    statusClass = 'bg-yellow-600';
+                    statusText = 'Hoje';
+                }
+                
+                const row = document.createElement('tr');
+                row.className = `hover:bg-gray-700 ${isVencido ? 'bg-red-900 bg-opacity-20' : isHoje ? 'bg-yellow-900 bg-opacity-20' : ''}`;
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-white font-medium">${lembrete.cliente}</td>
+                    <td class="px-6 py-4 text-gray-300">${new Date(lembrete.data).toLocaleDateString('pt-BR')}</td>
+                    <td class="px-6 py-4 text-gray-300">${lembrete.hora}</td>
+                    <td class="px-6 py-4 text-gray-300 max-w-xs truncate" title="${lembrete.observacao || 'Sem observação'}">${lembrete.observacao || 'Sem observação'}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full text-white ${statusClass}">${statusText}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        ${lembrete.status === 'ativo' ? `
+                            <button onclick="marcarLembreteConcluido(${lembrete.id})" class="text-green-400 hover:text-green-300 mr-2" title="Marcar como concluído">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        ` : ''}
+                        <button onclick="excluirLembrete(${lembrete.id})" class="text-red-400 hover:text-red-300" title="Excluir">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            if (lembretesFiltrados.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                        <i class="fas fa-bell-slash text-4xl mb-2 block"></i>
+                        Nenhum lembrete criado ainda
+                        <p class="text-sm mt-2">Crie lembretes nos cards do Kanban Indicações</p>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+        
+        async function marcarLembreteConcluido(lembreteId) {
+            try {
+                const lembrete = lembretes.find(l => l.id == lembreteId);
+                if (!lembrete) return;
+                
+                lembrete.status = 'concluido';
+                lembrete.concluidoEm = new Date().toLocaleDateString('pt-BR');
+                lembrete.concluidoPor = currentUser.nome;
+                
+                // Atualizar no Firebase
+                if (firebaseInitialized && database) {
+                    await database.ref(`lembretes/${lembreteId}`).update({
+                        status: 'concluido',
+                        concluidoEm: lembrete.concluidoEm,
+                        concluidoPor: lembrete.concluidoPor
+                    });
+                }
+                
+                createRealtimeNotification('success', 
+                    'Lembrete Concluído', 
+                    `Lembrete de ${lembrete.cliente} foi marcado como concluído`
+                );
+                
+                updateLembretesTable();
+                saveData();
+                
+            } catch (error) {
+                console.error('Erro ao marcar lembrete como concluído:', error);
+                createRealtimeNotification('error', 'Erro', 'Não foi possível marcar o lembrete como concluído');
+            }
+        }
+        
+        async function excluirLembrete(lembreteId) {
+            try {
+                const lembrete = lembretes.find(l => l.id == lembreteId);
+                if (!lembrete) return;
+                
+                const confirmResult = await customConfirm(
+                    'Excluir Lembrete',
+                    `Tem certeza que deseja excluir o lembrete de ${lembrete.cliente}?`
+                );
+                
+                if (!confirmResult) return;
+                
+                // Remover do array
+                lembretes = lembretes.filter(l => l.id !== lembreteId);
+                
+                // Remover do Firebase
+                if (firebaseInitialized && database) {
+                    await database.ref(`lembretes/${lembreteId}`).remove();
+                }
+                
+                createRealtimeNotification('warning', 
+                    'Lembrete Excluído', 
+                    `Lembrete de ${lembrete.cliente} foi removido`
+                );
+                
+                updateLembretesTable();
+                saveData();
+                
+            } catch (error) {
+                console.error('Erro ao excluir lembrete:', error);
+                createRealtimeNotification('error', 'Erro', 'Não foi possível excluir o lembrete');
+            }
+        }
+        
+        function checkOverdueReminders() {
+            const agora = new Date();
+            
+            lembretes.forEach(lembrete => {
+                if (lembrete.status === 'ativo') {
+                    const dataHora = new Date(`${lembrete.data}T${lembrete.hora}`);
+                    
+                    if (dataHora < agora && !lembrete.notificadoVencido) {
+                        // Marcar como notificado para não repetir
+                        lembrete.notificadoVencido = true;
+                        
+                        // Notificar sobre lembrete vencido
+                        addUserNotification({
+                            tipo: 'lembrete-vencido',
+                            titulo: '⚠️ Lembrete Vencido',
+                            mensagem: `${lembrete.cliente} - ${lembrete.observacao || 'Contato pendente'}`,
+                            timestamp: Date.now(),
+                            lida: false
+                        });
+                    }
+                }
+            });
+        }
+        
+        // ===== SISTEMA DE NOTIFICAÇÕES DO USUÁRIO =====
+        
+        function addUserNotification(notification) {
+            userNotifications.unshift({
+                id: Date.now(),
+                ...notification
+            });
+            
+            // Manter apenas as últimas 50 notificações
+            if (userNotifications.length > 50) {
+                userNotifications = userNotifications.slice(0, 50);
+            }
+            
+            updateNotificationBadge();
+            saveData();
+        }
+        
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notificationBadge');
+            if (!badge) return; // Verificar se o elemento existe
+            
+            const naoLidas = userNotifications.filter(n => !n.lida).length;
+            
+            if (naoLidas > 0) {
+                badge.textContent = naoLidas > 99 ? '99+' : naoLidas;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+        
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            const isHidden = dropdown.classList.contains('hidden');
+            
+            if (isHidden) {
+                dropdown.classList.remove('hidden');
+                updateNotificationsList();
+            } else {
+                dropdown.classList.add('hidden');
+            }
+        }
+        
+        function updateNotificationsList() {
+            const list = document.getElementById('notificationsList');
+            
+            if (userNotifications.length === 0) {
+                list.innerHTML = `
+                    <div class="p-4 text-center text-gray-400">
+                        <i class="fas fa-bell-slash text-2xl mb-2 block"></i>
+                        <p class="text-sm">Nenhuma notificação</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = '';
+            
+            userNotifications.slice(0, 10).forEach(notification => {
+                const item = document.createElement('div');
+                item.className = `p-4 border-b border-gray-700 hover:bg-gray-700 cursor-pointer ${!notification.lida ? 'bg-blue-900 bg-opacity-20' : ''}`;
+                item.onclick = () => markNotificationAsRead(notification.id);
+                
+                const timeAgo = getTimeAgo(notification.timestamp);
+                
+                item.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0">
+                            <i class="fas ${getNotificationIcon(notification.tipo)} text-${getNotificationColor(notification.tipo)}-400"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-white font-medium text-sm">${notification.titulo}</p>
+                            <p class="text-gray-300 text-xs mt-1">${notification.mensagem}</p>
+                            <p class="text-gray-500 text-xs mt-2">${timeAgo}</p>
+                        </div>
+                        ${!notification.lida ? '<div class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>' : ''}
+                    </div>
+                `;
+                
+                list.appendChild(item);
+            });
+        }
+        
+        function getNotificationIcon(tipo) {
+            switch (tipo) {
+                case 'lembrete': return 'fa-bell';
+                case 'lembrete-vencido': return 'fa-exclamation-triangle';
+                case 'indicacao': return 'fa-user-plus';
+                case 'venda': return 'fa-dollar-sign';
+                default: return 'fa-info-circle';
+            }
+        }
+        
+        function getNotificationColor(tipo) {
+            switch (tipo) {
+                case 'lembrete': return 'yellow';
+                case 'lembrete-vencido': return 'red';
+                case 'indicacao': return 'blue';
+                case 'venda': return 'green';
+                default: return 'gray';
+            }
+        }
+        
+        function getTimeAgo(timestamp) {
+            const agora = Date.now();
+            const diff = agora - timestamp;
+            const minutos = Math.floor(diff / 60000);
+            const horas = Math.floor(diff / 3600000);
+            const dias = Math.floor(diff / 86400000);
+            
+            if (minutos < 1) return 'Agora';
+            if (minutos < 60) return `${minutos}m atrás`;
+            if (horas < 24) return `${horas}h atrás`;
+            return `${dias}d atrás`;
+        }
+        
+        function markNotificationAsRead(notificationId) {
+            const notification = userNotifications.find(n => n.id === notificationId);
+            if (notification) {
+                notification.lida = true;
+                updateNotificationBadge();
+                updateNotificationsList();
+                saveData();
+            }
+        }
+        
+        function clearAllNotifications() {
+            userNotifications.forEach(n => n.lida = true);
+            updateNotificationBadge();
+            updateNotificationsList();
+            saveData();
+        }
+        
+        async function sendIndicacaoNotification(indicacao) {
+            // Adicionar notificação local para o vendedor
+            if (currentUser.tipo === 'admin') {
+                addUserNotification({
+                    tipo: 'indicacao',
+                    titulo: '🎯 Nova Indicação Enviada',
+                    mensagem: `${indicacao.nome} foi enviado para ${indicacao.vendedor}`,
+                    timestamp: Date.now(),
+                    lida: false
+                });
+            }
+        }
+        
+        function clearIndicacaoNotifications() {
+            // Verificar se userNotifications existe e é um array
+            if (!Array.isArray(userNotifications)) {
+                userNotifications = [];
+                return;
+            }
+            
+            // Marcar notificações de indicação como lidas quando entrar no kanban
+            userNotifications.forEach(notification => {
+                if (notification.tipo === 'indicacao' && !notification.lida) {
+                    notification.lida = true;
+                }
+            });
+            updateNotificationBadge();
+            saveData();
+        }
+
         // Dados já são carregados na inicialização do sistema
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97aa8e50e344c1b6',t:'MTc1NzEyNTk0Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97aabeb5513af1c7',t:'MTc1NzEyNzkyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
