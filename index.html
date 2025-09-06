@@ -7,10 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <!-- Firebase SDK - Versão mais estável -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
         .scrollbar-thin::-webkit-scrollbar { width: 4px; }
         .scrollbar-thin::-webkit-scrollbar-track { background: #1f2937; }
@@ -678,10 +677,77 @@
                 <div id="relatorios" class="section hidden">
                     <div class="mb-6">
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Relatórios</h2>
-                        <p class="text-gray-400">Relatórios e análises do negócio</p>
+                        <p class="text-gray-400">Performance individual dos vendedores</p>
                     </div>
+
+                    <!-- Resumo Geral -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+                        <div class="bg-gradient-to-br from-blue-900 to-indigo-900 rounded-xl border border-blue-600 p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-blue-600 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-users text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white">Total Vendedores</h3>
+                                    <p class="text-blue-200 text-sm">Equipe ativa</p>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-white" id="totalVendedoresRelatorio">0</div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-green-900 to-emerald-900 rounded-xl border border-green-600 p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-green-600 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-chart-line text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white">Vendas do Mês</h3>
+                                    <p class="text-green-200 text-sm">Total geral</p>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-white" id="totalVendasMesRelatorio">0</div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-purple-900 to-pink-900 rounded-xl border border-purple-600 p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-purple-600 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-dollar-sign text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white">Prêmio Total</h3>
+                                    <p class="text-purple-200 text-sm">Mês atual</p>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-bold text-white" id="premioTotalMesRelatorio">R$ 0,00</div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-yellow-900 to-orange-900 rounded-xl border border-yellow-600 p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-yellow-600 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-percentage text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white">Comissão Total</h3>
+                                    <p class="text-yellow-200 text-sm">Mês atual</p>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-bold text-white" id="comissaoTotalMesRelatorio">R$ 0,00</div>
+                        </div>
+                    </div>
+
+                    <!-- Cards dos Vendedores -->
                     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <p class="text-gray-400">Seção em desenvolvimento...</p>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Performance Individual</h3>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-trophy text-yellow-500"></i>
+                                <span class="text-yellow-400 font-medium" id="vendedoresAtivosCount">0 vendedores ativos</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="relatoriosVendedoresGrid">
+                            <!-- Cards dos vendedores serão inseridos aqui -->
+                        </div>
                     </div>
                 </div>
 
@@ -1154,14 +1220,22 @@
             projectId: "vm-seguros-crm",
             storageBucket: "vm-seguros-crm.firebasestorage.app",
             messagingSenderId: "420895990730",
-            appId: "1:420895990730:web:f6c753d929d84b5330e533",
-            measurementId: "G-V82V2HLX62"
+            appId: "1:420895990730:web:f6c753d929d84b5330e533"
         };
 
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const auth = firebase.auth();
+        // Inicializar Firebase com tratamento de erro
+        let database = null;
+        let firebaseInitialized = false;
+        
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            firebaseInitialized = true;
+            console.log('✅ Firebase inicializado com sucesso');
+        } catch (error) {
+            console.error('❌ Erro ao inicializar Firebase:', error);
+            firebaseInitialized = false;
+        }
 
         // ===== SISTEMA DE DADOS EM TEMPO REAL =====
         let currentUser = null;
@@ -1169,6 +1243,7 @@
         let lastActivity = Date.now();
         let heartbeatInterval = null;
         let dataListeners = {};
+        let listenersActive = false; // Controle para evitar listeners duplicados
 
         // Dados locais (cache) - Inicializar com arrays vazios
         let indicacoes = [];
@@ -1202,22 +1277,42 @@
                 this.connectedRef = null;
                 this.userPresenceRef = null;
                 this.connectionRetryCount = 0;
-                this.maxRetries = 3;
+                this.maxRetries = 5;
+                this.isInitialized = false;
                 this.setupConnectionMonitoring();
             }
 
             setupConnectionMonitoring() {
+                if (this.isInitialized) {
+                    console.log('⚠️ Sistema já inicializado, ignorando...');
+                    return;
+                }
+
+                if (!firebaseInitialized || !database) {
+                    console.log('⚠️ Firebase não inicializado, trabalhando offline');
+                    isOnline = false;
+                    this.updateConnectionStatus(false);
+                    return;
+                }
+
                 try {
+                    console.log('🔄 Configurando monitoramento de conexão...');
                     this.connectedRef = database.ref('.info/connected');
+                    
                     this.connectedRef.on('value', (snapshot) => {
-                        if (snapshot.val() === true) {
-                            console.log('🟢 Conectado ao Firebase');
+                        const connected = snapshot.val();
+                        console.log('🔗 Status de conexão:', connected ? 'ONLINE' : 'OFFLINE');
+                        
+                        if (connected === true) {
                             isOnline = true;
                             this.connectionRetryCount = 0;
                             this.updateConnectionStatus(true);
-                            this.syncLocalData();
+                            
+                            // Sincronizar apenas se não foi feito antes
+                            if (!listenersActive) {
+                                this.syncLocalData();
+                            }
                         } else {
-                            console.log('🔴 Desconectado do Firebase');
                             isOnline = false;
                             this.updateConnectionStatus(false);
                             this.handleDisconnection();
@@ -1226,12 +1321,17 @@
                         console.error('❌ Erro na conexão Firebase:', error);
                         isOnline = false;
                         this.updateConnectionStatus(false);
-                        this.retryConnection();
+                        this.handleDisconnection();
                     });
+
+                    this.isInitialized = true;
+                    console.log('✅ Monitoramento de conexão configurado');
+                    
                 } catch (error) {
                     console.error('❌ Erro ao configurar monitoramento de conexão:', error);
                     isOnline = false;
                     this.updateConnectionStatus(false);
+                    this.handleDisconnection();
                 }
             }
 
@@ -1269,30 +1369,34 @@
             }
 
             async setUserOnline(user) {
-                if (!user) return;
+                if (!user || !firebaseInitialized || !database) return;
                 
-                this.userPresenceRef = database.ref(`presence/${user.id}`);
-                
-                // Definir usuário como online
-                await this.userPresenceRef.set({
-                    nome: user.nome,
-                    login: user.login,
-                    tipo: user.tipo,
-                    lastSeen: firebase.database.ServerValue.TIMESTAMP,
-                    online: true
-                });
+                try {
+                    this.userPresenceRef = database.ref(`presence/${user.id}`);
+                    
+                    // Definir usuário como online
+                    await this.userPresenceRef.set({
+                        nome: user.nome,
+                        login: user.login,
+                        tipo: user.tipo,
+                        lastSeen: firebase.database.ServerValue.TIMESTAMP,
+                        online: true
+                    });
 
-                // Remover quando desconectar
-                this.userPresenceRef.onDisconnect().set({
-                    nome: user.nome,
-                    login: user.login,
-                    tipo: user.tipo,
-                    lastSeen: firebase.database.ServerValue.TIMESTAMP,
-                    online: false
-                });
+                    // Remover quando desconectar
+                    this.userPresenceRef.onDisconnect().set({
+                        nome: user.nome,
+                        login: user.login,
+                        tipo: user.tipo,
+                        lastSeen: firebase.database.ServerValue.TIMESTAMP,
+                        online: false
+                    });
 
-                // Monitorar outros usuários online
-                this.monitorOnlineUsers();
+                    // Monitorar outros usuários online
+                    this.monitorOnlineUsers();
+                } catch (error) {
+                    console.error('Erro ao definir usuário online:', error);
+                }
             }
 
             monitorOnlineUsers() {
@@ -1320,6 +1424,14 @@
             }
 
             syncLocalData() {
+                if (listenersActive) {
+                    console.log('⚠️ Listeners já ativos, ignorando sincronização...');
+                    return;
+                }
+
+                console.log('🔄 Iniciando sincronização de dados...');
+                listenersActive = true;
+
                 // Sincronizar dados locais com Firebase quando conectar
                 this.syncIndicacoes();
                 this.syncVendas();
@@ -1333,74 +1445,168 @@
             }
 
             async syncIndicacoes() {
+                if (!firebaseInitialized || !database) {
+                    console.log('⚠️ Firebase não disponível para indicações');
+                    return;
+                }
+
                 try {
-                    // Enviar dados locais para Firebase
-                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
-                    if (localData.indicacoes && localData.indicacoes.length > 0) {
-                        for (const indicacao of localData.indicacoes) {
-                            await database.ref(`indicacoes/${indicacao.id}`).set(indicacao);
+                    console.log('📋 Sincronizando indicações...');
+                    
+                    // Carregar dados do Firebase primeiro
+                    const snapshot = await database.ref('indicacoes').once('value');
+                    const firebaseData = snapshot.val();
+                    
+                    if (firebaseData) {
+                        const newIndicacoes = Object.values(firebaseData);
+                        console.log('📥 Indicações carregadas do Firebase:', newIndicacoes.length);
+                        
+                        // Só atualizar se realmente mudou
+                        if (JSON.stringify(newIndicacoes.sort((a,b) => a.id - b.id)) !== JSON.stringify(indicacoes.sort((a,b) => a.id - b.id))) {
+                            indicacoes = newIndicacoes;
+                            updateIndicacoesTable();
+                            updateKanbanIndicacoes();
+                            updateDashboard();
+                        }
+                    } else {
+                        console.log('📥 Nenhuma indicação no Firebase');
+                        if (indicacoes.length > 0) {
+                            indicacoes = [];
+                            updateIndicacoesTable();
+                            updateKanbanIndicacoes();
+                            updateDashboard();
                         }
                     }
 
-                    // Escutar mudanças em tempo real
+                    // Configurar listener apenas uma vez com controle de duplicação
                     database.ref('indicacoes').on('value', (snapshot) => {
                         const data = snapshot.val();
-                        if (data) {
-                            indicacoes = Object.values(data);
+                        const newIndicacoes = data ? Object.values(data) : [];
+                        
+                        // Verificar se houve mudança real comparando IDs ordenados
+                        const currentIds = indicacoes.map(i => i.id).sort();
+                        const newIds = newIndicacoes.map(i => i.id).sort();
+                        
+                        if (JSON.stringify(currentIds) !== JSON.stringify(newIds) || 
+                            JSON.stringify(newIndicacoes.sort((a,b) => a.id - b.id)) !== JSON.stringify(indicacoes.sort((a,b) => a.id - b.id))) {
+                            
+                            console.log('🔄 Indicações atualizadas - Antes:', indicacoes.length, 'Depois:', newIndicacoes.length);
+                            indicacoes = newIndicacoes;
                             updateIndicacoesTable();
                             updateKanbanIndicacoes();
                             updateDashboard();
                         }
                     });
+                    
                 } catch (error) {
-                    console.error('Erro ao sincronizar indicações:', error);
+                    console.error('❌ Erro ao sincronizar indicações:', error);
+                    // Carregar dados locais como fallback
+                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
+                    indicacoes = localData.indicacoes || [];
                 }
             }
 
             async syncVendas() {
+                if (!firebaseInitialized || !database) {
+                    console.log('⚠️ Firebase não disponível para vendas');
+                    return;
+                }
+
                 try {
-                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
-                    if (localData.vendas && localData.vendas.length > 0) {
-                        for (const venda of localData.vendas) {
-                            await database.ref(`vendas/${venda.id}`).set(venda);
+                    console.log('💰 Sincronizando vendas...');
+                    
+                    // Carregar dados do Firebase primeiro
+                    const snapshot = await database.ref('vendas').once('value');
+                    const firebaseData = snapshot.val();
+                    
+                    if (firebaseData) {
+                        const newVendas = Object.values(firebaseData);
+                        console.log('📥 Vendas carregadas do Firebase:', newVendas.length);
+                        
+                        // Só atualizar se realmente mudou
+                        if (JSON.stringify(newVendas.sort((a,b) => a.id - b.id)) !== JSON.stringify(vendas.sort((a,b) => a.id - b.id))) {
+                            vendas = newVendas;
+                            updateVendasTable();
+                            updateKanbanVendas();
+                            updateDashboard();
+                            updateVendedoresList();
+                        }
+                    } else {
+                        console.log('📥 Nenhuma venda no Firebase');
+                        if (vendas.length > 0) {
+                            vendas = [];
+                            updateVendasTable();
+                            updateKanbanVendas();
+                            updateDashboard();
+                            updateVendedoresList();
                         }
                     }
 
+                    // Configurar listener apenas uma vez com controle de duplicação
                     database.ref('vendas').on('value', (snapshot) => {
                         const data = snapshot.val();
-                        if (data) {
-                            vendas = Object.values(data);
+                        const newVendas = data ? Object.values(data) : [];
+                        
+                        // Verificar se houve mudança real comparando IDs ordenados
+                        const currentIds = vendas.map(v => v.id).sort();
+                        const newIds = newVendas.map(v => v.id).sort();
+                        
+                        if (JSON.stringify(currentIds) !== JSON.stringify(newIds) || 
+                            JSON.stringify(newVendas.sort((a,b) => a.id - b.id)) !== JSON.stringify(vendas.sort((a,b) => a.id - b.id))) {
+                            
+                            console.log('🔄 Vendas atualizadas - Antes:', vendas.length, 'Depois:', newVendas.length);
+                            vendas = newVendas;
                             updateVendasTable();
                             updateKanbanVendas();
                             updateDashboard();
                             updateVendedoresList();
                         }
                     });
+                    
                 } catch (error) {
-                    console.error('Erro ao sincronizar vendas:', error);
+                    console.error('❌ Erro ao sincronizar vendas:', error);
+                    // Carregar dados locais como fallback
+                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
+                    vendas = localData.vendas || [];
                 }
             }
 
             async syncVendedores() {
                 try {
-                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
-                    if (localData.vendedoresData && localData.vendedoresData.length > 0) {
-                        for (const vendedor of localData.vendedoresData) {
-                            await database.ref(`vendedores/${vendedor.id}`).set(vendedor);
-                        }
+                    console.log('👥 Sincronizando vendedores...');
+                    
+                    // Carregar dados do Firebase primeiro
+                    const snapshot = await database.ref('vendedores').once('value');
+                    const firebaseData = snapshot.val();
+                    
+                    if (firebaseData) {
+                        vendedoresData = Object.values(firebaseData);
+                        console.log('📥 Vendedores carregados do Firebase:', vendedoresData.length);
+                    } else {
+                        console.log('📥 Nenhum vendedor no Firebase');
+                        vendedoresData = [];
                     }
 
+                    // Configurar listener apenas uma vez
                     database.ref('vendedores').on('value', (snapshot) => {
                         const data = snapshot.val();
-                        if (data) {
-                            vendedoresData = Object.values(data);
+                        const newVendedores = data ? Object.values(data) : [];
+                        
+                        // Verificar se houve mudança real
+                        if (JSON.stringify(newVendedores) !== JSON.stringify(vendedoresData)) {
+                            console.log('🔄 Vendedores atualizados:', newVendedores.length);
+                            vendedoresData = newVendedores;
                             updateVendedoresList();
                             updateVendedoresTable();
                             populateVendedorSelects();
                         }
                     });
+                    
                 } catch (error) {
-                    console.error('Erro ao sincronizar vendedores:', error);
+                    console.error('❌ Erro ao sincronizar vendedores:', error);
+                    // Carregar dados locais como fallback
+                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
+                    vendedoresData = localData.vendedoresData || [];
                 }
             }
 
@@ -1445,104 +1651,156 @@
 
             async syncLeadsSuhai() {
                 try {
+                    console.log('⭐ Sincronizando leads Suhai...');
+                    
+                    const snapshot = await database.ref('leadsSuhai').once('value');
+                    const firebaseData = snapshot.val();
+                    
+                    if (firebaseData) {
+                        leadsSuhai = Object.values(firebaseData);
+                        console.log('📥 Leads Suhai carregados:', leadsSuhai.length);
+                    } else {
+                        leadsSuhai = [];
+                    }
+
                     database.ref('leadsSuhai').on('value', (snapshot) => {
                         const data = snapshot.val();
-                        if (data) {
-                            leadsSuhai = Object.values(data);
+                        const newLeads = data ? Object.values(data) : [];
+                        
+                        if (JSON.stringify(newLeads) !== JSON.stringify(leadsSuhai)) {
+                            leadsSuhai = newLeads;
                             updateLeadSuhaiTable();
                         }
                     });
                 } catch (error) {
-                    console.error('Erro ao sincronizar leads Suhai:', error);
+                    console.error('❌ Erro ao sincronizar leads Suhai:', error);
+                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
+                    leadsSuhai = localData.leadsSuhai || [];
                 }
             }
 
             async syncLeadsSemSucesso() {
                 try {
+                    console.log('❌ Sincronizando leads sem sucesso...');
+                    
+                    const snapshot = await database.ref('leadsSemSucesso').once('value');
+                    const firebaseData = snapshot.val();
+                    
+                    if (firebaseData) {
+                        leadsSemSucesso = Object.values(firebaseData);
+                        console.log('📥 Leads sem sucesso carregados:', leadsSemSucesso.length);
+                    } else {
+                        leadsSemSucesso = [];
+                    }
+
                     database.ref('leadsSemSucesso').on('value', (snapshot) => {
                         const data = snapshot.val();
-                        if (data) {
-                            leadsSemSucesso = Object.values(data);
+                        const newLeads = data ? Object.values(data) : [];
+                        
+                        if (JSON.stringify(newLeads) !== JSON.stringify(leadsSemSucesso)) {
+                            leadsSemSucesso = newLeads;
                             updateSemSucessoTable();
                         }
                     });
                 } catch (error) {
-                    console.error('Erro ao sincronizar leads sem sucesso:', error);
+                    console.error('❌ Erro ao sincronizar leads sem sucesso:', error);
+                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
+                    leadsSemSucesso = localData.leadsSemSucesso || [];
                 }
             }
 
             async syncComissoes() {
                 try {
+                    console.log('💰 Sincronizando comissões...');
+                    
+                    const snapshot = await database.ref('comissoes').once('value');
+                    const firebaseData = snapshot.val();
+                    
+                    if (firebaseData) {
+                        comissoes = Object.values(firebaseData);
+                        console.log('📥 Comissões carregadas:', comissoes.length);
+                    } else {
+                        comissoes = [];
+                    }
+
                     database.ref('comissoes').on('value', (snapshot) => {
                         const data = snapshot.val();
-                        if (data) {
-                            comissoes = Object.values(data);
+                        const newComissoes = data ? Object.values(data) : [];
+                        
+                        if (JSON.stringify(newComissoes) !== JSON.stringify(comissoes)) {
+                            comissoes = newComissoes;
                             updateComissaoTable();
                         }
                     });
                 } catch (error) {
-                    console.error('Erro ao sincronizar comissões:', error);
+                    console.error('❌ Erro ao sincronizar comissões:', error);
+                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
+                    comissoes = localData.comissoes || [];
                 }
             }
 
             async syncCancelamentos() {
                 try {
+                    console.log('🚫 Sincronizando cancelamentos...');
+                    
+                    const snapshot = await database.ref('cancelamentos').once('value');
+                    const firebaseData = snapshot.val();
+                    
+                    if (firebaseData) {
+                        cancelamentos = Object.values(firebaseData);
+                        console.log('📥 Cancelamentos carregados:', cancelamentos.length);
+                    } else {
+                        cancelamentos = [];
+                    }
+
                     database.ref('cancelamentos').on('value', (snapshot) => {
                         const data = snapshot.val();
-                        if (data) {
-                            cancelamentos = Object.values(data);
+                        const newCancelamentos = data ? Object.values(data) : [];
+                        
+                        if (JSON.stringify(newCancelamentos) !== JSON.stringify(cancelamentos)) {
+                            cancelamentos = newCancelamentos;
                             updateCancelamentosTable();
                         }
                     });
                 } catch (error) {
-                    console.error('Erro ao sincronizar cancelamentos:', error);
+                    console.error('❌ Erro ao sincronizar cancelamentos:', error);
+                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
+                    cancelamentos = localData.cancelamentos || [];
                 }
             }
 
             async syncLinksUteis() {
                 try {
-                    // Carregar dados locais primeiro
-                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
-                    if (localData.linksUteis && localData.linksUteis.length > 0) {
-                        console.log('📤 Sincronizando links locais para Firebase...');
-                        for (const link of localData.linksUteis) {
-                            try {
-                                await database.ref(`linksUteis/${link.id}`).set(link);
-                            } catch (syncError) {
-                                console.error('Erro ao sincronizar link individual:', syncError);
-                            }
-                        }
+                    console.log('🔗 Sincronizando links úteis...');
+                    
+                    const snapshot = await database.ref('linksUteis').once('value');
+                    const firebaseData = snapshot.val();
+                    
+                    if (firebaseData) {
+                        linksUteis = Object.values(firebaseData);
+                        console.log('📥 Links carregados do Firebase:', linksUteis.length);
+                    } else {
+                        linksUteis = [];
+                        console.log('📥 Nenhum link no Firebase');
                     }
 
-                    // Escutar mudanças em tempo real
+                    // Configurar listener apenas uma vez
                     database.ref('linksUteis').on('value', (snapshot) => {
                         const data = snapshot.val();
-                        if (data) {
-                            linksUteis = Object.values(data);
-                            console.log('📥 Links carregados do Firebase:', linksUteis.length);
-                        } else {
-                            linksUteis = [];
-                            console.log('📥 Nenhum link encontrado no Firebase');
+                        const newLinks = data ? Object.values(data) : [];
+                        
+                        if (JSON.stringify(newLinks) !== JSON.stringify(linksUteis)) {
+                            console.log('🔄 Links atualizados:', newLinks.length);
+                            linksUteis = newLinks;
+                            updateLinksGrid();
                         }
-                        updateLinksGrid();
-                    }, (error) => {
-                        console.error('Erro ao escutar mudanças nos links:', error);
-                        // Carregar dados locais como fallback
-                        const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
-                        linksUteis = localData.linksUteis || [];
-                        updateLinksGrid();
                     });
+                    
                 } catch (error) {
-                    console.error('Erro ao sincronizar links úteis:', error);
+                    console.error('❌ Erro ao sincronizar links úteis:', error);
                     // Carregar dados locais como fallback
-                    try {
-                        const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
-                        linksUteis = localData.linksUteis || [];
-                        console.log('📱 Carregando links do cache local:', linksUteis.length);
-                    } catch (localError) {
-                        console.error('Erro ao carregar dados locais:', localError);
-                        linksUteis = [];
-                    }
+                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
+                    linksUteis = localData.linksUteis || [];
                     updateLinksGrid();
                 }
             }
@@ -1698,10 +1956,31 @@
 
         async function initializeSystem() {
             try {
-                // Carregar dados do Firebase
-                await loadFirebaseData();
+                console.log('🚀 Inicializando sistema...');
                 
-                // Inicializar componentes
+                // Aguardar Firebase estar pronto
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Verificar se Firebase foi inicializado corretamente
+                if (!firebaseInitialized) {
+                    console.log('⚠️ Firebase não inicializado, trabalhando offline');
+                    isOnline = false;
+                }
+                
+                // Carregar dados (Firebase ou local)
+                if (isOnline) {
+                    console.log('🌐 Carregando dados do Firebase...');
+                    await loadFirebaseData();
+                } else {
+                    console.log('📱 Carregando dados locais...');
+                    loadLocalData();
+                }
+                
+                // Configurar interface baseada no tipo de usuário
+                setupUserInterface();
+                
+                // Inicializar componentes da interface
+                console.log('🎨 Inicializando componentes da interface...');
                 initializeDragAndDrop();
                 updateDashboard();
                 updateKanbanVendas();
@@ -1722,12 +2001,92 @@
                 initializeLinkForm();
                 updateLinksGrid();
                 updateMonthlySalesCount();
+                updateRelatoriosVendedores();
                 
                 console.log('✅ Sistema inicializado com sucesso');
+                createRealtimeNotification('success', 'Sistema Pronto', 'CRM VM Seguros carregado com sucesso!');
+                
             } catch (error) {
                 console.error('❌ Erro ao inicializar sistema:', error);
-                createRealtimeNotification('error', 'Erro de Conexão', 'Não foi possível conectar ao servidor. Trabalhando offline.');
+                createRealtimeNotification('error', 'Erro de Inicialização', 'Houve um problema ao carregar o sistema. Tentando modo offline...');
+                
+                // Tentar carregar dados locais como fallback
+                try {
+                    loadLocalData();
+                    console.log('📱 Modo offline ativado');
+                } catch (localError) {
+                    console.error('❌ Erro crítico:', localError);
+                }
             }
+        }
+
+        // ===== CONTROLE DE ACESSO POR USUÁRIO =====
+        function setupUserInterface() {
+            if (!currentUser) return;
+            
+            console.log('👤 Configurando interface para:', currentUser.tipo, '-', currentUser.nome);
+            
+            if (currentUser.tipo === 'vendedor') {
+                // Ocultar páginas restritas para vendedores
+                const restrictedPages = [
+                    'configuracoes',
+                    'lead-suhai', 
+                    'relatorios',
+                    'cancelamentos'
+                ];
+                
+                restrictedPages.forEach(pageId => {
+                    const navButton = document.querySelector(`[onclick*="${pageId}"]`);
+                    if (navButton) {
+                        navButton.style.display = 'none';
+                    }
+                });
+                
+                console.log('🔒 Páginas restritas ocultadas para vendedor');
+            } else {
+                // Admin - mostrar todas as páginas
+                const allNavButtons = document.querySelectorAll('.nav-item');
+                allNavButtons.forEach(button => {
+                    button.style.display = 'block';
+                });
+                
+                console.log('🔓 Todas as páginas liberadas para admin');
+            }
+        }
+
+        function isUserAuthorized(requiredRole = null) {
+            if (!currentUser) return false;
+            
+            if (requiredRole === 'admin') {
+                return currentUser.tipo === 'admin';
+            }
+            
+            return true; // Usuário logado tem acesso básico
+        }
+
+        function filterDataByUser(data, dataType) {
+            if (!currentUser) return [];
+            
+            // Admin vê tudo
+            if (currentUser.tipo === 'admin') {
+                return data;
+            }
+            
+            // Vendedor vê apenas seus próprios dados
+            if (currentUser.tipo === 'vendedor') {
+                switch (dataType) {
+                    case 'indicacoes':
+                        return data.filter(item => item.vendedor === currentUser.nome);
+                    case 'vendas':
+                        return data.filter(item => item.vendedor === currentUser.nome);
+                    case 'comissoes':
+                        return data.filter(item => item.vendedor === currentUser.nome);
+                    default:
+                        return data;
+                }
+            }
+            
+            return data;
         }
 
         async function loadFirebaseData() {
@@ -1828,6 +2187,14 @@
         }
 
         function showSection(sectionId, element = null) {
+            // Verificar se o usuário tem autorização para acessar a seção
+            const restrictedSections = ['configuracoes', 'lead-suhai', 'relatorios', 'cancelamentos'];
+            
+            if (currentUser && currentUser.tipo === 'vendedor' && restrictedSections.includes(sectionId)) {
+                createRealtimeNotification('warning', 'Acesso Negado', 'Você não tem permissão para acessar esta seção');
+                return;
+            }
+            
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.add('hidden');
             });
@@ -1883,14 +2250,18 @@
         function updateDashboard() {
             const hoje = new Date().toLocaleDateString('pt-BR');
             
-            const leadsHoje = indicacoes.filter(i => i.data === hoje).length;
-            const vendasHoje = vendas.filter(v => v.data === hoje).length;
+            // Filtrar dados baseado no usuário
+            const indicacoesFiltradas = filterDataByUser(indicacoes, 'indicacoes');
+            const vendasFiltradas = filterDataByUser(vendas, 'vendas');
             
-            const premioHoje = vendas
+            const leadsHoje = indicacoesFiltradas.filter(i => i.data === hoje).length;
+            const vendasHoje = vendasFiltradas.filter(v => v.data === hoje).length;
+            
+            const premioHoje = vendasFiltradas
                 .filter(v => v.data === hoje)
                 .reduce((sum, v) => sum + v.premioLiquido, 0);
             
-            const premioMes = vendas
+            const premioMes = vendasFiltradas
                 .filter(v => {
                     const vendaDate = new Date(v.data.split('/').reverse().join('-'));
                     const currentDate = new Date();
@@ -1920,10 +2291,13 @@
                 'Pagamento Efetuado': document.getElementById('pagamentoEfetuadoCount')
             };
 
+            // Filtrar vendas baseado no usuário
+            const vendasFiltradas = filterDataByUser(vendas, 'vendas');
+
             Object.keys(containers).forEach(status => {
                 const container = containers[status];
                 const count = counts[status];
-                const vendasStatus = vendas.filter(v => v.status === status);
+                const vendasStatus = vendasFiltradas.filter(v => v.status === status);
                 
                 container.innerHTML = '';
                 count.textContent = vendasStatus.length;
@@ -1995,10 +2369,13 @@
                 'Pedindo Dados': document.getElementById('pedindoDadosCount')
             };
 
+            // Filtrar indicações baseado no usuário
+            const indicacoesFiltradas = filterDataByUser(indicacoes, 'indicacoes');
+
             Object.keys(containers).forEach(status => {
                 const container = containers[status];
                 const count = counts[status];
-                const indicacoesStatus = indicacoes.filter(i => i.status === status);
+                const indicacoesStatus = indicacoesFiltradas.filter(i => i.status === status);
                 
                 container.innerHTML = '';
                 count.textContent = indicacoesStatus.length;
@@ -2063,7 +2440,10 @@
             const tbody = document.getElementById('indicacoesTableBody');
             tbody.innerHTML = '';
             
-            indicacoes.forEach(indicacao => {
+            // Filtrar indicações baseado no usuário
+            const indicacoesFiltradas = filterDataByUser(indicacoes, 'indicacoes');
+            
+            indicacoesFiltradas.forEach(indicacao => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-700';
                 row.innerHTML = `
@@ -2093,7 +2473,10 @@
             const tbody = document.getElementById('vendasTableBody');
             tbody.innerHTML = '';
             
-            vendas.forEach(venda => {
+            // Filtrar vendas baseado no usuário
+            const vendasFiltradas = filterDataByUser(vendas, 'vendas');
+            
+            vendasFiltradas.forEach(venda => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-700';
                 row.innerHTML = `
@@ -2127,6 +2510,11 @@
             if (!vendedoresList) return;
             
             vendedoresList.innerHTML = '';
+            
+            // Filtrar vendedores baseado no usuário (admin vê todos, vendedor não vê esta seção)
+            if (currentUser && currentUser.tipo === 'vendedor') {
+                return; // Vendedores não devem ver a lista de vendedores
+            }
             
             vendedoresData.forEach(vendedor => {
                 const vendasVendedor = vendas.filter(v => v.vendedor === vendedor.nome);
@@ -2197,6 +2585,11 @@
             if (!tbody) return;
             
             tbody.innerHTML = '';
+            
+            // Filtrar vendedores baseado no usuário (admin vê todos, vendedor não vê esta seção)
+            if (currentUser && currentUser.tipo === 'vendedor') {
+                return; // Vendedores não devem ver a tabela de vendedores
+            }
             
             vendedoresData.forEach(vendedor => {
                 const vendasVendedor = vendas.filter(v => v.vendedor === vendedor.nome);
@@ -2404,12 +2797,14 @@
                             indicacao.lastUpdated = Date.now();
                             indicacao.updatedBy = currentUser.nome;
                             
-                            // Atualizar no Firebase
-                            await database.ref(`indicacoes/${editId}`).update({
-                                ...indicacaoData,
-                                lastUpdated: indicacao.lastUpdated,
-                                updatedBy: indicacao.updatedBy
-                            });
+                            // Atualizar no Firebase se disponível
+                            if (firebaseInitialized && database) {
+                                await database.ref(`indicacoes/${editId}`).update({
+                                    ...indicacaoData,
+                                    lastUpdated: indicacao.lastUpdated,
+                                    updatedBy: indicacao.updatedBy
+                                });
+                            }
                             
                             createRealtimeNotification('success', 
                                 'Indicação Atualizada', 
@@ -2428,8 +2823,10 @@
                             timestamp: Date.now()
                         };
                         
-                        // Salvar no Firebase
-                        await database.ref(`indicacoes/${novaIndicacao.id}`).set(novaIndicacao);
+                        // Salvar no Firebase se disponível
+                        if (firebaseInitialized && database) {
+                            await database.ref(`indicacoes/${novaIndicacao.id}`).set(novaIndicacao);
+                        }
                         
                         // Encontrar ID do vendedor
                         const vendedorUser = usuarios.find(u => u.nome === novaIndicacao.vendedor);
@@ -2511,8 +2908,10 @@
                             createdBy: currentUser.nome
                         };
                         
-                        // Salvar no Firebase
-                        await database.ref(`vendas/${novaVenda.id}`).set(novaVenda);
+                        // Salvar no Firebase se disponível
+                        if (firebaseInitialized && database) {
+                            await database.ref(`vendas/${novaVenda.id}`).set(novaVenda);
+                        }
                         
                         // Encontrar ID do vendedor
                         const vendedorUser = usuarios.find(u => u.nome === novaVenda.vendedor);
@@ -2607,17 +3006,30 @@
                 );
                 
                 if (confirmResult) {
-                    indicacoes = indicacoes.filter(i => i.id !== id);
-                    saveData();
-                    
-                    createRealtimeNotification('warning', 
-                        'Indicação Excluída', 
-                        `Indicação de ${indicacao.nome} foi removida do sistema`
-                    );
-                    
-                    updateIndicacoesTable();
-                    updateKanbanIndicacoes();
-                    updateDashboard();
+                    try {
+                        // Remover do Firebase PRIMEIRO
+                        if (firebaseInitialized && database) {
+                            await database.ref(`indicacoes/${id}`).remove();
+                            console.log('✅ Indicação removida do Firebase:', id);
+                        }
+                        
+                        // Depois remover do array local
+                        indicacoes = indicacoes.filter(i => i.id != id);
+                        saveData();
+                        
+                        createRealtimeNotification('warning', 
+                            'Indicação Excluída', 
+                            `Indicação de ${indicacao.nome} foi removida permanentemente`
+                        );
+                        
+                        updateIndicacoesTable();
+                        updateKanbanIndicacoes();
+                        updateDashboard();
+                        
+                    } catch (error) {
+                        console.error('Erro ao excluir indicação:', error);
+                        createRealtimeNotification('error', 'Erro', 'Não foi possível excluir a indicação');
+                    }
                 }
             }
         }
@@ -2666,24 +3078,42 @@
                 );
                 
                 if (confirmResult) {
-                    vendas = vendas.filter(v => v.id !== id);
-                    saveData();
-                    
-                    createRealtimeNotification('warning', 
-                        'Venda Excluída', 
-                        `Venda de ${venda.cliente} foi removida do sistema`
-                    );
-                    
-                    updateVendasTable();
-                    updateKanbanVendas();
-                    updateDashboard();
-                    updateVendedoresList();
+                    try {
+                        // Remover do Firebase PRIMEIRO
+                        if (firebaseInitialized && database) {
+                            await database.ref(`vendas/${id}`).remove();
+                            console.log('✅ Venda removida do Firebase:', id);
+                        }
+                        
+                        // Depois remover do array local
+                        vendas = vendas.filter(v => v.id != id);
+                        saveData();
+                        
+                        createRealtimeNotification('warning', 
+                            'Venda Excluída', 
+                            `Venda de ${venda.cliente} foi removida permanentemente`
+                        );
+                        
+                        updateVendasTable();
+                        updateKanbanVendas();
+                        updateDashboard();
+                        updateVendedoresList();
+                        
+                    } catch (error) {
+                        console.error('Erro ao excluir venda:', error);
+                        createRealtimeNotification('error', 'Erro', 'Não foi possível excluir a venda');
+                    }
                 }
             }
         }
 
         // ===== SISTEMA DE NOTIFICAÇÕES EM TEMPO REAL =====
         async function sendRealtimeNotification(userId, notificationData) {
+            if (!firebaseInitialized || !database) {
+                console.log('⚠️ Firebase não disponível para notificações');
+                return;
+            }
+
             try {
                 const notification = {
                     ...notificationData,
@@ -3227,6 +3657,13 @@
                     return;
                 }
                 
+                // Verificar se já existe uma venda convertida desta indicação
+                const vendaExistente = vendas.find(v => v.convertidaDe === id);
+                if (vendaExistente) {
+                    createRealtimeNotification('warning', 'Já Convertida', `${indicacao.nome} já foi convertido em venda anteriormente`);
+                    return;
+                }
+                
                 const confirmResult = await customConfirm(
                     'Converter Indicação',
                     `Tem certeza que deseja converter ${indicacao.nome} em venda?`
@@ -3236,70 +3673,91 @@
                 
                 console.log('✅ Indicação encontrada:', indicacao);
                 
-                // Criar nova venda baseada na indicação
+                // Criar nova venda baseada na indicação com ID único
                 const novaVenda = {
-                    id: Date.now(),
+                    id: Date.now() + Math.floor(Math.random() * 1000), // ID mais único
                     cliente: indicacao.nome,
                     produto: 'Seguro Auto', // Produto padrão
                     empresa: 'A definir',
                     vendedor: indicacao.vendedor,
                     premioLiquido: 0, // Será preenchido depois
+                    percentualComissao: 15, // Padrão
+                    comissaoTotal: 0,
+                    comissaoVendedor: 0,
                     status: 'Fazer Vistoria',
                     data: new Date().toLocaleDateString('pt-BR'),
                     timestamp: Date.now(),
                     createdBy: currentUser ? currentUser.nome : 'Sistema',
                     convertidaDe: indicacao.id,
                     telefone: indicacao.telefone,
-                    veiculo: indicacao.veiculo
+                    veiculo: indicacao.veiculo,
+                    leadSuhai: false
                 };
                 
                 console.log('💾 Salvando nova venda:', novaVenda);
                 
-                // Salvar nova venda no Firebase
-                if (isOnline) {
-                    await database.ref(`vendas/${novaVenda.id}`).set(novaVenda);
-                    console.log('✅ Venda salva no Firebase');
+                // OPERAÇÃO ATÔMICA: Firebase primeiro, depois local
+                try {
+                    // 1. Salvar nova venda no Firebase PRIMEIRO
+                    if (firebaseInitialized && database) {
+                        await database.ref(`vendas/${novaVenda.id}`).set(novaVenda);
+                        console.log('✅ Venda salva no Firebase');
+                    }
+                    
+                    // 2. Remover indicação do Firebase SEGUNDO
+                    if (firebaseInitialized && database) {
+                        await database.ref(`indicacoes/${indicacao.id}`).remove();
+                        console.log('✅ Indicação removida do Firebase');
+                    }
+                    
+                    // 3. Atualizar arrays locais APENAS após Firebase confirmar
+                    // NÃO atualizar arrays locais aqui - deixar os listeners do Firebase fazerem isso
+                    // Isso evita duplicação porque os listeners já vão detectar as mudanças
+                    
+                    console.log('🔄 Operação Firebase concluída, aguardando sincronização automática...');
+                    
+                    // Salvar localmente como backup
+                    saveData();
+                    
+                    // Notificar vendedor
+                    const vendedorUser = usuarios.find(u => u.nome === indicacao.vendedor);
+                    if (vendedorUser && firebaseInitialized) {
+                        await sendRealtimeNotification(vendedorUser.id, {
+                            tipo: 'success',
+                            titulo: '🎯 Indicação Convertida!',
+                            mensagem: `${indicacao.nome} foi convertido em venda por ${currentUser ? currentUser.nome : 'Sistema'}`,
+                            dados: novaVenda
+                        });
+                    }
+                    
+                    createRealtimeNotification('success', 
+                        'Indicação Convertida', 
+                        `${indicacao.nome} foi convertido em venda e movido para Kanban Vendas - Fazer Vistoria!`
+                    );
+                    
+                    console.log('✅ Conversão concluída com sucesso!');
+                    
+                } catch (firebaseError) {
+                    console.error('❌ Erro no Firebase durante conversão:', firebaseError);
+                    
+                    // Fallback: atualizar localmente se Firebase falhar
+                    vendas.push(novaVenda);
+                    indicacoes = indicacoes.filter(i => i.id !== id);
+                    
+                    // Atualizar interfaces manualmente apenas no fallback
+                    updateKanbanIndicacoes();
+                    updateKanbanVendas();
+                    updateIndicacoesTable();
+                    updateVendasTable();
+                    updateDashboard();
+                    
+                    saveData();
+                    
+                    createRealtimeNotification('warning', 
+                        'Convertido Offline', 
+                        `${indicacao.nome} foi convertido localmente. Será sincronizado quando online.`
+                    );
                 }
-                
-                // Remover indicação do Firebase
-                if (isOnline) {
-                    await database.ref(`indicacoes/${indicacao.id}`).remove();
-                    console.log('✅ Indicação removida do Firebase');
-                }
-                
-                // Atualizar arrays locais
-                vendas.push(novaVenda);
-                indicacoes = indicacoes.filter(i => i.id !== id);
-                
-                console.log('🔄 Atualizando interfaces...');
-                
-                // Atualizar interfaces
-                updateKanbanIndicacoes();
-                updateKanbanVendas();
-                updateIndicacoesTable();
-                updateVendasTable();
-                updateDashboard();
-                
-                // Salvar localmente
-                saveData();
-                
-                // Notificar vendedor
-                const vendedorUser = usuarios.find(u => u.nome === indicacao.vendedor);
-                if (vendedorUser && isOnline) {
-                    await sendRealtimeNotification(vendedorUser.id, {
-                        tipo: 'success',
-                        titulo: '🎯 Indicação Convertida!',
-                        mensagem: `${indicacao.nome} foi convertido em venda por ${currentUser ? currentUser.nome : 'Sistema'}`,
-                        dados: novaVenda
-                    });
-                }
-                
-                createRealtimeNotification('success', 
-                    'Indicação Convertida', 
-                    `${indicacao.nome} foi convertido em venda e movido para Kanban Vendas - Fazer Vistoria!`
-                );
-                
-                console.log('✅ Conversão concluída com sucesso!');
                 
             } catch (error) {
                 console.error('❌ Erro ao converter indicação:', error);
@@ -3696,9 +4154,12 @@
             
             tbody.innerHTML = '';
             
+            // Filtrar comissões baseado no usuário
+            const comissoesFiltradas = filterDataByUser(comissoes, 'comissoes');
+            
             // Calcular totais
-            const totalComissao = comissoes.reduce((sum, c) => sum + c.comissaoTotal, 0);
-            const totalVendas = comissoes.length;
+            const totalComissao = comissoesFiltradas.reduce((sum, c) => sum + c.comissaoTotal, 0);
+            const totalVendas = comissoesFiltradas.length;
             
             // Atualizar elementos de resumo
             if (countElement) {
@@ -3712,7 +4173,7 @@
             }
             
             // Preencher tabela
-            comissoes.forEach(comissao => {
+            comissoesFiltradas.forEach(comissao => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-700';
                 row.innerHTML = `
@@ -3729,7 +4190,7 @@
                 tbody.appendChild(row);
             });
             
-            if (comissoes.length === 0) {
+            if (comissoesFiltradas.length === 0) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td colspan="6" class="px-6 py-8 text-center text-gray-400">
@@ -4266,7 +4727,218 @@
             }
         }
 
+        // ===== FUNÇÃO DE RELATÓRIOS DOS VENDEDORES =====
+        function updateRelatoriosVendedores() {
+            const grid = document.getElementById('relatoriosVendedoresGrid');
+            const totalVendedoresElement = document.getElementById('totalVendedoresRelatorio');
+            const totalVendasMesElement = document.getElementById('totalVendasMesRelatorio');
+            const premioTotalMesElement = document.getElementById('premioTotalMesRelatorio');
+            const comissaoTotalMesElement = document.getElementById('comissaoTotalMesRelatorio');
+            const vendedoresAtivosElement = document.getElementById('vendedoresAtivosCount');
+            
+            if (!grid) return;
+            
+            // Verificar se usuário tem acesso aos relatórios
+            if (currentUser && currentUser.tipo === 'vendedor') {
+                return; // Vendedores não têm acesso aos relatórios
+            }
+            
+            grid.innerHTML = '';
+            
+            // Obter todos os vendedores (tanto cadastrados quanto do sistema de usuários)
+            const todosVendedores = usuarios.filter(u => u.tipo === 'vendedor');
+            
+            // Calcular totais gerais
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            let totalVendasMes = 0;
+            let premioTotalMes = 0;
+            let comissaoTotalMes = 0;
+            
+            // Atualizar elementos de resumo
+            if (totalVendedoresElement) {
+                totalVendedoresElement.textContent = todosVendedores.length;
+            }
+            if (vendedoresAtivosElement) {
+                vendedoresAtivosElement.textContent = `${todosVendedores.length} vendedores ativos`;
+            }
+            
+            // Criar card para cada vendedor
+            todosVendedores.forEach(vendedor => {
+                // Buscar dados do vendedor cadastrado
+                const vendedorData = vendedoresData.find(v => v.usuario === vendedor.login) || {
+                    nome: vendedor.nome,
+                    usuario: vendedor.login,
+                    metaMes: 0,
+                    comissao: 10
+                };
+                
+                // Calcular vendas do mês atual
+                const vendasDoMes = vendas.filter(venda => {
+                    const vendaDate = new Date(venda.data.split('/').reverse().join('-'));
+                    return vendaDate.getMonth() === currentMonth && 
+                           vendaDate.getFullYear() === currentYear &&
+                           venda.vendedor === vendedor.nome;
+                });
+                
+                const quantidadeVendas = vendasDoMes.length;
+                const premioLiquidoMes = vendasDoMes.reduce((sum, v) => sum + v.premioLiquido, 0);
+                const comissaoRealizadaMes = vendasDoMes.reduce((sum, v) => {
+                    return sum + (v.premioLiquido * (vendedorData.comissao / 100));
+                }, 0);
+                
+                // Somar aos totais gerais
+                totalVendasMes += quantidadeVendas;
+                premioTotalMes += premioLiquidoMes;
+                comissaoTotalMes += comissaoRealizadaMes;
+                
+                // Calcular percentual da meta
+                const percentualMeta = vendedorData.metaMes > 0 ? (premioLiquidoMes / vendedorData.metaMes * 100) : 0;
+                
+                // Determinar cor baseada na performance
+                let corCard = 'from-gray-700 to-gray-800';
+                let corBorda = 'border-gray-600';
+                let iconeStatus = 'fa-user';
+                let corIcone = 'bg-gray-600';
+                
+                if (percentualMeta >= 100) {
+                    corCard = 'from-green-800 to-emerald-800';
+                    corBorda = 'border-green-500';
+                    iconeStatus = 'fa-trophy';
+                    corIcone = 'bg-green-600';
+                } else if (percentualMeta >= 75) {
+                    corCard = 'from-blue-800 to-indigo-800';
+                    corBorda = 'border-blue-500';
+                    iconeStatus = 'fa-star';
+                    corIcone = 'bg-blue-600';
+                } else if (percentualMeta >= 50) {
+                    corCard = 'from-yellow-800 to-orange-800';
+                    corBorda = 'border-yellow-500';
+                    iconeStatus = 'fa-chart-line';
+                    corIcone = 'bg-yellow-600';
+                } else if (quantidadeVendas > 0) {
+                    corCard = 'from-purple-800 to-pink-800';
+                    corBorda = 'border-purple-500';
+                    iconeStatus = 'fa-arrow-up';
+                    corIcone = 'bg-purple-600';
+                }
+                
+                const card = document.createElement('div');
+                card.className = `bg-gradient-to-br ${corCard} rounded-xl border ${corBorda} p-6 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 hover:-translate-y-1`;
+                
+                card.innerHTML = `
+                    <!-- Header do Card -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="${corIcone} w-12 h-12 rounded-full flex items-center justify-center shadow-lg">
+                                <i class="fas ${iconeStatus} text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">${vendedor.nome}</h3>
+                                <p class="text-gray-300 text-sm">@${vendedor.login}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-white">${quantidadeVendas}</div>
+                            <div class="text-xs text-gray-300">vendas</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Métricas Principais -->
+                    <div class="space-y-4 mb-6">
+                        <!-- Meta de Vendas -->
+                        <div class="bg-black bg-opacity-20 rounded-lg p-4 border border-gray-600">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gray-300 text-sm font-medium">Meta de Vendas</span>
+                                <i class="fas fa-target text-yellow-400"></i>
+                            </div>
+                            <div class="text-xl font-bold text-white">R$ ${vendedorData.metaMes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                        </div>
+                        
+                        <!-- Comissão Realizada -->
+                        <div class="bg-black bg-opacity-20 rounded-lg p-4 border border-gray-600">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gray-300 text-sm font-medium">Comissão Realizada</span>
+                                <i class="fas fa-percentage text-green-400"></i>
+                            </div>
+                            <div class="text-xl font-bold text-green-400">R$ ${comissaoRealizadaMes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                            <div class="text-xs text-gray-400 mt-1">${vendedorData.comissao}% sobre prêmio líquido</div>
+                        </div>
+                        
+                        <!-- Prêmio Líquido Realizado -->
+                        <div class="bg-black bg-opacity-20 rounded-lg p-4 border border-gray-600">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gray-300 text-sm font-medium">Prêmio Líquido Mês</span>
+                                <i class="fas fa-dollar-sign text-blue-400"></i>
+                            </div>
+                            <div class="text-xl font-bold text-blue-400">R$ ${premioLiquidoMes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Barra de Progresso da Meta -->
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-300">Progresso da Meta</span>
+                            <span class="text-white font-medium">${percentualMeta.toFixed(1)}%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+                            <div class="h-3 rounded-full transition-all duration-500 ${
+                                percentualMeta >= 100 ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+                                percentualMeta >= 75 ? 'bg-gradient-to-r from-blue-500 to-indigo-500' :
+                                percentualMeta >= 50 ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
+                                'bg-gradient-to-r from-red-500 to-pink-500'
+                            }" style="width: ${Math.min(percentualMeta, 100)}%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Badge -->
+                    <div class="flex justify-center">
+                        <span class="px-3 py-1 text-xs rounded-full font-medium ${
+                            percentualMeta >= 100 ? 'bg-green-600 text-white' :
+                            percentualMeta >= 75 ? 'bg-blue-600 text-white' :
+                            percentualMeta >= 50 ? 'bg-yellow-600 text-white' :
+                            quantidadeVendas > 0 ? 'bg-purple-600 text-white' :
+                            'bg-gray-600 text-gray-300'
+                        }">
+                            ${
+                                percentualMeta >= 100 ? '🏆 Meta Atingida!' :
+                                percentualMeta >= 75 ? '⭐ Quase lá!' :
+                                percentualMeta >= 50 ? '📈 No caminho certo' :
+                                quantidadeVendas > 0 ? '🚀 Começando bem' :
+                                '💪 Vamos começar!'
+                            }
+                        </span>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+            
+            // Atualizar totais gerais
+            if (totalVendasMesElement) {
+                totalVendasMesElement.textContent = totalVendasMes;
+            }
+            if (premioTotalMesElement) {
+                premioTotalMesElement.textContent = `R$ ${premioTotalMes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            }
+            if (comissaoTotalMesElement) {
+                comissaoTotalMesElement.textContent = `R$ ${comissaoTotalMes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            }
+            
+            // Se não há vendedores, mostrar mensagem
+            if (todosVendedores.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-users text-6xl text-gray-600 mb-4 block"></i>
+                        <h3 class="text-xl font-bold text-gray-400 mb-2">Nenhum vendedor encontrado</h3>
+                        <p class="text-gray-500">Cadastre vendedores na seção "Vendedores" para ver os relatórios</p>
+                    </div>
+                `;
+            }
+        }
+
         // Dados já são carregados na inicialização do sistema
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a9d78d809cf1c7',t:'MTc1NzExODQ2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97aa529046bdc1b6',t:'MTc1NzEyMzQ5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
