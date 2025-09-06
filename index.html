@@ -347,6 +347,7 @@
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Telefone</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Veículo</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendedor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Observações</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Status</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Data</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Ações</th>
@@ -376,10 +377,13 @@
                                 <thead class="bg-gray-700">
                                     <tr>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Cliente</th>
-                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Produto</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Empresa</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Produto</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendedor</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Prêmio Líquido</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">% Comissão</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Comissão Total</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Comissão Vendedor</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Status</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Data</th>
                                         <th class="px-6 py-4 text-left text-gray-300 font-medium">Ações</th>
@@ -437,6 +441,12 @@
                                     <label class="block text-gray-300 text-sm font-medium mb-2">% de Comissão *</label>
                                     <input type="number" step="0.01" min="0" max="100" id="vendedorComissao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="0,00" required>
                                 </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Vendas do Mês (Automático)</label>
+                                    <input type="number" id="vendedorVendasMes" class="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-gray-300 cursor-not-allowed" placeholder="0" readonly>
+                                    <p class="text-gray-400 text-xs mt-1">Este campo é atualizado automaticamente e zera todo mês</p>
+                                </div>
                             </div>
                             
                             <div class="flex space-x-4 pt-4">
@@ -482,8 +492,61 @@
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Comissão</h2>
                         <p class="text-gray-400">Controle de comissões dos vendedores</p>
                     </div>
+                    
+                    <!-- Resumo de Comissões -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-gradient-to-br from-green-900 to-blue-900 rounded-xl border border-green-600 p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-green-600 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-dollar-sign text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">Total de Comissões</h3>
+                                    <p class="text-green-200 text-sm">Vendas com pagamento efetuado</p>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-white" id="totalComissaoGeral">R$ 0,00</div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-purple-900 to-pink-900 rounded-xl border border-purple-600 p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-purple-600 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-chart-bar text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">Total de Vendas</h3>
+                                    <p class="text-purple-200 text-sm">Pagamentos efetuados</p>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-white" id="totalVendasComissao">0</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tabela de Comissões -->
                     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <p class="text-gray-400">Seção em desenvolvimento...</p>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Lista de Comissões</h3>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-money-bill-wave text-green-500"></i>
+                                <span class="text-green-400 font-medium" id="comissaoCount">0 comissões</span>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Nome Completo</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Empresa</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Vendedor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Comissão Total</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Comissão Vendedor</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Data</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="comissaoTableBody" class="divide-y divide-gray-700"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -492,8 +555,123 @@
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Cancelamentos</h2>
                         <p class="text-gray-400">Gerencie cancelamentos de apólices</p>
                     </div>
+
+                    <!-- Formulário de Cancelamento -->
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Registrar Cancelamento</h3>
+                            <button onclick="resetCancelamentoForm()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                                <i class="fas fa-plus mr-2"></i>Novo Cancelamento
+                            </button>
+                        </div>
+                        
+                        <form id="cancelamentoForm" class="space-y-4">
+                            <input type="hidden" id="cancelamentoId" value="">
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Nome Completo *</label>
+                                    <input type="text" id="cancelamentoNome" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500" placeholder="Digite o nome completo" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Empresa *</label>
+                                    <select id="cancelamentoEmpresa" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500" required>
+                                        <option value="">Selecione a empresa</option>
+                                        <option value="Porto Seguro">Porto Seguro</option>
+                                        <option value="Bradesco">Bradesco</option>
+                                        <option value="Azul Seguros">Azul Seguros</option>
+                                        <option value="Suhai">Suhai</option>
+                                        <option value="Allianz">Allianz</option>
+                                        <option value="Tokio Marine">Tokio Marine</option>
+                                        <option value="HDI">HDI</option>
+                                        <option value="Mapfre">Mapfre</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Valor do Estorno (R$) *</label>
+                                    <input type="number" step="0.01" min="0" id="cancelamentoValor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500" placeholder="0,00" required>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-4 pt-4">
+                                <button type="button" onclick="resetCancelamentoForm()" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition duration-200">
+                                    <i class="fas fa-times mr-2"></i>Cancelar
+                                </button>
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition duration-200">
+                                    <i class="fas fa-save mr-2"></i>Registrar Cancelamento
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Caixa de Resumo Sofisticada -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-gradient-to-br from-red-900 to-pink-900 rounded-xl border border-red-600 p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-red-600 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-dollar-sign text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">Total de Estornos</h3>
+                                    <p class="text-red-200 text-sm">Valor total cancelado</p>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-white" id="totalEstornos">R$ 0,00</div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-orange-900 to-red-900 rounded-xl border border-orange-600 p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-orange-600 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-times-circle text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">Cancelamentos</h3>
+                                    <p class="text-orange-200 text-sm">Quantidade total</p>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-white" id="totalCancelamentos">0</div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-yellow-900 to-orange-900 rounded-xl border border-yellow-600 p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-yellow-600 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-chart-bar text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">Média por Cancelamento</h3>
+                                    <p class="text-yellow-200 text-sm">Valor médio</p>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-white" id="mediaCancelamentos">R$ 0,00</div>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Cancelamentos -->
                     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <p class="text-gray-400">Seção em desenvolvimento...</p>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Lista de Cancelamentos</h3>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-times-circle text-red-500"></i>
+                                <span class="text-red-400 font-medium" id="cancelamentosCount">0 cancelamentos</span>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Nome Completo</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Empresa</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Valor do Estorno</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Data</th>
+                                        <th class="px-6 py-4 text-left text-gray-300 font-medium">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cancelamentosTableBody" class="divide-y divide-gray-700"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -512,8 +690,55 @@
                         <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Links Úteis</h2>
                         <p class="text-gray-400">Links importantes para o trabalho</p>
                     </div>
+
+                    <!-- Formulário de Links -->
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Adicionar Novo Link</h3>
+                            <button onclick="resetLinkForm()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                                <i class="fas fa-plus mr-2"></i>Novo Link
+                            </button>
+                        </div>
+                        
+                        <form id="linkForm" class="space-y-4">
+                            <input type="hidden" id="linkId" value="">
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Nome do Site *</label>
+                                    <input type="text" id="linkNome" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="Ex: Portal da Seguradora" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">URL *</label>
+                                    <input type="url" id="linkUrl" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="https://exemplo.com" required>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-4 pt-4">
+                                <button type="button" onclick="resetLinkForm()" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition duration-200">
+                                    <i class="fas fa-times mr-2"></i>Cancelar
+                                </button>
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-200">
+                                    <i class="fas fa-save mr-2"></i>Salvar Link
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Grid de Links -->
                     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <p class="text-gray-400">Seção em desenvolvimento...</p>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Links Salvos</h3>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-link text-blue-500"></i>
+                                <span class="text-blue-400 font-medium" id="linksCount">0 links</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="linksGrid">
+                            <!-- Links serão inseridos aqui -->
+                        </div>
                     </div>
                 </div>
 
@@ -746,87 +971,132 @@
 
     <!-- Modals -->
     <div id="novaIndicacaoModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 border border-gray-700">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-4xl mx-4 border border-gray-700 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-white">Nova Indicação</h3>
                 <button onclick="closeModal('novaIndicacaoModal')" class="text-gray-400 hover:text-white">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <form id="indicacaoForm" class="space-y-4">
-                <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-2">Nome do Cliente</label>
-                    <input type="text" id="indicacaoNome" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+            <form id="indicacaoForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Nome do Cliente *</label>
+                        <input type="text" id="indicacaoNome" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Telefone *</label>
+                        <input type="tel" id="indicacaoTelefone" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="(11) 99999-9999" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Veículo *</label>
+                        <input type="text" id="indicacaoVeiculo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="Ex: Honda Civic 2020" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Vendedor *</label>
+                        <select id="indicacaoVendedor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                            <option value="">Selecione um vendedor</option>
+                        </select>
+                    </div>
                 </div>
+                
                 <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-2">Telefone</label>
-                    <input type="tel" id="indicacaoTelefone" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Observações</label>
+                    <textarea id="indicacaoObservacoes" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" rows="4" placeholder="Digite observações sobre o cliente, preferências, histórico de contato, etc..."></textarea>
+                    <p class="text-gray-400 text-xs mt-1">Informações adicionais que podem ajudar no atendimento</p>
                 </div>
-                <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-2">Veículo</label>
-                    <input type="text" id="indicacaoVeiculo" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
-                </div>
-                <div>
-                    <label class="block text-gray-300 text-sm font-medium mb-2">Vendedor</label>
-                    <select id="indicacaoVendedor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
-                        <option value="">Selecione um vendedor</option>
-                    </select>
-                </div>
-                <div class="flex space-x-4">
-                    <button type="button" onclick="closeModal('novaIndicacaoModal')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg transition duration-200">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition duration-200"><i class="fas fa-plus mr-2"></i>Adicionar</button>
+                
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="closeModal('novaIndicacaoModal')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg transition duration-200">
+                        <i class="fas fa-times mr-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition duration-200">
+                        <i class="fas fa-plus mr-2"></i>Adicionar Indicação
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
     <div id="novaVendaModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-2xl mx-4 border border-gray-700 max-h-[90vh] overflow-y-auto">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-4xl mx-4 border border-gray-700 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-white">Nova Venda</h3>
                 <button onclick="closeModal('novaVendaModal')" class="text-gray-400 hover:text-white">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <form id="vendaForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form id="vendaForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-gray-300 text-sm font-medium mb-2">Nome Completo</label>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Nome Completo *</label>
                         <input type="text" id="vendaCliente" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
                     </div>
                     <div>
-                        <label class="block text-gray-300 text-sm font-medium mb-2">Produto</label>
-                        <select id="vendaProduto" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
-                            <option value="">Selecione um produto</option>
-                            <option value="Seguro Auto">Seguro Auto</option>
-                            <option value="Seguro Residencial">Seguro Residencial</option>
-                            <option value="Seguro Vida">Seguro Vida</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-gray-300 text-sm font-medium mb-2">Empresa</label>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Empresa *</label>
                         <select id="vendaEmpresa" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
                             <option value="">Selecione uma empresa</option>
                             <option value="Porto Seguro">Porto Seguro</option>
                             <option value="Bradesco">Bradesco</option>
                             <option value="Azul Seguros">Azul Seguros</option>
                             <option value="Suhai">Suhai</option>
+                            <option value="Allianz">Allianz</option>
+                            <option value="Tokio Marine">Tokio Marine</option>
+                            <option value="HDI">HDI</option>
+                            <option value="Mapfre">Mapfre</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-gray-300 text-sm font-medium mb-2">Vendedor</label>
-                        <select id="vendaVendedor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Produto *</label>
+                        <select id="vendaProduto" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                            <option value="">Selecione um produto</option>
+                            <option value="Seguro Auto">Seguro Auto</option>
+                            <option value="Seguro Residencial">Seguro Residencial</option>
+                            <option value="Seguro Vida">Seguro Vida</option>
+                            <option value="Seguro Empresarial">Seguro Empresarial</option>
+                            <option value="Seguro Viagem">Seguro Viagem</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Vendedor *</label>
+                        <select id="vendaVendedor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" onchange="updateVendedorComissao()" required>
                             <option value="">Selecione um vendedor</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-gray-300 text-sm font-medium mb-2">Prêmio Líquido (R$)</label>
-                        <input type="number" step="0.01" id="vendaPremio" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Prêmio Líquido (R$) *</label>
+                        <input type="number" step="0.01" min="0" id="vendaPremio" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" oninput="calculateComissoes()" required>
                     </div>
                 </div>
-                <div class="flex space-x-4 mt-6">
-                    <button type="button" onclick="closeModal('novaVendaModal')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg transition duration-200">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition duration-200"><i class="fas fa-plus mr-2"></i>Adicionar</button>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">% de Comissão da Venda *</label>
+                        <input type="number" step="0.01" min="0" max="100" id="vendaPercentualComissao" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" oninput="calculateComissoes()" placeholder="15.00" required>
+                        <p class="text-gray-400 text-xs mt-1">% total da comissão da empresa</p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Comissão Total (R$)</label>
+                        <input type="number" step="0.01" id="vendaComissaoTotal" class="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-gray-300 cursor-not-allowed" readonly>
+                        <p class="text-gray-400 text-xs mt-1">Calculado automaticamente</p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Comissão Vendedor (R$)</label>
+                        <input type="number" step="0.01" id="vendaComissaoVendedor" class="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-gray-300 cursor-not-allowed" readonly>
+                        <p class="text-gray-400 text-xs mt-1" id="vendaComissaoVendedorInfo">Baseado no % do vendedor</p>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="closeModal('novaVendaModal')" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg transition duration-200">
+                        <i class="fas fa-times mr-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition duration-200">
+                        <i class="fas fa-plus mr-2"></i>Adicionar Venda
+                    </button>
                 </div>
             </form>
         </div>
@@ -900,7 +1170,7 @@
         let heartbeatInterval = null;
         let dataListeners = {};
 
-        // Dados locais (cache)
+        // Dados locais (cache) - Inicializar com arrays vazios
         let indicacoes = [];
         let vendas = [];
         let vendedoresData = [];
@@ -908,6 +1178,9 @@
         let usuariosOnline = {};
         let leadsSuhai = [];
         let leadsSemSucesso = [];
+        let comissoes = [];
+        let cancelamentos = [];
+        let linksUteis = [];
 
         const usuarios = [
             { id: 1, nome: 'Admin', login: 'admin', senha: 'admin123', tipo: 'admin' },
@@ -926,24 +1199,64 @@
         // ===== SISTEMA DE CONEXÃO EM TEMPO REAL =====
         class RealtimeSystem {
             constructor() {
-                this.connectedRef = database.ref('.info/connected');
+                this.connectedRef = null;
                 this.userPresenceRef = null;
+                this.connectionRetryCount = 0;
+                this.maxRetries = 3;
                 this.setupConnectionMonitoring();
             }
 
             setupConnectionMonitoring() {
-                this.connectedRef.on('value', (snapshot) => {
-                    if (snapshot.val() === true) {
-                        console.log('🟢 Conectado ao Firebase');
-                        isOnline = true;
-                        this.updateConnectionStatus(true);
-                        this.syncLocalData();
-                    } else {
-                        console.log('🔴 Desconectado do Firebase');
+                try {
+                    this.connectedRef = database.ref('.info/connected');
+                    this.connectedRef.on('value', (snapshot) => {
+                        if (snapshot.val() === true) {
+                            console.log('🟢 Conectado ao Firebase');
+                            isOnline = true;
+                            this.connectionRetryCount = 0;
+                            this.updateConnectionStatus(true);
+                            this.syncLocalData();
+                        } else {
+                            console.log('🔴 Desconectado do Firebase');
+                            isOnline = false;
+                            this.updateConnectionStatus(false);
+                            this.handleDisconnection();
+                        }
+                    }, (error) => {
+                        console.error('❌ Erro na conexão Firebase:', error);
                         isOnline = false;
                         this.updateConnectionStatus(false);
-                    }
-                });
+                        this.retryConnection();
+                    });
+                } catch (error) {
+                    console.error('❌ Erro ao configurar monitoramento de conexão:', error);
+                    isOnline = false;
+                    this.updateConnectionStatus(false);
+                }
+            }
+
+            handleDisconnection() {
+                // Trabalhar offline
+                console.log('⚠️ Trabalhando offline - dados salvos localmente');
+                createRealtimeNotification('warning', 'Modo Offline', 'Trabalhando offline. Dados serão sincronizados quando a conexão retornar.');
+            }
+
+            retryConnection() {
+                if (this.connectionRetryCount < this.maxRetries) {
+                    this.connectionRetryCount++;
+                    console.log(`🔄 Tentativa de reconexão ${this.connectionRetryCount}/${this.maxRetries}`);
+                    
+                    setTimeout(() => {
+                        try {
+                            this.setupConnectionMonitoring();
+                        } catch (error) {
+                            console.error('❌ Erro na tentativa de reconexão:', error);
+                        }
+                    }, 5000 * this.connectionRetryCount); // Delay progressivo
+                } else {
+                    console.log('❌ Máximo de tentativas de reconexão atingido. Trabalhando offline.');
+                    createRealtimeNotification('error', 'Conexão Perdida', 'Não foi possível conectar ao servidor. Trabalhando offline.');
+                }
             }
 
             updateConnectionStatus(connected) {
@@ -1014,6 +1327,9 @@
                 this.syncNotificacoes();
                 this.syncLeadsSuhai();
                 this.syncLeadsSemSucesso();
+                this.syncComissoes();
+                this.syncCancelamentos();
+                this.syncLinksUteis();
             }
 
             async syncIndicacoes() {
@@ -1155,6 +1471,82 @@
                 }
             }
 
+            async syncComissoes() {
+                try {
+                    database.ref('comissoes').on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            comissoes = Object.values(data);
+                            updateComissaoTable();
+                        }
+                    });
+                } catch (error) {
+                    console.error('Erro ao sincronizar comissões:', error);
+                }
+            }
+
+            async syncCancelamentos() {
+                try {
+                    database.ref('cancelamentos').on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            cancelamentos = Object.values(data);
+                            updateCancelamentosTable();
+                        }
+                    });
+                } catch (error) {
+                    console.error('Erro ao sincronizar cancelamentos:', error);
+                }
+            }
+
+            async syncLinksUteis() {
+                try {
+                    // Carregar dados locais primeiro
+                    const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
+                    if (localData.linksUteis && localData.linksUteis.length > 0) {
+                        console.log('📤 Sincronizando links locais para Firebase...');
+                        for (const link of localData.linksUteis) {
+                            try {
+                                await database.ref(`linksUteis/${link.id}`).set(link);
+                            } catch (syncError) {
+                                console.error('Erro ao sincronizar link individual:', syncError);
+                            }
+                        }
+                    }
+
+                    // Escutar mudanças em tempo real
+                    database.ref('linksUteis').on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            linksUteis = Object.values(data);
+                            console.log('📥 Links carregados do Firebase:', linksUteis.length);
+                        } else {
+                            linksUteis = [];
+                            console.log('📥 Nenhum link encontrado no Firebase');
+                        }
+                        updateLinksGrid();
+                    }, (error) => {
+                        console.error('Erro ao escutar mudanças nos links:', error);
+                        // Carregar dados locais como fallback
+                        const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
+                        linksUteis = localData.linksUteis || [];
+                        updateLinksGrid();
+                    });
+                } catch (error) {
+                    console.error('Erro ao sincronizar links úteis:', error);
+                    // Carregar dados locais como fallback
+                    try {
+                        const localData = JSON.parse(localStorage.getItem('vmSegurosData') || '{}');
+                        linksUteis = localData.linksUteis || [];
+                        console.log('📱 Carregando links do cache local:', linksUteis.length);
+                    } catch (localError) {
+                        console.error('Erro ao carregar dados locais:', localError);
+                        linksUteis = [];
+                    }
+                    updateLinksGrid();
+                }
+            }
+
             playNotificationSound() {
                 try {
                     const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
@@ -1188,43 +1580,121 @@
                     currentUser = user;
                     lastActivity = Date.now();
                     
+                    // Salvar sessão no localStorage
+                    localStorage.setItem('currentUserSession', JSON.stringify({
+                        user: user,
+                        loginTime: Date.now(),
+                        lastActivity: Date.now()
+                    }));
+                    
                     document.getElementById('currentUser').textContent = user.nome;
                     document.getElementById('loginScreen').classList.add('hidden');
                     document.getElementById('crmSystem').classList.remove('hidden');
                     
                     // Definir usuário como online no Firebase
-                    await realtimeSystem.setUserOnline(user);
+                    try {
+                        await realtimeSystem.setUserOnline(user);
+                    } catch (error) {
+                        console.error('Erro ao definir usuário online:', error);
+                    }
                     
                     // Inicializar sistema
                     await initializeSystem();
                     showSection('dashboard', document.querySelector('[onclick*="dashboard"]'));
                     
                     // Criar notificação de login
-                    await sendRealtimeNotification(null, {
-                        tipo: 'info',
-                        titulo: 'Usuário Conectado',
-                        mensagem: `${user.nome} entrou no sistema`,
-                        broadcast: true
-                    });
+                    try {
+                        await sendRealtimeNotification(null, {
+                            tipo: 'info',
+                            titulo: 'Usuário Conectado',
+                            mensagem: `${user.nome} entrou no sistema`,
+                            broadcast: true
+                        });
+                    } catch (error) {
+                        console.error('Erro ao enviar notificação de login:', error);
+                    }
                     
                 } else {
                     alert('Usuário ou senha incorretos!');
                 }
             });
 
+            // Verificar se há sessão ativa
+            checkExistingSession();
+
             initializeModalForms();
             
             // Monitorar atividade do usuário
-            document.addEventListener('click', () => lastActivity = Date.now());
-            document.addEventListener('keypress', () => lastActivity = Date.now());
+            document.addEventListener('click', () => {
+                lastActivity = Date.now();
+                updateSessionActivity();
+            });
+            document.addEventListener('keypress', () => {
+                lastActivity = Date.now();
+                updateSessionActivity();
+            });
             
             // Cleanup ao fechar a página
             window.addEventListener('beforeunload', async () => {
                 if (currentUser) {
-                    await realtimeSystem.setUserOffline();
+                    try {
+                        await realtimeSystem.setUserOffline();
+                    } catch (error) {
+                        console.error('Erro ao definir usuário offline:', error);
+                    }
                 }
             });
         });
+
+        function checkExistingSession() {
+            try {
+                const session = localStorage.getItem('currentUserSession');
+                if (session) {
+                    const sessionData = JSON.parse(session);
+                    const now = Date.now();
+                    const sessionAge = now - sessionData.loginTime;
+                    const maxSessionAge = 24 * 60 * 60 * 1000; // 24 horas
+                    
+                    if (sessionAge < maxSessionAge) {
+                        // Restaurar sessão
+                        currentUser = sessionData.user;
+                        lastActivity = sessionData.lastActivity;
+                        
+                        document.getElementById('currentUser').textContent = currentUser.nome;
+                        document.getElementById('loginScreen').classList.add('hidden');
+                        document.getElementById('crmSystem').classList.remove('hidden');
+                        
+                        // Inicializar sistema
+                        initializeSystem().then(() => {
+                            showSection('dashboard', document.querySelector('[onclick*="dashboard"]'));
+                        });
+                        
+                        console.log('Sessão restaurada para:', currentUser.nome);
+                    } else {
+                        // Sessão expirada
+                        localStorage.removeItem('currentUserSession');
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao verificar sessão existente:', error);
+                localStorage.removeItem('currentUserSession');
+            }
+        }
+
+        function updateSessionActivity() {
+            if (currentUser) {
+                try {
+                    const session = localStorage.getItem('currentUserSession');
+                    if (session) {
+                        const sessionData = JSON.parse(session);
+                        sessionData.lastActivity = Date.now();
+                        localStorage.setItem('currentUserSession', JSON.stringify(sessionData));
+                    }
+                } catch (error) {
+                    console.error('Erro ao atualizar atividade da sessão:', error);
+                }
+            }
+        }
 
         async function initializeSystem() {
             try {
@@ -1246,6 +1716,12 @@
                 updateDebugCredentials();
                 updateLeadSuhaiTable();
                 updateSemSucessoTable();
+                updateComissaoTable();
+                initializeCancelamentoForm();
+                updateCancelamentosTable();
+                initializeLinkForm();
+                updateLinksGrid();
+                updateMonthlySalesCount();
                 
                 console.log('✅ Sistema inicializado com sucesso');
             } catch (error) {
@@ -1286,6 +1762,24 @@
                     leadsSemSucesso = Object.values(leadsSemSucessoSnapshot.val());
                 }
 
+                // Carregar comissões
+                const comissoesSnapshot = await database.ref('comissoes').once('value');
+                if (comissoesSnapshot.exists()) {
+                    comissoes = Object.values(comissoesSnapshot.val());
+                }
+
+                // Carregar cancelamentos
+                const cancelamentosSnapshot = await database.ref('cancelamentos').once('value');
+                if (cancelamentosSnapshot.exists()) {
+                    cancelamentos = Object.values(cancelamentosSnapshot.val());
+                }
+
+                // Carregar links úteis
+                const linksSnapshot = await database.ref('linksUteis').once('value');
+                if (linksSnapshot.exists()) {
+                    linksUteis = Object.values(linksSnapshot.val());
+                }
+
                 console.log('📊 Dados carregados do Firebase');
             } catch (error) {
                 console.error('Erro ao carregar dados do Firebase:', error);
@@ -1304,6 +1798,9 @@
                     vendedoresData = parsed.vendedoresData || [];
                     leadsSuhai = parsed.leadsSuhai || [];
                     leadsSemSucesso = parsed.leadsSemSucesso || [];
+                    comissoes = parsed.comissoes || [];
+                    cancelamentos = parsed.cancelamentos || [];
+                    linksUteis = parsed.linksUteis || [];
                     console.log('📱 Dados carregados do cache local:', parsed);
                 } else {
                     console.log('📱 Nenhum dado local encontrado, iniciando com arrays vazios');
@@ -1312,6 +1809,9 @@
                     vendedoresData = [];
                     leadsSuhai = [];
                     leadsSemSucesso = [];
+                    comissoes = [];
+                    cancelamentos = [];
+                    linksUteis = [];
                 }
             } catch (error) {
                 console.error('❌ Erro ao carregar dados locais:', error);
@@ -1321,6 +1821,9 @@
                 vendedoresData = [];
                 leadsSuhai = [];
                 leadsSemSucesso = [];
+                comissoes = [];
+                cancelamentos = [];
+                linksUteis = [];
             }
         }
 
@@ -1351,17 +1854,24 @@
 
         async function logout() {
             if (currentUser) {
-                // Notificar logout
-                await sendRealtimeNotification(null, {
-                    tipo: 'info',
-                    titulo: 'Usuário Desconectado',
-                    mensagem: `${currentUser.nome} saiu do sistema`,
-                    broadcast: true
-                });
-                
-                // Definir usuário como offline
-                await realtimeSystem.setUserOffline();
+                try {
+                    // Notificar logout
+                    await sendRealtimeNotification(null, {
+                        tipo: 'info',
+                        titulo: 'Usuário Desconectado',
+                        mensagem: `${currentUser.nome} saiu do sistema`,
+                        broadcast: true
+                    });
+                    
+                    // Definir usuário como offline
+                    await realtimeSystem.setUserOffline();
+                } catch (error) {
+                    console.error('Erro ao fazer logout:', error);
+                }
             }
+            
+            // Limpar sessão
+            localStorage.removeItem('currentUserSession');
             
             currentUser = null;
             document.getElementById('loginScreen').classList.remove('hidden');
@@ -1429,30 +1939,40 @@
                     card.addEventListener('dragend', handleDragEnd);
                     
                     card.innerHTML = `
-                        <div class="card-actions">
-                            <button onclick="editarVenda(${venda.id})" class="text-blue-400 hover:text-blue-300 text-xs mr-1">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button onclick="excluirVenda(${venda.id})" class="text-red-400 hover:text-red-300 text-xs">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-medium text-white text-sm flex-1">${venda.cliente}</h4>
+                            <div class="flex space-x-1 ml-2">
+                                <button onclick="editarVenda(${venda.id})" class="text-blue-400 hover:text-blue-300 text-xs">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="excluirVenda(${venda.id})" class="text-red-400 hover:text-red-300 text-xs">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
-                        <h4 class="font-medium text-white text-sm mb-2 pr-8">${venda.cliente}</h4>
                         <p class="text-gray-300 text-xs mb-1">${venda.produto} - ${venda.empresa}</p>
                         <p class="text-gray-400 text-xs mb-2">${venda.vendedor}</p>
                         <p class="text-green-400 text-xs font-medium">R$ ${venda.premioLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
-                        <div class="mt-3 flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" ${venda.leadSuhai ? 'checked' : ''} onchange="toggleLeadSuhai(${venda.id})" class="sr-only">
-                                    <div class="relative">
-                                        <div class="w-4 h-4 bg-gray-600 rounded border border-gray-500 transition-all duration-200 ${venda.leadSuhai ? 'bg-purple-600 border-purple-500' : ''}"></div>
-                                        ${venda.leadSuhai ? '<i class="fas fa-check absolute top-0 left-0 w-4 h-4 text-white text-xs flex items-center justify-center"></i>' : ''}
-                                    </div>
-                                </label>
-                                <span class="text-purple-400 text-xs font-medium">Lead Suhai</span>
+                        <div class="mt-3">
+                            <!-- Lead Suhai Checkbox -->
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" ${venda.leadSuhai ? 'checked' : ''} onchange="toggleLeadSuhai(${venda.id})" class="sr-only">
+                                        <div class="relative">
+                                            <div class="w-4 h-4 bg-gray-600 rounded border border-gray-500 transition-all duration-200 ${venda.leadSuhai ? 'bg-purple-600 border-purple-500' : ''}"></div>
+                                            ${venda.leadSuhai ? '<i class="fas fa-check absolute top-0 left-0 w-4 h-4 text-white text-xs flex items-center justify-center"></i>' : ''}
+                                        </div>
+                                    </label>
+                                    <span class="text-purple-400 text-xs font-medium">Lead Suhai</span>
+                                </div>
+                                <span class="text-gray-500 text-xs">${venda.data}</span>
                             </div>
-                            <span class="text-gray-500 text-xs">${venda.data}</span>
+                            
+                            <!-- Navigation Buttons -->
+                            <div class="flex items-center justify-center space-x-1">
+                                ${getKanbanNavigationButtons(venda.status, venda.id)}
+                            </div>
                         </div>
                     `;
                     container.appendChild(card);
@@ -1533,7 +2053,6 @@
                         <div class="flex items-center justify-between">
                             <span class="text-gray-500 text-xs">${indicacao.data}</span>
                         </div>
-                        ${indicacao.assignedBy ? `<p class="text-gray-500 text-xs mt-1">Por: ${indicacao.assignedBy}</p>` : ''}
                     `;
                     container.appendChild(card);
                 });
@@ -1552,6 +2071,7 @@
                     <td class="px-6 py-4 text-gray-300">${indicacao.telefone}</td>
                     <td class="px-6 py-4 text-gray-300">${indicacao.veiculo}</td>
                     <td class="px-6 py-4 text-gray-300">${indicacao.vendedor}</td>
+                    <td class="px-6 py-4 text-gray-300 max-w-xs truncate" title="${indicacao.observacoes || 'Sem observações'}">${indicacao.observacoes || 'Sem observações'}</td>
                     <td class="px-6 py-4">
                         <span class="px-2 py-1 text-xs rounded-full bg-blue-600 text-white">${indicacao.status}</span>
                     </td>
@@ -1578,10 +2098,13 @@
                 row.className = 'hover:bg-gray-700';
                 row.innerHTML = `
                     <td class="px-6 py-4 text-white">${venda.cliente}</td>
-                    <td class="px-6 py-4 text-gray-300">${venda.produto}</td>
                     <td class="px-6 py-4 text-gray-300">${venda.empresa}</td>
+                    <td class="px-6 py-4 text-gray-300">${venda.produto}</td>
                     <td class="px-6 py-4 text-gray-300">${venda.vendedor}</td>
                     <td class="px-6 py-4 text-green-400">R$ ${venda.premioLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td class="px-6 py-4 text-blue-400">${venda.percentualComissao || 15}%</td>
+                    <td class="px-6 py-4 text-purple-400">R$ ${(venda.comissaoTotal || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td class="px-6 py-4 text-yellow-400">R$ ${(venda.comissaoVendedor || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
                     <td class="px-6 py-4">
                         <span class="px-2 py-1 text-xs rounded-full bg-yellow-600 text-white">${venda.status}</span>
                     </td>
@@ -1823,108 +2346,213 @@
             });
         }
 
+        // ===== FUNÇÕES DE CÁLCULO DE COMISSÃO =====
+        function updateVendedorComissao() {
+            const vendedorSelecionado = document.getElementById('vendaVendedor').value;
+            const infoElement = document.getElementById('vendaComissaoVendedorInfo');
+            
+            if (vendedorSelecionado) {
+                const vendedorData = vendedoresData.find(v => v.nome === vendedorSelecionado);
+                const percentual = vendedorData ? vendedorData.comissao : 10;
+                infoElement.textContent = `Baseado no % do vendedor (${percentual}%)`;
+            } else {
+                infoElement.textContent = 'Baseado no % do vendedor';
+            }
+            
+            calculateComissoes();
+        }
+        
+        function calculateComissoes() {
+            const premioLiquido = parseFloat(document.getElementById('vendaPremio').value) || 0;
+            const percentualComissao = parseFloat(document.getElementById('vendaPercentualComissao').value) || 0;
+            const vendedorSelecionado = document.getElementById('vendaVendedor').value;
+            
+            // Calcular comissão total (% da empresa sobre o prêmio)
+            const comissaoTotal = (premioLiquido * percentualComissao) / 100;
+            document.getElementById('vendaComissaoTotal').value = comissaoTotal.toFixed(2);
+            
+            // Calcular comissão do vendedor (% do vendedor sobre o prêmio, NÃO sobre a comissão total)
+            if (vendedorSelecionado) {
+                const vendedorData = vendedoresData.find(v => v.nome === vendedorSelecionado);
+                const percentualVendedor = vendedorData ? vendedorData.comissao : 10;
+                const comissaoVendedor = (premioLiquido * percentualVendedor) / 100;
+                document.getElementById('vendaComissaoVendedor').value = comissaoVendedor.toFixed(2);
+            } else {
+                document.getElementById('vendaComissaoVendedor').value = '0.00';
+            }
+        }
+
         function initializeModalForms() {
             document.getElementById('indicacaoForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const novaIndicacao = {
-                    id: Date.now(),
+                const editId = this.dataset.editId;
+                const indicacaoData = {
                     nome: document.getElementById('indicacaoNome').value,
                     telefone: document.getElementById('indicacaoTelefone').value,
                     veiculo: document.getElementById('indicacaoVeiculo').value,
                     vendedor: document.getElementById('indicacaoVendedor').value,
-                    status: 'Lead Novo',
-                    data: new Date().toLocaleDateString('pt-BR'),
-                    observacoes: '',
-                    assignedBy: currentUser.nome,
-                    timestamp: Date.now()
+                    observacoes: document.getElementById('indicacaoObservacoes').value
                 };
                 
                 try {
-                    // Salvar no Firebase
-                    await database.ref(`indicacoes/${novaIndicacao.id}`).set(novaIndicacao);
-                    
-                    // Encontrar ID do vendedor
-                    const vendedorUser = usuarios.find(u => u.nome === novaIndicacao.vendedor);
-                    
-                    // Enviar notificação para o vendedor
-                    if (vendedorUser) {
-                        await sendRealtimeNotification(vendedorUser.id, {
-                            tipo: 'success',
-                            titulo: '🎯 Nova Indicação Recebida!',
-                            mensagem: `${novaIndicacao.nome} foi atribuído a você por ${currentUser.nome}`,
-                            dados: novaIndicacao
-                        });
+                    if (editId) {
+                        // Editar indicação existente
+                        const indicacao = indicacoes.find(i => i.id == editId);
+                        if (indicacao) {
+                            Object.assign(indicacao, indicacaoData);
+                            indicacao.lastUpdated = Date.now();
+                            indicacao.updatedBy = currentUser.nome;
+                            
+                            // Atualizar no Firebase
+                            await database.ref(`indicacoes/${editId}`).update({
+                                ...indicacaoData,
+                                lastUpdated: indicacao.lastUpdated,
+                                updatedBy: indicacao.updatedBy
+                            });
+                            
+                            createRealtimeNotification('success', 
+                                'Indicação Atualizada', 
+                                `Dados de ${indicacaoData.nome} foram atualizados`
+                            );
+                        }
+                    } else {
+                        // Criar nova indicação
+                        const novaIndicacao = {
+                            id: Date.now(),
+                            ...indicacaoData,
+                            status: 'Lead Novo',
+                            data: new Date().toLocaleDateString('pt-BR'),
+                            observacoes: '',
+                            assignedBy: currentUser.nome,
+                            timestamp: Date.now()
+                        };
+                        
+                        // Salvar no Firebase
+                        await database.ref(`indicacoes/${novaIndicacao.id}`).set(novaIndicacao);
+                        
+                        // Encontrar ID do vendedor
+                        const vendedorUser = usuarios.find(u => u.nome === novaIndicacao.vendedor);
+                        
+                        // Enviar notificação para o vendedor
+                        if (vendedorUser) {
+                            await sendRealtimeNotification(vendedorUser.id, {
+                                tipo: 'success',
+                                titulo: '🎯 Nova Indicação Recebida!',
+                                mensagem: `${novaIndicacao.nome} foi atribuído a você por ${currentUser.nome}`,
+                                dados: novaIndicacao
+                            });
+                        }
+                        
+                        createRealtimeNotification('success', 
+                            'Indicação Criada', 
+                            `Indicação de ${novaIndicacao.nome} foi enviada para ${novaIndicacao.vendedor}`
+                        );
                     }
-                    
-                    // Notificação para quem criou
-                    createRealtimeNotification('success', 
-                        'Indicação Criada', 
-                        `Indicação de ${novaIndicacao.nome} foi enviada para ${novaIndicacao.vendedor}`
-                    );
                     
                     closeModal('novaIndicacaoModal');
                     this.reset();
+                    delete this.dataset.editId;
+                    
+                    // Resetar botão
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    submitBtn.innerHTML = '<i class="fas fa-plus mr-2"></i>Adicionar';
                     
                 } catch (error) {
-                    console.error('Erro ao criar indicação:', error);
-                    createRealtimeNotification('error', 'Erro', 'Não foi possível criar a indicação. Tente novamente.');
+                    console.error('Erro ao salvar indicação:', error);
+                    createRealtimeNotification('error', 'Erro', 'Não foi possível salvar a indicação. Tente novamente.');
                 }
             });
 
             document.getElementById('vendaForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const novaVenda = {
-                    id: Date.now(),
+                const editId = this.dataset.editId;
+                const vendaData = {
                     cliente: document.getElementById('vendaCliente').value,
-                    produto: document.getElementById('vendaProduto').value,
                     empresa: document.getElementById('vendaEmpresa').value,
+                    produto: document.getElementById('vendaProduto').value,
                     vendedor: document.getElementById('vendaVendedor').value,
                     premioLiquido: parseFloat(document.getElementById('vendaPremio').value),
-                    status: 'Fazer Vistoria',
-                    data: new Date().toLocaleDateString('pt-BR'),
-                    timestamp: Date.now(),
-                    createdBy: currentUser.nome
+                    percentualComissao: parseFloat(document.getElementById('vendaPercentualComissao').value),
+                    comissaoTotal: parseFloat(document.getElementById('vendaComissaoTotal').value),
+                    comissaoVendedor: parseFloat(document.getElementById('vendaComissaoVendedor').value)
                 };
                 
                 try {
-                    // Salvar no Firebase
-                    await database.ref(`vendas/${novaVenda.id}`).set(novaVenda);
-                    
-                    // Encontrar ID do vendedor
-                    const vendedorUser = usuarios.find(u => u.nome === novaVenda.vendedor);
-                    
-                    // Enviar notificação para o vendedor
-                    if (vendedorUser) {
-                        await sendRealtimeNotification(vendedorUser.id, {
+                    if (editId) {
+                        // Editar venda existente
+                        const venda = vendas.find(v => v.id == editId);
+                        if (venda) {
+                            Object.assign(venda, vendaData);
+                            venda.lastUpdated = Date.now();
+                            venda.updatedBy = currentUser.nome;
+                            
+                            // Atualizar no Firebase
+                            await database.ref(`vendas/${editId}`).update({
+                                ...vendaData,
+                                lastUpdated: venda.lastUpdated,
+                                updatedBy: venda.updatedBy
+                            });
+                            
+                            createRealtimeNotification('success', 
+                                'Venda Atualizada', 
+                                `Dados de ${vendaData.cliente} foram atualizados`
+                            );
+                        }
+                    } else {
+                        // Criar nova venda
+                        const novaVenda = {
+                            id: Date.now(),
+                            ...vendaData,
+                            status: 'Fazer Vistoria',
+                            data: new Date().toLocaleDateString('pt-BR'),
+                            timestamp: Date.now(),
+                            createdBy: currentUser.nome
+                        };
+                        
+                        // Salvar no Firebase
+                        await database.ref(`vendas/${novaVenda.id}`).set(novaVenda);
+                        
+                        // Encontrar ID do vendedor
+                        const vendedorUser = usuarios.find(u => u.nome === novaVenda.vendedor);
+                        
+                        // Enviar notificação para o vendedor
+                        if (vendedorUser) {
+                            await sendRealtimeNotification(vendedorUser.id, {
+                                tipo: 'success',
+                                titulo: '💰 Nova Venda Registrada!',
+                                mensagem: `Venda de ${novaVenda.cliente} (R$ ${novaVenda.premioLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}) foi registrada`,
+                                dados: novaVenda
+                            });
+                        }
+                        
+                        // Notificação geral para admins
+                        await sendRealtimeNotification(null, {
                             tipo: 'success',
-                            titulo: '💰 Nova Venda Registrada!',
-                            mensagem: `Venda de ${novaVenda.cliente} (R$ ${novaVenda.premioLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}) foi registrada`,
-                            dados: novaVenda
+                            titulo: '🎉 Nova Venda!',
+                            mensagem: `${novaVenda.cliente} - ${novaVenda.vendedor} - R$ ${novaVenda.premioLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`,
+                            broadcast: true,
+                            adminOnly: true
                         });
+                        
+                        createRealtimeNotification('success', 
+                            'Venda Criada', 
+                            `Nova venda de ${novaVenda.cliente} por ${novaVenda.vendedor}`
+                        );
                     }
-                    
-                    // Notificação geral para admins
-                    await sendRealtimeNotification(null, {
-                        tipo: 'success',
-                        titulo: '🎉 Nova Venda!',
-                        mensagem: `${novaVenda.cliente} - ${novaVenda.vendedor} - R$ ${novaVenda.premioLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`,
-                        broadcast: true,
-                        adminOnly: true
-                    });
-                    
-                    createRealtimeNotification('success', 
-                        'Venda Criada', 
-                        `Nova venda de ${novaVenda.cliente} por ${novaVenda.vendedor}`
-                    );
                     
                     closeModal('novaVendaModal');
                     this.reset();
+                    delete this.dataset.editId;
+                    
+                    // Resetar botão
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    submitBtn.innerHTML = '<i class="fas fa-plus mr-2"></i>Adicionar';
                     
                 } catch (error) {
-                    console.error('Erro ao criar venda:', error);
-                    createRealtimeNotification('error', 'Erro', 'Não foi possível criar a venda. Tente novamente.');
+                    console.error('Erro ao salvar venda:', error);
+                    createRealtimeNotification('error', 'Erro', 'Não foi possível salvar a venda. Tente novamente.');
                 }
             });
         }
@@ -1941,8 +2569,33 @@
             document.getElementById(modalId).classList.add('hidden');
         }
 
-        function editarIndicacao(id) {
-            alert('Função de edição em desenvolvimento');
+        async function editarIndicacao(id) {
+            try {
+                const indicacao = indicacoes.find(i => i.id == id);
+                if (!indicacao) return;
+                
+                // Preencher modal com dados da indicação
+                document.getElementById('indicacaoNome').value = indicacao.nome;
+                document.getElementById('indicacaoTelefone').value = indicacao.telefone;
+                document.getElementById('indicacaoVeiculo').value = indicacao.veiculo;
+                document.getElementById('indicacaoVendedor').value = indicacao.vendedor;
+                document.getElementById('indicacaoObservacoes').value = indicacao.observacoes || '';
+                
+                // Adicionar ID para edição
+                const form = document.getElementById('indicacaoForm');
+                form.dataset.editId = id;
+                
+                // Alterar texto do botão
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i>Salvar Alterações';
+                
+                // Mostrar modal
+                showNovaIndicacaoModal();
+                
+            } catch (error) {
+                console.error('Erro ao editar indicação:', error);
+                createRealtimeNotification('error', 'Erro', 'Não foi possível carregar os dados da indicação');
+            }
         }
 
         async function excluirIndicacao(id) {
@@ -1969,8 +2622,39 @@
             }
         }
 
-        function editarVenda(id) {
-            alert('Função de edição em desenvolvimento');
+        async function editarVenda(id) {
+            try {
+                const venda = vendas.find(v => v.id == id);
+                if (!venda) return;
+                
+                // Preencher modal com dados da venda
+                document.getElementById('vendaCliente').value = venda.cliente;
+                document.getElementById('vendaEmpresa').value = venda.empresa;
+                document.getElementById('vendaProduto').value = venda.produto;
+                document.getElementById('vendaVendedor').value = venda.vendedor;
+                document.getElementById('vendaPremio').value = venda.premioLiquido;
+                document.getElementById('vendaPercentualComissao').value = venda.percentualComissao || 15;
+                document.getElementById('vendaComissaoTotal').value = venda.comissaoTotal || 0;
+                document.getElementById('vendaComissaoVendedor').value = venda.comissaoVendedor || 0;
+                
+                // Atualizar informações do vendedor
+                updateVendedorComissao();
+                
+                // Adicionar ID para edição
+                const form = document.getElementById('vendaForm');
+                form.dataset.editId = id;
+                
+                // Alterar texto do botão
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i>Salvar Alterações';
+                
+                // Mostrar modal
+                showNovaVendaModal();
+                
+            } catch (error) {
+                console.error('Erro ao editar venda:', error);
+                createRealtimeNotification('error', 'Erro', 'Não foi possível carregar os dados da venda');
+            }
         }
 
         async function excluirVenda(id) {
@@ -2092,6 +2776,86 @@
             }
         }
 
+        // ===== FUNÇÕES DE NAVEGAÇÃO DO KANBAN =====
+        function getKanbanNavigationButtons(currentStatus, vendaId) {
+            const statusOrder = ['Fazer Vistoria', 'Mandar Boletos', 'Falta Pagamento', 'Pagamento Efetuado'];
+            const currentIndex = statusOrder.indexOf(currentStatus);
+            
+            let buttons = '';
+            
+            // Botão Voltar (se não for o primeiro)
+            if (currentIndex > 0) {
+                const prevStatus = statusOrder[currentIndex - 1];
+                buttons += `
+                    <button onclick="moveVendaToStatus(${vendaId}, '${prevStatus}')" 
+                            class="bg-gray-600 hover:bg-gray-500 text-white text-xs px-2 py-1 rounded flex items-center transition-all duration-200"
+                            title="Voltar para ${prevStatus}">
+                        <i class="fas fa-chevron-left text-xs"></i>
+                    </button>
+                `;
+            }
+            
+            // Botão Avançar (se não for o último)
+            if (currentIndex < statusOrder.length - 1) {
+                const nextStatus = statusOrder[currentIndex + 1];
+                buttons += `
+                    <button onclick="moveVendaToStatus(${vendaId}, '${nextStatus}')" 
+                            class="bg-blue-600 hover:bg-blue-500 text-white text-xs px-2 py-1 rounded flex items-center transition-all duration-200"
+                            title="Avançar para ${nextStatus}">
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                `;
+            }
+            
+            return buttons;
+        }
+        
+        async function moveVendaToStatus(vendaId, newStatus) {
+            try {
+                const venda = vendas.find(v => v.id == vendaId);
+                if (!venda) return;
+                
+                const oldStatus = venda.status;
+                venda.status = newStatus;
+                venda.lastUpdated = Date.now();
+                venda.updatedBy = currentUser.nome;
+                
+                // Se mudou para "Pagamento Efetuado", criar comissão automaticamente
+                if (newStatus === 'Pagamento Efetuado' && oldStatus !== 'Pagamento Efetuado') {
+                    await criarComissaoAutomatica(venda);
+                }
+                
+                // Atualizar no Firebase
+                await database.ref(`vendas/${venda.id}`).update({
+                    status: newStatus,
+                    lastUpdated: venda.lastUpdated,
+                    updatedBy: venda.updatedBy
+                });
+                
+                // Notificar vendedor sobre mudança de status
+                const vendedorUser = usuarios.find(u => u.nome === venda.vendedor);
+                if (vendedorUser && vendedorUser.id !== currentUser.id) {
+                    await sendRealtimeNotification(vendedorUser.id, {
+                        tipo: 'info',
+                        titulo: '📋 Status Atualizado',
+                        mensagem: `${venda.cliente} foi movido de "${oldStatus}" para "${newStatus}" por ${currentUser.nome}`,
+                        dados: venda
+                    });
+                }
+                
+                createRealtimeNotification('success', 
+                    'Status Atualizado', 
+                    `${venda.cliente} movido para ${newStatus}`
+                );
+                
+                updateKanbanVendas();
+                
+            } catch (error) {
+                console.error('Erro ao mover venda:', error);
+                createRealtimeNotification('error', 'Erro', 'Não foi possível atualizar o status');
+            }
+        }
+
         // ===== SISTEMA DE MODAIS PERSONALIZADOS =====
         function customConfirm(title, message) {
             return new Promise((resolve) => {
@@ -2190,6 +2954,9 @@
                     vendedoresData,
                     leadsSuhai,
                     leadsSemSucesso,
+                    comissoes,
+                    cancelamentos,
+                    linksUteis,
                     timestamp: Date.now()
                 };
                 
@@ -2249,6 +3016,11 @@
                         venda.status = newStatus;
                         venda.lastUpdated = Date.now();
                         venda.updatedBy = currentUser.nome;
+                        
+                        // Se mudou para "Pagamento Efetuado", criar comissão automaticamente
+                        if (newStatus === 'Pagamento Efetuado' && oldStatus !== 'Pagamento Efetuado') {
+                            await criarComissaoAutomatica(venda);
+                        }
                         
                         // Atualizar no Firebase
                         await database.ref(`vendas/${venda.id}`).update({
@@ -2853,7 +3625,648 @@
             }
         }
 
+        // ===== FUNÇÕES DE COMISSÃO =====
+        
+        async function criarComissaoAutomatica(venda) {
+            try {
+                // Verificar se já existe comissão para esta venda
+                const comissaoExistente = comissoes.find(c => c.vendaId === venda.id);
+                if (comissaoExistente) {
+                    console.log('Comissão já existe para esta venda');
+                    return;
+                }
+                
+                // Buscar dados do vendedor para calcular comissão
+                const vendedorData = vendedoresData.find(v => v.nome === venda.vendedor);
+                const percentualComissao = vendedorData ? vendedorData.comissao : 10; // 10% padrão
+                
+                const comissaoTotal = venda.premioLiquido * 0.15; // 15% comissão total da empresa
+                const comissaoVendedor = venda.premioLiquido * (percentualComissao / 100);
+                
+                const novaComissao = {
+                    id: Date.now(),
+                    vendaId: venda.id,
+                    nomeCompleto: venda.cliente,
+                    empresa: venda.empresa,
+                    vendedor: venda.vendedor,
+                    comissaoTotal: comissaoTotal,
+                    comissaoVendedor: comissaoVendedor,
+                    percentualVendedor: percentualComissao,
+                    premioLiquido: venda.premioLiquido,
+                    data: new Date().toLocaleDateString('pt-BR'),
+                    dataPagamento: new Date().toLocaleDateString('pt-BR'),
+                    timestamp: Date.now(),
+                    criadaPor: currentUser.nome
+                };
+                
+                // Salvar no Firebase
+                await database.ref(`comissoes/${novaComissao.id}`).set(novaComissao);
+                
+                // Notificar vendedor sobre comissão
+                const vendedorUser = usuarios.find(u => u.nome === venda.vendedor);
+                if (vendedorUser) {
+                    await sendRealtimeNotification(vendedorUser.id, {
+                        tipo: 'success',
+                        titulo: '💰 Comissão Gerada!',
+                        mensagem: `Sua comissão de R$ ${comissaoVendedor.toLocaleString('pt-BR', {minimumFractionDigits: 2})} foi registrada para ${venda.cliente}`,
+                        dados: novaComissao
+                    });
+                }
+                
+                createRealtimeNotification('success', 
+                    'Comissão Criada', 
+                    `Comissão de ${venda.vendedor} registrada: R$ ${comissaoVendedor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+                );
+                
+                console.log('✅ Comissão criada automaticamente:', novaComissao);
+                
+            } catch (error) {
+                console.error('Erro ao criar comissão automática:', error);
+                createRealtimeNotification('error', 'Erro', 'Não foi possível criar a comissão automaticamente');
+            }
+        }
+        
+        function updateComissaoTable() {
+            const tbody = document.getElementById('comissaoTableBody');
+            const countElement = document.getElementById('comissaoCount');
+            const totalComissaoElement = document.getElementById('totalComissaoGeral');
+            const totalVendasElement = document.getElementById('totalVendasComissao');
+            
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            // Calcular totais
+            const totalComissao = comissoes.reduce((sum, c) => sum + c.comissaoTotal, 0);
+            const totalVendas = comissoes.length;
+            
+            // Atualizar elementos de resumo
+            if (countElement) {
+                countElement.textContent = `${totalVendas} comissões`;
+            }
+            if (totalComissaoElement) {
+                totalComissaoElement.textContent = `R$ ${totalComissao.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            }
+            if (totalVendasElement) {
+                totalVendasElement.textContent = totalVendas;
+            }
+            
+            // Preencher tabela
+            comissoes.forEach(comissao => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-700';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-white font-medium">${comissao.nomeCompleto}</td>
+                    <td class="px-6 py-4 text-gray-300">${comissao.empresa}</td>
+                    <td class="px-6 py-4 text-blue-400">${comissao.vendedor}</td>
+                    <td class="px-6 py-4 text-green-400 font-medium">R$ ${comissao.comissaoTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td class="px-6 py-4 text-purple-400 font-medium">
+                        R$ ${comissao.comissaoVendedor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                        <span class="text-gray-400 text-xs block">(${comissao.percentualVendedor}%)</span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-300">${comissao.dataPagamento}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            if (comissoes.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                        <i class="fas fa-money-bill-wave text-4xl mb-2 block"></i>
+                        Nenhuma comissão registrada ainda
+                        <p class="text-sm mt-2">As comissões são criadas automaticamente quando uma venda é marcada como "Pagamento Efetuado"</p>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        function initializeCancelamentoForm() {
+            const form = document.getElementById('cancelamentoForm');
+            if (!form) return;
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const id = document.getElementById('cancelamentoId').value;
+                const cancelamentoData = {
+                    nome: document.getElementById('cancelamentoNome').value,
+                    empresa: document.getElementById('cancelamentoEmpresa').value,
+                    valorEstorno: parseFloat(document.getElementById('cancelamentoValor').value),
+                    data: new Date().toLocaleDateString('pt-BR'),
+                    timestamp: Date.now(),
+                    registradoPor: currentUser.nome
+                };
+                
+                if (id) {
+                    // Editar cancelamento existente
+                    const index = cancelamentos.findIndex(c => c.id == id);
+                    if (index !== -1) {
+                        cancelamentos[index] = { ...cancelamentos[index], ...cancelamentoData };
+                        createRealtimeNotification('success', 'Cancelamento Atualizado', `Dados de ${cancelamentoData.nome} foram atualizados`);
+                    }
+                } else {
+                    // Criar novo cancelamento
+                    const novoCancelamento = {
+                        id: Date.now(),
+                        ...cancelamentoData
+                    };
+                    
+                    try {
+                        // Salvar no Firebase
+                        await database.ref(`cancelamentos/${novoCancelamento.id}`).set(novoCancelamento);
+                        
+                        createRealtimeNotification('warning', 
+                            'Cancelamento Registrado', 
+                            `Estorno de R$ ${cancelamentoData.valorEstorno.toLocaleString('pt-BR', {minimumFractionDigits: 2})} para ${cancelamentoData.nome}`
+                        );
+                        
+                    } catch (error) {
+                        console.error('Erro ao registrar cancelamento:', error);
+                        createRealtimeNotification('error', 'Erro', 'Não foi possível registrar o cancelamento');
+                    }
+                }
+                
+                updateCancelamentosTable();
+                resetCancelamentoForm();
+            });
+        }
+
+        function resetCancelamentoForm() {
+            const form = document.getElementById('cancelamentoForm');
+            if (form) {
+                form.reset();
+                document.getElementById('cancelamentoId').value = '';
+            }
+        }
+
+        function updateCancelamentosTable() {
+            const tbody = document.getElementById('cancelamentosTableBody');
+            const countElement = document.getElementById('cancelamentosCount');
+            const totalEstornosElement = document.getElementById('totalEstornos');
+            const totalCancelamentosElement = document.getElementById('totalCancelamentos');
+            const mediaCancelamentosElement = document.getElementById('mediaCancelamentos');
+            
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            // Calcular totais
+            const totalEstornos = cancelamentos.reduce((sum, c) => sum + c.valorEstorno, 0);
+            const totalCancelamentosCount = cancelamentos.length;
+            const mediaEstornos = totalCancelamentosCount > 0 ? totalEstornos / totalCancelamentosCount : 0;
+            
+            // Atualizar elementos de resumo
+            if (countElement) {
+                countElement.textContent = `${totalCancelamentosCount} cancelamentos`;
+            }
+            if (totalEstornosElement) {
+                totalEstornosElement.textContent = `R$ ${totalEstornos.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            }
+            if (totalCancelamentosElement) {
+                totalCancelamentosElement.textContent = totalCancelamentosCount;
+            }
+            if (mediaCancelamentosElement) {
+                mediaCancelamentosElement.textContent = `R$ ${mediaEstornos.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            }
+            
+            // Preencher tabela
+            cancelamentos.forEach(cancelamento => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-700';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-white font-medium">${cancelamento.nome}</td>
+                    <td class="px-6 py-4 text-gray-300">${cancelamento.empresa}</td>
+                    <td class="px-6 py-4 text-red-400 font-medium">R$ ${cancelamento.valorEstorno.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td class="px-6 py-4 text-gray-300">${cancelamento.data}</td>
+                    <td class="px-6 py-4">
+                        <button onclick="editarCancelamento(${cancelamento.id})" class="text-blue-400 hover:text-blue-300 mr-2">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="excluirCancelamento(${cancelamento.id})" class="text-red-400 hover:text-red-300">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            if (cancelamentos.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-400">
+                        <i class="fas fa-check-circle text-4xl mb-2 block text-green-500"></i>
+                        Nenhum cancelamento registrado! 🎉
+                    </td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        function editarCancelamento(id) {
+            const cancelamento = cancelamentos.find(c => c.id == id);
+            if (!cancelamento) return;
+            
+            document.getElementById('cancelamentoId').value = cancelamento.id;
+            document.getElementById('cancelamentoNome').value = cancelamento.nome;
+            document.getElementById('cancelamentoEmpresa').value = cancelamento.empresa;
+            document.getElementById('cancelamentoValor').value = cancelamento.valorEstorno;
+            
+            // Scroll para o formulário
+            document.getElementById('cancelamentoForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function excluirCancelamento(id) {
+            const cancelamento = cancelamentos.find(c => c.id == id);
+            if (!cancelamento) return;
+            
+            const confirmResult = await customConfirm(
+                'Excluir Cancelamento',
+                `Tem certeza que deseja excluir o cancelamento de ${cancelamento.nome}?`
+            );
+            
+            if (confirmResult) {
+                try {
+                    // Remover do Firebase
+                    await database.ref(`cancelamentos/${id}`).remove();
+                    
+                    createRealtimeNotification('warning', 
+                        'Cancelamento Excluído', 
+                        `Cancelamento de ${cancelamento.nome} foi removido`
+                    );
+                    
+                } catch (error) {
+                    console.error('Erro ao excluir cancelamento:', error);
+                    createRealtimeNotification('error', 'Erro', 'Não foi possível excluir o cancelamento');
+                }
+            }
+        }
+
+        async function syncCancelamentos() {
+            try {
+                database.ref('cancelamentos').on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        cancelamentos = Object.values(data);
+                        updateCancelamentosTable();
+                    }
+                });
+            } catch (error) {
+                console.error('Erro ao sincronizar cancelamentos:', error);
+            }
+        }
+
+        // ===== SISTEMA DE RESET MENSAL AUTOMÁTICO =====
+        function updateMonthlySalesCount() {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            // Verificar se mudou o mês
+            const lastResetMonth = localStorage.getItem('lastResetMonth');
+            const lastResetYear = localStorage.getItem('lastResetYear');
+            
+            if (lastResetMonth != currentMonth || lastResetYear != currentYear) {
+                // Resetar contadores mensais de todos os vendedores
+                vendedoresData.forEach(vendedor => {
+                    vendedor.vendasMesAtual = 0;
+                    vendedor.ultimoResetMes = currentMonth;
+                    vendedor.ultimoResetAno = currentYear;
+                });
+                
+                // Salvar nova data de reset
+                localStorage.setItem('lastResetMonth', currentMonth);
+                localStorage.setItem('lastResetYear', currentYear);
+                
+                console.log('🔄 Contadores mensais resetados para o novo mês');
+                
+                // Atualizar no Firebase
+                vendedoresData.forEach(async (vendedor) => {
+                    if (vendedor.id) {
+                        await database.ref(`vendedores/${vendedor.id}`).update({
+                            vendasMesAtual: 0,
+                            ultimoResetMes: currentMonth,
+                            ultimoResetAno: currentYear
+                        });
+                    }
+                });
+            }
+            
+            // Atualizar contadores baseado nas vendas do mês atual
+            vendedoresData.forEach(vendedor => {
+                const vendasDoMes = vendas.filter(venda => {
+                    const vendaDate = new Date(venda.data.split('/').reverse().join('-'));
+                    return vendaDate.getMonth() === currentMonth && 
+                           vendaDate.getFullYear() === currentYear &&
+                           venda.vendedor === vendedor.nome;
+                }).length;
+                
+                vendedor.vendasMesAtual = vendasDoMes;
+            });
+        }
+
+        // ===== FUNÇÕES DE LINKS ÚTEIS =====
+        
+        function initializeLinkForm() {
+            const form = document.getElementById('linkForm');
+            if (!form) return;
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                console.log('📝 Formulário de link enviado');
+                
+                // Verificar se usuário ainda está logado
+                if (!currentUser) {
+                    console.error('❌ Usuário não logado');
+                    createRealtimeNotification('error', 'Sessão Expirada', 'Faça login novamente');
+                    logout();
+                    return;
+                }
+                
+                // Verificar se sessão ainda é válida
+                try {
+                    const session = localStorage.getItem('currentUserSession');
+                    if (!session) {
+                        console.error('❌ Sessão não encontrada');
+                        createRealtimeNotification('error', 'Sessão Expirada', 'Faça login novamente');
+                        logout();
+                        return;
+                    }
+                    
+                    const sessionData = JSON.parse(session);
+                    const now = Date.now();
+                    const sessionAge = now - sessionData.loginTime;
+                    const maxSessionAge = 24 * 60 * 60 * 1000; // 24 horas
+                    
+                    if (sessionAge > maxSessionAge) {
+                        console.error('❌ Sessão expirada');
+                        createRealtimeNotification('error', 'Sessão Expirada', 'Sua sessão expirou. Faça login novamente');
+                        logout();
+                        return;
+                    }
+                } catch (error) {
+                    console.error('❌ Erro ao validar sessão:', error);
+                    createRealtimeNotification('error', 'Erro de Sessão', 'Faça login novamente');
+                    logout();
+                    return;
+                }
+                
+                const id = document.getElementById('linkId').value;
+                const linkData = {
+                    nome: document.getElementById('linkNome').value.trim(),
+                    url: document.getElementById('linkUrl').value.trim()
+                };
+                
+                console.log('📋 Dados do link:', linkData);
+                
+                // Validar campos obrigatórios
+                if (!linkData.nome || !linkData.url) {
+                    createRealtimeNotification('error', 'Campos Obrigatórios', 'Preencha o nome e a URL do site');
+                    return;
+                }
+                
+                // Validar URL
+                if (!linkData.url.startsWith('http://') && !linkData.url.startsWith('https://')) {
+                    linkData.url = 'https://' + linkData.url;
+                }
+                
+                try {
+                    if (id) {
+                        // Editar link existente
+                        const index = linksUteis.findIndex(l => l.id == id);
+                        if (index !== -1) {
+                            linksUteis[index] = { ...linksUteis[index], ...linkData, lastUpdated: Date.now(), updatedBy: currentUser.nome };
+                            
+                            // Atualizar no Firebase se online
+                            if (isOnline) {
+                                try {
+                                    await database.ref(`linksUteis/${id}`).update({
+                                        ...linkData,
+                                        lastUpdated: Date.now(),
+                                        updatedBy: currentUser.nome
+                                    });
+                                    console.log('✅ Link atualizado no Firebase');
+                                } catch (firebaseError) {
+                                    console.error('⚠️ Erro no Firebase, salvando localmente:', firebaseError);
+                                }
+                            }
+                            
+                            createRealtimeNotification('success', 'Link Atualizado', `${linkData.nome} foi atualizado`);
+                        }
+                    } else {
+                        // Criar novo link
+                        const novoLink = {
+                            id: Date.now(),
+                            ...linkData,
+                            criadoEm: new Date().toLocaleDateString('pt-BR'),
+                            criadoPor: currentUser.nome,
+                            timestamp: Date.now()
+                        };
+                        
+                        console.log('💾 Criando novo link:', novoLink);
+                        
+                        // Adicionar ao array local primeiro
+                        linksUteis.push(novoLink);
+                        console.log('✅ Link adicionado ao array local. Total:', linksUteis.length);
+                        
+                        // Salvar localmente como backup
+                        saveData();
+                        console.log('✅ Dados salvos localmente');
+                        
+                        // Salvar no Firebase se online
+                        if (isOnline) {
+                            try {
+                                await database.ref(`linksUteis/${novoLink.id}`).set(novoLink);
+                                console.log('✅ Link salvo no Firebase');
+                            } catch (firebaseError) {
+                                console.error('⚠️ Erro no Firebase, mantendo dados locais:', firebaseError);
+                            }
+                        } else {
+                            console.log('⚠️ Offline - dados salvos apenas localmente');
+                        }
+                        
+                        createRealtimeNotification('success', 'Link Adicionado', `${linkData.nome} foi adicionado aos links úteis`);
+                    }
+                    
+                    // Atualizar interface
+                    updateLinksGrid();
+                    resetLinkForm();
+                    
+                    console.log('✅ Operação de link concluída com sucesso');
+                    
+                } catch (error) {
+                    console.error('❌ Erro ao salvar link:', error);
+                    createRealtimeNotification('error', 'Erro', 'Não foi possível salvar o link: ' + error.message);
+                }
+            });
+        }
+        
+        function resetLinkForm() {
+            const form = document.getElementById('linkForm');
+            if (form) {
+                form.reset();
+                document.getElementById('linkId').value = '';
+            }
+        }
+        
+        function updateLinksGrid() {
+            const grid = document.getElementById('linksGrid');
+            const countElement = document.getElementById('linksCount');
+            
+            if (!grid) return;
+            
+            grid.innerHTML = '';
+            
+            if (countElement) {
+                countElement.textContent = `${linksUteis.length} links`;
+            }
+            
+            if (linksUteis.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-link text-6xl text-gray-600 mb-4 block"></i>
+                        <h3 class="text-xl font-bold text-gray-400 mb-2">Nenhum link salvo</h3>
+                        <p class="text-gray-500">Adicione links úteis para facilitar o acesso rápido</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            linksUteis.forEach(link => {
+                const linkCard = document.createElement('div');
+                linkCard.className = 'group relative bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl border border-gray-600 hover:border-blue-500 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1 cursor-pointer overflow-hidden';
+                
+                // Extrair domínio para favicon
+                let domain = '';
+                try {
+                    domain = new URL(link.url).hostname;
+                } catch (e) {
+                    domain = 'example.com';
+                }
+                
+                linkCard.innerHTML = `
+                    <!-- Efeito de brilho no hover -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-600/5 to-blue-600/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    <!-- Conteúdo do card -->
+                    <div class="relative p-6">
+                        <!-- Header com favicon e ações -->
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                                    <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=32" 
+                                         alt="Favicon" 
+                                         class="w-6 h-6"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <i class="fas fa-globe text-white text-lg hidden"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-lg font-bold text-white truncate group-hover:text-blue-300 transition-colors duration-200">${link.nome}</h3>
+                                    <p class="text-sm text-gray-400 truncate">${domain}</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Ações (visíveis no hover) -->
+                            <div class="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <button onclick="event.stopPropagation(); editarLink(${link.id})" 
+                                        class="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
+                                        title="Editar">
+                                    <i class="fas fa-edit text-xs"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); excluirLink(${link.id})" 
+                                        class="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200"
+                                        title="Excluir">
+                                    <i class="fas fa-trash text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Botão de acesso -->
+                        <button onclick="abrirLink('${link.url}')" 
+                                class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-external-link-alt"></i>
+                            <span>Acessar Site</span>
+                        </button>
+                        
+                        <!-- Footer com data -->
+                        <div class="mt-4 pt-3 border-t border-gray-600">
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <span>Criado por ${link.criadoPor || 'Sistema'}</span>
+                                <span>${link.criadoEm || 'Data não disponível'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Indicador de hover -->
+                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                `;
+                
+                grid.appendChild(linkCard);
+            });
+        }
+        
+        function abrirLink(url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+        
+        function editarLink(id) {
+            const link = linksUteis.find(l => l.id == id);
+            if (!link) return;
+            
+            document.getElementById('linkId').value = link.id;
+            document.getElementById('linkNome').value = link.nome;
+            document.getElementById('linkUrl').value = link.url;
+            
+            // Scroll para o formulário
+            document.getElementById('linkForm').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        async function excluirLink(id) {
+            const link = linksUteis.find(l => l.id == id);
+            if (!link) return;
+            
+            // Verificar se usuário ainda está logado
+            if (!currentUser) {
+                createRealtimeNotification('error', 'Sessão Expirada', 'Faça login novamente');
+                return;
+            }
+            
+            const confirmResult = await customConfirm(
+                'Excluir Link',
+                `Tem certeza que deseja excluir o link "${link.nome}"?`
+            );
+            
+            if (confirmResult) {
+                try {
+                    // Remover do array local primeiro
+                    linksUteis = linksUteis.filter(l => l.id !== id);
+                    
+                    // Remover do Firebase se online
+                    if (isOnline) {
+                        try {
+                            await database.ref(`linksUteis/${id}`).remove();
+                        } catch (firebaseError) {
+                            console.error('Erro no Firebase, removendo localmente:', firebaseError);
+                        }
+                    }
+                    
+                    // Salvar localmente
+                    saveData();
+                    
+                    // Atualizar interface
+                    updateLinksGrid();
+                    
+                    createRealtimeNotification('warning', 'Link Excluído', `${link.nome} foi removido dos links úteis`);
+                    
+                } catch (error) {
+                    console.error('Erro ao excluir link:', error);
+                    createRealtimeNotification('error', 'Erro', 'Não foi possível excluir o link: ' + error.message);
+                }
+            }
+        }
+
         // Dados já são carregados na inicialização do sistema
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a295ef30ebf1c7',t:'MTc1NzA0MjM3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97a9ca4e2623f1c7',t:'MTc1NzExNzkxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
