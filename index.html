@@ -24,6 +24,21 @@
         .nav-item.active { background-color: #374151; color: white; }
         .notification { position: fixed; top: 20px; right: 20px; z-index: 1000; min-width: 300px; animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        /* Checkbox customizado */
+        input[type="checkbox"]:checked + div .checkbox-bg { background-color: #7c3aed; border-color: #7c3aed; }
+        input[type="checkbox"]:checked + div .checkbox-icon { opacity: 1; }
+        
+        /* Animação piscante para S do Suhai */
+        .suhai-indicator { 
+            animation: pulse-suhai 2s infinite; 
+            background: linear-gradient(45deg, #10b981, #059669);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        @keyframes pulse-suhai { 
+            0%, 100% { opacity: 1; transform: scale(1); } 
+            50% { opacity: 0.7; transform: scale(1.1); } 
+        }
     </style>
 </head>
 <body class="bg-gray-900 font-sans">
@@ -98,6 +113,9 @@
                     <div id="connectionStatus" class="text-sm text-gray-400">
                         <i class="fas fa-wifi text-gray-500"></i> Conectando...
                     </div>
+                    <button onclick="refreshPage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition duration-200 flex items-center" title="Atualizar página">
+                        <i class="fas fa-sync-alt text-sm"></i>
+                    </button>
                     <div id="onlineUsers" class="text-sm text-gray-400 hidden md:block">
                         0 usuários online
                     </div>
@@ -280,10 +298,36 @@
                         <p class="text-gray-400">Acompanhe o processo de indicações</p>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-4 flex flex-wrap items-center gap-4">
                         <button onclick="showNovaIndicacaoModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center">
                             <i class="fas fa-plus mr-2"></i>Nova Indicação
                         </button>
+                        
+                        <!-- Filtros de Data -->
+                        <div class="flex items-center space-x-2">
+                            <label class="text-gray-300 text-sm font-medium">Filtrar por:</label>
+                            <select id="filtroDataIndicacoes" onchange="aplicarFiltroIndicacoes()" class="bg-gray-700 border border-gray-600 rounded-lg text-white px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                                <option value="todos">TODOS LEADS</option>
+                                <option value="hoje">HOJE</option>
+                                <option value="data-especifica">DATA ESPECÍFICA</option>
+                            </select>
+                            
+                            <!-- Input de data específica (inicialmente oculto) -->
+                            <input type="date" id="dataEspecificaIndicacoes" onchange="aplicarFiltroIndicacoes()" class="bg-gray-700 border border-gray-600 rounded-lg text-white px-3 py-2 text-sm focus:outline-none focus:border-blue-500 hidden">
+                        </div>
+                        
+                        <!-- Filtro de Vendedor (apenas para Admin) -->
+                        <div id="filtroVendedorContainer" class="flex items-center space-x-2" style="display: none;">
+                            <label class="text-gray-300 text-sm font-medium">Vendedor:</label>
+                            <select id="filtroVendedorIndicacoes" onchange="aplicarFiltroIndicacoes()" class="bg-gray-700 border border-gray-600 rounded-lg text-white px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                                <option value="todos">TODOS</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Contador de resultados -->
+                        <div class="text-gray-400 text-sm">
+                            <span id="contadorIndicacoesFiltradas">0 indicações encontradas</span>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -935,45 +979,195 @@
                         <p class="text-gray-400">Configurações do sistema</p>
                     </div>
                     
-                    <!-- Status Firebase -->
-                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-6">
-                        <div class="flex items-center mb-4">
-                            <i class="fas fa-fire text-orange-500 mr-3"></i>
-                            <h3 class="text-xl font-bold text-white">Status Firebase</h3>
-                            <div id="firebaseStatus" class="ml-auto">
-                                <span class="px-3 py-1 text-xs rounded-full bg-green-600 text-white">
-                                    <i class="fas fa-check-circle mr-1"></i>Conectado
-                                </span>
+                    <!-- Menu de Configurações -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <!-- Adicionar Usuário -->
+                        <div class="bg-gradient-to-br from-blue-800 to-indigo-800 rounded-xl border border-blue-600 p-6 cursor-pointer hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 hover:-translate-y-1" onclick="toggleConfigSection('addUser')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="bg-blue-600 p-3 rounded-lg">
+                                    <i class="fas fa-user-plus text-white text-xl"></i>
+                                </div>
+                                <i class="fas fa-chevron-down text-blue-300 transition-transform duration-300" id="addUserChevron"></i>
                             </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Adicionar Usuário</h3>
+                            <p class="text-blue-200 text-sm">Cadastrar novos usuários no sistema</p>
                         </div>
-                        
-                        <div class="bg-green-900 bg-opacity-30 p-4 rounded border border-green-600">
-                            <div class="flex items-center mb-3">
-                                <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                                <h4 class="text-lg font-bold text-green-400">✅ Firebase Configurado com Sucesso!</h4>
+
+                        <!-- Empresas -->
+                        <div class="bg-gradient-to-br from-green-800 to-emerald-800 rounded-xl border border-green-600 p-6 cursor-pointer hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300 hover:-translate-y-1" onclick="toggleConfigSection('companies')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="bg-green-600 p-3 rounded-lg">
+                                    <i class="fas fa-building text-white text-xl"></i>
+                                </div>
+                                <i class="fas fa-chevron-down text-green-300 transition-transform duration-300" id="companiesChevron"></i>
                             </div>
-                            
-                            <div class="space-y-2 text-sm text-gray-300">
-                                <p><strong>Projeto:</strong> vm-seguros-crm</p>
-                                <p><strong>Database URL:</strong> https://vm-seguros-crm-default-rtdb.firebaseio.com</p>
-                                <p><strong>Status:</strong> Realtime Database ativo e funcionando</p>
-                                <p><strong>Funcionalidades:</strong> Sincronização em tempo real, notificações push, presença online</p>
-                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Empresas</h3>
+                            <p class="text-green-200 text-sm">Gerenciar empresas de seguros</p>
                         </div>
-                        
-                        <div class="mt-4 p-3 bg-blue-900 bg-opacity-30 rounded border border-blue-600">
-                            <div class="flex items-center">
-                                <i class="fas fa-info-circle text-blue-400 mr-2"></i>
-                                <p class="text-blue-300 text-sm">
-                                    <strong>Sistema 100% Funcional:</strong> Todas as funcionalidades em tempo real estão ativas. 
-                                    Teste criando indicações e vendas em abas diferentes para ver a sincronização instantânea!
-                                </p>
+
+                        <!-- Produtos -->
+                        <div class="bg-gradient-to-br from-purple-800 to-pink-800 rounded-xl border border-purple-600 p-6 cursor-pointer hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 hover:-translate-y-1" onclick="toggleConfigSection('products')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="bg-purple-600 p-3 rounded-lg">
+                                    <i class="fas fa-box text-white text-xl"></i>
+                                </div>
+                                <i class="fas fa-chevron-down text-purple-300 transition-transform duration-300" id="productsChevron"></i>
                             </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Produtos</h3>
+                            <p class="text-purple-200 text-sm">Gerenciar produtos de seguros</p>
+                        </div>
+
+                        <!-- Debug -->
+                        <div class="bg-gradient-to-br from-red-800 to-pink-800 rounded-xl border border-red-600 p-6 cursor-pointer hover:shadow-lg hover:shadow-red-500/20 transition-all duration-300 hover:-translate-y-1" onclick="toggleConfigSection('debug')">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="bg-red-600 p-3 rounded-lg">
+                                    <i class="fas fa-bug text-white text-xl"></i>
+                                </div>
+                                <i class="fas fa-chevron-down text-red-300 transition-transform duration-300" id="debugChevron"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">Debug</h3>
+                            <p class="text-red-200 text-sm">Credenciais e informações do sistema</p>
                         </div>
                     </div>
 
-                    <!-- Debug Section -->
-                    <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-6">
+                    <!-- Seção Adicionar Usuário -->
+                    <div id="addUserSection" class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-6 hidden">
+                        <div class="flex items-center mb-6">
+                            <i class="fas fa-user-plus text-blue-500 mr-3"></i>
+                            <h3 class="text-xl font-bold text-white">Adicionar Novo Usuário</h3>
+                        </div>
+                        
+                        <form id="addUserForm" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Nome Completo *</label>
+                                    <input type="text" id="newUserName" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="Digite o nome completo" required>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Login *</label>
+                                    <input type="text" id="newUserLogin" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="Digite o login" required>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Senha *</label>
+                                    <input type="password" id="newUserPassword" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="Digite a senha" required>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-2">Tipo de Usuário *</label>
+                                    <select id="newUserType" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
+                                        <option value="">Selecione o tipo</option>
+                                        <option value="admin">Administrador</option>
+                                        <option value="vendedor">Vendedor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-4 pt-4">
+                                <button type="button" onclick="resetAddUserForm()" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition duration-200">
+                                    <i class="fas fa-times mr-2"></i>Cancelar
+                                </button>
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-200">
+                                    <i class="fas fa-user-plus mr-2"></i>Adicionar Usuário
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Seção Empresas -->
+                    <div id="companiesSection" class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-6 hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center">
+                                <i class="fas fa-building text-green-500 mr-3"></i>
+                                <h3 class="text-xl font-bold text-white">Gerenciar Empresas</h3>
+                            </div>
+                            <button onclick="showAddCompanyForm()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                                <i class="fas fa-plus mr-2"></i>Nova Empresa
+                            </button>
+                        </div>
+                        
+                        <!-- Formulário de Empresa -->
+                        <div id="companyFormContainer" class="mb-6 hidden">
+                            <form id="companyForm" class="space-y-4">
+                                <input type="hidden" id="companyId" value="">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-gray-300 text-sm font-medium mb-2">Nome da Empresa *</label>
+                                        <input type="text" id="companyName" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-green-500" placeholder="Ex: Porto Seguro" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-300 text-sm font-medium mb-2">Status</label>
+                                        <select id="companyStatus" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-green-500">
+                                            <option value="ativa">Ativa</option>
+                                            <option value="inativa">Inativa</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex space-x-4">
+                                    <button type="button" onclick="hideCompanyForm()" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition duration-200">
+                                        <i class="fas fa-times mr-2"></i>Cancelar
+                                    </button>
+                                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition duration-200">
+                                        <i class="fas fa-save mr-2"></i>Salvar Empresa
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Lista de Empresas -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="companiesList">
+                            <!-- Empresas serão carregadas aqui -->
+                        </div>
+                    </div>
+
+                    <!-- Seção Produtos -->
+                    <div id="productsSection" class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-6 hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center">
+                                <i class="fas fa-box text-purple-500 mr-3"></i>
+                                <h3 class="text-xl font-bold text-white">Gerenciar Produtos</h3>
+                            </div>
+                            <button onclick="showAddProductForm()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                                <i class="fas fa-plus mr-2"></i>Novo Produto
+                            </button>
+                        </div>
+                        
+                        <!-- Formulário de Produto -->
+                        <div id="productFormContainer" class="mb-6 hidden">
+                            <form id="productForm" class="space-y-4">
+                                <input type="hidden" id="productId" value="">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-gray-300 text-sm font-medium mb-2">Nome do Produto *</label>
+                                        <input type="text" id="productName" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-purple-500" placeholder="Ex: Seguro Auto" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-300 text-sm font-medium mb-2">Status</label>
+                                        <select id="productStatus" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-purple-500">
+                                            <option value="ativo">Ativo</option>
+                                            <option value="inativo">Inativo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex space-x-4">
+                                    <button type="button" onclick="hideProductForm()" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition duration-200">
+                                        <i class="fas fa-times mr-2"></i>Cancelar
+                                    </button>
+                                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg transition duration-200">
+                                        <i class="fas fa-save mr-2"></i>Salvar Produto
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Lista de Produtos -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="productsList">
+                            <!-- Produtos serão carregados aqui -->
+                        </div>
+                    </div>
+
+                    <!-- Seção Debug -->
+                    <div id="debugSection" class="bg-gray-800 rounded-xl border border-gray-700 p-6 mb-6 hidden">
                         <div class="flex items-center mb-4">
                             <i class="fas fa-bug text-red-500 mr-3"></i>
                             <h3 class="text-xl font-bold text-white">Debug - Credenciais do Sistema</h3>
@@ -1024,11 +1218,42 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Outras configurações -->
+
+                    <!-- Status Firebase -->
                     <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
-                        <h3 class="text-xl font-bold text-white mb-4">Configurações Gerais</h3>
-                        <p class="text-gray-400">Outras configurações em desenvolvimento...</p>
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-fire text-orange-500 mr-3"></i>
+                            <h3 class="text-xl font-bold text-white">Status Firebase</h3>
+                            <div id="firebaseStatus" class="ml-auto">
+                                <span class="px-3 py-1 text-xs rounded-full bg-green-600 text-white">
+                                    <i class="fas fa-check-circle mr-1"></i>Conectado
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-900 bg-opacity-30 p-4 rounded border border-green-600">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                                <h4 class="text-lg font-bold text-green-400">✅ Firebase Configurado com Sucesso!</h4>
+                            </div>
+                            
+                            <div class="space-y-2 text-sm text-gray-300">
+                                <p><strong>Projeto:</strong> vm-seguros-crm</p>
+                                <p><strong>Database URL:</strong> https://vm-seguros-crm-default-rtdb.firebaseio.com</p>
+                                <p><strong>Status:</strong> Realtime Database ativo e funcionando</p>
+                                <p><strong>Funcionalidades:</strong> Sincronização em tempo real, notificações push, presença online</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-blue-900 bg-opacity-30 rounded border border-blue-600">
+                            <div class="flex items-center">
+                                <i class="fas fa-info-circle text-blue-400 mr-2"></i>
+                                <p class="text-blue-300 text-sm">
+                                    <strong>Sistema 100% Funcional:</strong> Todas as funcionalidades em tempo real estão ativas. 
+                                    Teste criando indicações e vendas em abas diferentes para ver a sincronização instantânea!
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -1045,7 +1270,7 @@
                 </button>
             </div>
             <form id="indicacaoForm" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div>
                         <label class="block text-gray-300 text-sm font-medium mb-2">Nome do Cliente *</label>
                         <input type="text" id="indicacaoNome" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
@@ -1063,6 +1288,19 @@
                         <select id="indicacaoVendedor" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500" required>
                             <option value="">Selecione um vendedor</option>
                         </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Lead Suhai</label>
+                        <div class="flex items-center justify-center h-12 bg-gray-700 border border-gray-600 rounded-lg">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="indicacaoLeadSuhai" class="sr-only">
+                                <div class="relative">
+                                    <div class="w-6 h-6 bg-gray-600 rounded border border-gray-500 transition-all duration-200 checkbox-bg"></div>
+                                    <i class="fas fa-check absolute top-0 left-0 w-6 h-6 text-white text-sm flex items-center justify-center opacity-0 transition-opacity duration-200 checkbox-icon"></i>
+                                </div>
+                                <span class="text-purple-400 text-sm font-medium ml-2">Suhai</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
                 
@@ -2002,6 +2240,9 @@
                 updateLinksGrid();
                 updateMonthlySalesCount();
                 updateRelatoriosVendedores();
+                updateVendaEmpresaSelect();
+                updateVendaProdutoSelect();
+                setupFiltrosIndicacoes();
                 
                 console.log('✅ Sistema inicializado com sucesso');
                 createRealtimeNotification('success', 'Sistema Pronto', 'CRM VM Seguros carregado com sucesso!');
@@ -2032,7 +2273,8 @@
                     'configuracoes',
                     'lead-suhai', 
                     'relatorios',
-                    'cancelamentos'
+                    'cancelamentos',
+                    'vendedores'
                 ];
                 
                 restrictedPages.forEach(pageId => {
@@ -2355,6 +2597,13 @@
         }
 
         function updateKanbanIndicacoes() {
+            // Se os filtros estão configurados, usar a função filtrada
+            if (document.getElementById('filtroDataIndicacoes')) {
+                aplicarFiltroIndicacoes();
+                return;
+            }
+            
+            // Função original para quando os filtros não estão disponíveis
             const containers = {
                 'Lead Novo': document.getElementById('leadNovoContainer'),
                 'WhatsApp': document.getElementById('whatsappContainer'),
@@ -2403,7 +2652,10 @@
                         <h4 class="font-medium text-white text-sm mb-2 pr-8">${indicacao.nome}</h4>
                         <p class="text-gray-300 text-xs mb-1">${indicacao.telefone}</p>
                         <p class="text-gray-300 text-xs mb-1">${indicacao.veiculo}</p>
-                        <p class="text-gray-400 text-xs mb-3">${indicacao.vendedor}</p>
+                        <div class="flex items-center justify-between mb-3">
+                            <p class="text-gray-400 text-xs">${indicacao.vendedor}</p>
+                            ${indicacao.leadSuhai ? '<span class="suhai-indicator text-white text-xs font-bold px-1.5 py-0.5 rounded-full">S</span>' : ''}
+                        </div>
                         
                         <!-- Checkbox Não Atendeu -->
                         <div class="mb-2 flex items-center space-x-2">
@@ -2728,13 +2980,23 @@
             selects.forEach(selectId => {
                 const select = document.getElementById(selectId);
                 if (select) {
-                    select.innerHTML = '<option value="">Selecione um vendedor</option>';
-                    vendedores.forEach(vendedor => {
-                        const option = document.createElement('option');
-                        option.value = vendedor.nome;
-                        option.textContent = vendedor.nome;
-                        select.appendChild(option);
-                    });
+                    if (currentUser && currentUser.tipo === 'vendedor') {
+                        // Vendedor só pode selecionar a si mesmo
+                        select.innerHTML = `<option value="${currentUser.nome}" selected>${currentUser.nome}</option>`;
+                        select.disabled = true;
+                        select.classList.add('cursor-not-allowed', 'bg-gray-600');
+                    } else {
+                        // Admin pode selecionar qualquer vendedor
+                        select.innerHTML = '<option value="">Selecione um vendedor</option>';
+                        select.disabled = false;
+                        select.classList.remove('cursor-not-allowed', 'bg-gray-600');
+                        vendedores.forEach(vendedor => {
+                            const option = document.createElement('option');
+                            option.value = vendedor.nome;
+                            option.textContent = vendedor.nome;
+                            select.appendChild(option);
+                        });
+                    }
                 }
             });
         }
@@ -2785,7 +3047,8 @@
                     telefone: document.getElementById('indicacaoTelefone').value,
                     veiculo: document.getElementById('indicacaoVeiculo').value,
                     vendedor: document.getElementById('indicacaoVendedor').value,
-                    observacoes: document.getElementById('indicacaoObservacoes').value
+                    observacoes: document.getElementById('indicacaoObservacoes').value,
+                    leadSuhai: document.getElementById('indicacaoLeadSuhai').checked
                 };
                 
                 try {
@@ -2818,7 +3081,6 @@
                             ...indicacaoData,
                             status: 'Lead Novo',
                             data: new Date().toLocaleDateString('pt-BR'),
-                            observacoes: '',
                             assignedBy: currentUser.nome,
                             timestamp: Date.now()
                         };
@@ -2979,6 +3241,7 @@
                 document.getElementById('indicacaoVeiculo').value = indicacao.veiculo;
                 document.getElementById('indicacaoVendedor').value = indicacao.vendedor;
                 document.getElementById('indicacaoObservacoes').value = indicacao.observacoes || '';
+                document.getElementById('indicacaoLeadSuhai').checked = indicacao.leadSuhai || false;
                 
                 // Adicionar ID para edição
                 const form = document.getElementById('indicacaoForm');
@@ -4938,7 +5201,647 @@
             }
         }
 
+        // ===== FUNÇÕES DE CONFIGURAÇÕES =====
+        
+        // Dados para empresas e produtos
+        let empresas = [
+            { id: 1, nome: 'Porto Seguro', status: 'ativa' },
+            { id: 2, nome: 'Bradesco', status: 'ativa' },
+            { id: 3, nome: 'Azul Seguros', status: 'ativa' },
+            { id: 4, nome: 'Suhai', status: 'ativa' },
+            { id: 5, nome: 'Allianz', status: 'ativa' },
+            { id: 6, nome: 'Tokio Marine', status: 'ativa' },
+            { id: 7, nome: 'HDI', status: 'ativa' },
+            { id: 8, nome: 'Mapfre', status: 'ativa' }
+        ];
+        
+        let produtos = [
+            { id: 1, nome: 'Seguro Auto', status: 'ativo' },
+            { id: 2, nome: 'Seguro Residencial', status: 'ativo' },
+            { id: 3, nome: 'Seguro Vida', status: 'ativo' },
+            { id: 4, nome: 'Seguro Empresarial', status: 'ativo' },
+            { id: 5, nome: 'Seguro Viagem', status: 'ativo' }
+        ];
+        
+        function toggleConfigSection(sectionName) {
+            const sections = ['addUser', 'companies', 'products', 'debug'];
+            const chevrons = ['addUserChevron', 'companiesChevron', 'productsChevron', 'debugChevron'];
+            
+            sections.forEach((section, index) => {
+                const sectionElement = document.getElementById(section + 'Section');
+                const chevronElement = document.getElementById(chevrons[index]);
+                
+                if (section === sectionName) {
+                    // Toggle a seção clicada
+                    const isHidden = sectionElement.classList.contains('hidden');
+                    if (isHidden) {
+                        sectionElement.classList.remove('hidden');
+                        chevronElement.style.transform = 'rotate(180deg)';
+                    } else {
+                        sectionElement.classList.add('hidden');
+                        chevronElement.style.transform = 'rotate(0deg)';
+                    }
+                } else {
+                    // Fechar outras seções
+                    sectionElement.classList.add('hidden');
+                    chevronElement.style.transform = 'rotate(0deg)';
+                }
+            });
+            
+            // Carregar dados específicos da seção
+            if (sectionName === 'companies') {
+                updateCompaniesList();
+            } else if (sectionName === 'products') {
+                updateProductsList();
+            } else if (sectionName === 'debug') {
+                updateDebugCredentials();
+            }
+        }
+        
+        // ===== FUNÇÕES DE USUÁRIOS =====
+        function initializeAddUserForm() {
+            const form = document.getElementById('addUserForm');
+            if (!form) return;
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const userData = {
+                    nome: document.getElementById('newUserName').value.trim(),
+                    login: document.getElementById('newUserLogin').value.trim().toLowerCase(),
+                    senha: document.getElementById('newUserPassword').value,
+                    tipo: document.getElementById('newUserType').value
+                };
+                
+                // Validar se login já existe
+                const loginExists = usuarios.find(u => u.login === userData.login);
+                if (loginExists) {
+                    createRealtimeNotification('error', 'Login Já Existe', 'Este login já está sendo usado por outro usuário');
+                    return;
+                }
+                
+                try {
+                    // Adicionar ao array de usuários
+                    const novoUsuario = {
+                        id: Date.now(),
+                        ...userData
+                    };
+                    
+                    usuarios.push(novoUsuario);
+                    
+                    // Salvar no Firebase se disponível
+                    if (firebaseInitialized && database) {
+                        await database.ref(`usuarios/${novoUsuario.id}`).set(novoUsuario);
+                    }
+                    
+                    createRealtimeNotification('success', 'Usuário Criado', `${userData.nome} foi adicionado ao sistema`);
+                    
+                    resetAddUserForm();
+                    updateDebugCredentials();
+                    populateVendedorSelects();
+                    
+                } catch (error) {
+                    console.error('Erro ao criar usuário:', error);
+                    createRealtimeNotification('error', 'Erro', 'Não foi possível criar o usuário');
+                }
+            });
+        }
+        
+        function resetAddUserForm() {
+            const form = document.getElementById('addUserForm');
+            if (form) {
+                form.reset();
+            }
+        }
+        
+        // ===== FUNÇÕES DE EMPRESAS =====
+        function showAddCompanyForm() {
+            document.getElementById('companyFormContainer').classList.remove('hidden');
+            document.getElementById('companyId').value = '';
+            document.getElementById('companyForm').reset();
+        }
+        
+        function hideCompanyForm() {
+            document.getElementById('companyFormContainer').classList.add('hidden');
+        }
+        
+        function initializeCompanyForm() {
+            const form = document.getElementById('companyForm');
+            if (!form) return;
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const id = document.getElementById('companyId').value;
+                const companyData = {
+                    nome: document.getElementById('companyName').value.trim(),
+                    status: document.getElementById('companyStatus').value
+                };
+                
+                try {
+                    if (id) {
+                        // Editar empresa existente
+                        const index = empresas.findIndex(e => e.id == id);
+                        if (index !== -1) {
+                            empresas[index] = { ...empresas[index], ...companyData };
+                            createRealtimeNotification('success', 'Empresa Atualizada', `${companyData.nome} foi atualizada`);
+                        }
+                    } else {
+                        // Criar nova empresa
+                        const novaEmpresa = {
+                            id: Date.now(),
+                            ...companyData
+                        };
+                        empresas.push(novaEmpresa);
+                        createRealtimeNotification('success', 'Empresa Criada', `${companyData.nome} foi adicionada`);
+                    }
+                    
+                    // Salvar no Firebase
+                    if (firebaseInitialized && database) {
+                        await database.ref('empresas').set(empresas);
+                    }
+                    
+                    updateCompaniesList();
+                    updateVendaEmpresaSelect();
+                    hideCompanyForm();
+                    
+                } catch (error) {
+                    console.error('Erro ao salvar empresa:', error);
+                    createRealtimeNotification('error', 'Erro', 'Não foi possível salvar a empresa');
+                }
+            });
+        }
+        
+        function updateCompaniesList() {
+            const list = document.getElementById('companiesList');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            
+            empresas.forEach(empresa => {
+                const card = document.createElement('div');
+                card.className = `bg-gray-700 rounded-lg border border-gray-600 p-4 hover:border-green-500 transition-all duration-200 ${empresa.status === 'inativa' ? 'opacity-50' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-green-600 w-10 h-10 rounded-full flex items-center justify-center">
+                                <i class="fas fa-building text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-white">${empresa.nome}</h4>
+                                <span class="text-xs px-2 py-1 rounded-full ${empresa.status === 'ativa' ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}">${empresa.status}</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-1">
+                            <button onclick="editarEmpresa(${empresa.id})" class="text-blue-400 hover:text-blue-300 p-2">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="excluirEmpresa(${empresa.id})" class="text-red-400 hover:text-red-300 p-2">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                list.appendChild(card);
+            });
+        }
+        
+        function editarEmpresa(id) {
+            const empresa = empresas.find(e => e.id == id);
+            if (!empresa) return;
+            
+            document.getElementById('companyId').value = empresa.id;
+            document.getElementById('companyName').value = empresa.nome;
+            document.getElementById('companyStatus').value = empresa.status;
+            
+            showAddCompanyForm();
+        }
+        
+        async function excluirEmpresa(id) {
+            const empresa = empresas.find(e => e.id == id);
+            if (!empresa) return;
+            
+            const confirmResult = await customConfirm(
+                'Excluir Empresa',
+                `Tem certeza que deseja excluir ${empresa.nome}?`
+            );
+            
+            if (confirmResult) {
+                empresas = empresas.filter(e => e.id !== id);
+                
+                if (firebaseInitialized && database) {
+                    await database.ref('empresas').set(empresas);
+                }
+                
+                updateCompaniesList();
+                updateVendaEmpresaSelect();
+                createRealtimeNotification('warning', 'Empresa Excluída', `${empresa.nome} foi removida`);
+            }
+        }
+        
+        // ===== FUNÇÕES DE PRODUTOS =====
+        function showAddProductForm() {
+            document.getElementById('productFormContainer').classList.remove('hidden');
+            document.getElementById('productId').value = '';
+            document.getElementById('productForm').reset();
+        }
+        
+        function hideProductForm() {
+            document.getElementById('productFormContainer').classList.add('hidden');
+        }
+        
+        function initializeProductForm() {
+            const form = document.getElementById('productForm');
+            if (!form) return;
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const id = document.getElementById('productId').value;
+                const productData = {
+                    nome: document.getElementById('productName').value.trim(),
+                    status: document.getElementById('productStatus').value
+                };
+                
+                try {
+                    if (id) {
+                        // Editar produto existente
+                        const index = produtos.findIndex(p => p.id == id);
+                        if (index !== -1) {
+                            produtos[index] = { ...produtos[index], ...productData };
+                            createRealtimeNotification('success', 'Produto Atualizado', `${productData.nome} foi atualizado`);
+                        }
+                    } else {
+                        // Criar novo produto
+                        const novoProduto = {
+                            id: Date.now(),
+                            ...productData
+                        };
+                        produtos.push(novoProduto);
+                        createRealtimeNotification('success', 'Produto Criado', `${productData.nome} foi adicionado`);
+                    }
+                    
+                    // Salvar no Firebase
+                    if (firebaseInitialized && database) {
+                        await database.ref('produtos').set(produtos);
+                    }
+                    
+                    updateProductsList();
+                    updateVendaProdutoSelect();
+                    hideProductForm();
+                    
+                } catch (error) {
+                    console.error('Erro ao salvar produto:', error);
+                    createRealtimeNotification('error', 'Erro', 'Não foi possível salvar o produto');
+                }
+            });
+        }
+        
+        function updateProductsList() {
+            const list = document.getElementById('productsList');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            
+            produtos.forEach(produto => {
+                const card = document.createElement('div');
+                card.className = `bg-gray-700 rounded-lg border border-gray-600 p-4 hover:border-purple-500 transition-all duration-200 ${produto.status === 'inativo' ? 'opacity-50' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-purple-600 w-10 h-10 rounded-full flex items-center justify-center">
+                                <i class="fas fa-box text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-white">${produto.nome}</h4>
+                                <span class="text-xs px-2 py-1 rounded-full ${produto.status === 'ativo' ? 'bg-purple-600 text-white' : 'bg-gray-600 text-gray-300'}">${produto.status}</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-1">
+                            <button onclick="editarProduto(${produto.id})" class="text-blue-400 hover:text-blue-300 p-2">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="excluirProduto(${produto.id})" class="text-red-400 hover:text-red-300 p-2">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                list.appendChild(card);
+            });
+        }
+        
+        function editarProduto(id) {
+            const produto = produtos.find(p => p.id == id);
+            if (!produto) return;
+            
+            document.getElementById('productId').value = produto.id;
+            document.getElementById('productName').value = produto.nome;
+            document.getElementById('productStatus').value = produto.status;
+            
+            showAddProductForm();
+        }
+        
+        async function excluirProduto(id) {
+            const produto = produtos.find(p => p.id == id);
+            if (!produto) return;
+            
+            const confirmResult = await customConfirm(
+                'Excluir Produto',
+                `Tem certeza que deseja excluir ${produto.nome}?`
+            );
+            
+            if (confirmResult) {
+                produtos = produtos.filter(p => p.id !== id);
+                
+                if (firebaseInitialized && database) {
+                    await database.ref('produtos').set(produtos);
+                }
+                
+                updateProductsList();
+                updateVendaProdutoSelect();
+                createRealtimeNotification('warning', 'Produto Excluído', `${produto.nome} foi removido`);
+            }
+        }
+        
+        // ===== FUNÇÕES PARA ATUALIZAR SELECTS =====
+        function updateVendaEmpresaSelect() {
+            const select = document.getElementById('vendaEmpresa');
+            if (!select) return;
+            
+            const empresasAtivas = empresas.filter(e => e.status === 'ativa');
+            select.innerHTML = '<option value="">Selecione uma empresa</option>';
+            
+            empresasAtivas.forEach(empresa => {
+                const option = document.createElement('option');
+                option.value = empresa.nome;
+                option.textContent = empresa.nome;
+                select.appendChild(option);
+            });
+        }
+        
+        function updateVendaProdutoSelect() {
+            const select = document.getElementById('vendaProduto');
+            if (!select) return;
+            
+            const produtosAtivos = produtos.filter(p => p.status === 'ativo');
+            select.innerHTML = '<option value="">Selecione um produto</option>';
+            
+            produtosAtivos.forEach(produto => {
+                const option = document.createElement('option');
+                option.value = produto.nome;
+                option.textContent = produto.nome;
+                select.appendChild(option);
+            });
+        }
+        
+        // Inicializar formulários de configuração
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAddUserForm();
+            initializeCompanyForm();
+            initializeProductForm();
+        });
+
+        // ===== SCRIPT PARA CHECKBOX CUSTOMIZADO =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar checkbox do Lead Suhai
+            const checkbox = document.getElementById('indicacaoLeadSuhai');
+            if (checkbox) {
+                checkbox.addEventListener('change', function() {
+                    const checkboxBg = this.nextElementSibling.querySelector('.checkbox-bg');
+                    const checkboxIcon = this.nextElementSibling.querySelector('.checkbox-icon');
+                    
+                    if (this.checked) {
+                        checkboxBg.style.backgroundColor = '#7c3aed';
+                        checkboxBg.style.borderColor = '#7c3aed';
+                        checkboxIcon.style.opacity = '1';
+                    } else {
+                        checkboxBg.style.backgroundColor = '#4b5563';
+                        checkboxBg.style.borderColor = '#6b7280';
+                        checkboxIcon.style.opacity = '0';
+                    }
+                });
+            }
+        });
+
+        // ===== FUNÇÃO DE REFRESH DA PÁGINA =====
+        function refreshPage() {
+            const refreshBtn = document.querySelector('[onclick="refreshPage()"]');
+            const icon = refreshBtn.querySelector('i');
+            
+            // Animação de rotação
+            icon.classList.add('fa-spin');
+            refreshBtn.disabled = true;
+            refreshBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            // Simular carregamento e atualizar dados
+            setTimeout(async () => {
+                try {
+                    // Recarregar dados do Firebase ou local
+                    if (isOnline && firebaseInitialized) {
+                        await loadFirebaseData();
+                    } else {
+                        loadLocalData();
+                    }
+                    
+                    // Atualizar todas as interfaces
+                    updateDashboard();
+                    updateKanbanVendas();
+                    updateKanbanIndicacoes();
+                    updateIndicacoesTable();
+                    updateVendasTable();
+                    updateVendedoresList();
+                    updateVendedoresTable();
+                    updateLeadSuhaiTable();
+                    updateSemSucessoTable();
+                    updateComissaoTable();
+                    updateCancelamentosTable();
+                    updateLinksGrid();
+                    updateRelatoriosVendedores();
+                    
+                    // Aplicar filtros se estiverem ativos
+                    aplicarFiltroIndicacoes();
+                    
+                    createRealtimeNotification('success', 'Página Atualizada', 'Todos os dados foram recarregados com sucesso!');
+                    
+                } catch (error) {
+                    console.error('Erro ao atualizar página:', error);
+                    createRealtimeNotification('error', 'Erro na Atualização', 'Houve um problema ao recarregar os dados');
+                } finally {
+                    // Remover animação
+                    icon.classList.remove('fa-spin');
+                    refreshBtn.disabled = false;
+                    refreshBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }, 1000);
+        }
+
+        // ===== SISTEMA DE FILTROS PARA KANBAN INDICAÇÕES =====
+        let indicacoesFiltradas = [];
+        
+        function setupFiltrosIndicacoes() {
+            // Configurar filtro de vendedor apenas para admin
+            if (currentUser && currentUser.tipo === 'admin') {
+                document.getElementById('filtroVendedorContainer').style.display = 'flex';
+                populateFiltroVendedor();
+            } else {
+                document.getElementById('filtroVendedorContainer').style.display = 'none';
+            }
+            
+            // Configurar evento para mostrar/ocultar input de data
+            const filtroData = document.getElementById('filtroDataIndicacoes');
+            const inputData = document.getElementById('dataEspecificaIndicacoes');
+            
+            filtroData.addEventListener('change', function() {
+                if (this.value === 'data-especifica') {
+                    inputData.classList.remove('hidden');
+                    inputData.focus();
+                } else {
+                    inputData.classList.add('hidden');
+                    inputData.value = '';
+                }
+            });
+            
+            // Aplicar filtro inicial
+            aplicarFiltroIndicacoes();
+        }
+        
+        function populateFiltroVendedor() {
+            const select = document.getElementById('filtroVendedorIndicacoes');
+            if (!select) return;
+            
+            const vendedores = usuarios.filter(u => u.tipo === 'vendedor');
+            select.innerHTML = '<option value="todos">TODOS</option>';
+            
+            vendedores.forEach(vendedor => {
+                const option = document.createElement('option');
+                option.value = vendedor.nome;
+                option.textContent = vendedor.nome;
+                select.appendChild(option);
+            });
+        }
+        
+        function aplicarFiltroIndicacoes() {
+            const filtroData = document.getElementById('filtroDataIndicacoes').value;
+            const dataEspecifica = document.getElementById('dataEspecificaIndicacoes').value;
+            const filtroVendedor = document.getElementById('filtroVendedorIndicacoes').value;
+            const contador = document.getElementById('contadorIndicacoesFiltradas');
+            
+            // Começar com todas as indicações (filtradas por usuário se necessário)
+            let indicacoesBase = filterDataByUser(indicacoes, 'indicacoes');
+            
+            // Aplicar filtro de data
+            if (filtroData === 'hoje') {
+                const hoje = new Date().toLocaleDateString('pt-BR');
+                indicacoesFiltradas = indicacoesBase.filter(i => i.data === hoje);
+            } else if (filtroData === 'data-especifica' && dataEspecifica) {
+                const dataFiltro = new Date(dataEspecifica).toLocaleDateString('pt-BR');
+                indicacoesFiltradas = indicacoesBase.filter(i => i.data === dataFiltro);
+            } else {
+                indicacoesFiltradas = indicacoesBase;
+            }
+            
+            // Aplicar filtro de vendedor (apenas para admin)
+            if (currentUser && currentUser.tipo === 'admin' && filtroVendedor !== 'todos') {
+                indicacoesFiltradas = indicacoesFiltradas.filter(i => i.vendedor === filtroVendedor);
+            }
+            
+            // Atualizar contador
+            if (contador) {
+                contador.textContent = `${indicacoesFiltradas.length} indicações encontradas`;
+            }
+            
+            // Atualizar kanban com dados filtrados
+            updateKanbanIndicacoesFiltrado();
+        }
+        
+        function updateKanbanIndicacoesFiltrado() {
+            const containers = {
+                'Lead Novo': document.getElementById('leadNovoContainer'),
+                'WhatsApp': document.getElementById('whatsappContainer'),
+                'Negociando': document.getElementById('negociandoContainer'),
+                'Pedindo Dados': document.getElementById('pedindoDadosContainer')
+            };
+
+            const counts = {
+                'Lead Novo': document.getElementById('leadNovoCount'),
+                'WhatsApp': document.getElementById('whatsappCount'),
+                'Negociando': document.getElementById('negociandoCount'),
+                'Pedindo Dados': document.getElementById('pedindoDadosCount')
+            };
+
+            Object.keys(containers).forEach(status => {
+                const container = containers[status];
+                const count = counts[status];
+                const indicacoesStatus = indicacoesFiltradas.filter(i => i.status === status);
+                
+                container.innerHTML = '';
+                count.textContent = indicacoesStatus.length;
+                
+                indicacoesStatus.forEach(indicacao => {
+                    const card = document.createElement('div');
+                    card.className = 'kanban-card bg-gray-700 p-3 rounded-lg border border-gray-600';
+                    card.draggable = true;
+                    card.dataset.id = indicacao.id;
+                    card.dataset.type = 'indicacao';
+                    
+                    card.addEventListener('dragstart', (e) => handleDragStart(e, 'indicacao', indicacao.id));
+                    card.addEventListener('dragend', handleDragEnd);
+                    
+                    card.innerHTML = `
+                        <div class="card-actions">
+                            <button onclick="editarIndicacao(${indicacao.id})" class="text-blue-400 hover:text-blue-300 text-xs mr-1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="excluirIndicacao(${indicacao.id})" class="text-red-400 hover:text-red-300 text-xs">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <h4 class="font-medium text-white text-sm mb-2 pr-8">${indicacao.nome}</h4>
+                        <p class="text-gray-300 text-xs mb-1">${indicacao.telefone}</p>
+                        <p class="text-gray-300 text-xs mb-1">${indicacao.veiculo}</p>
+                        <div class="flex items-center justify-between mb-3">
+                            <p class="text-gray-400 text-xs">${indicacao.vendedor}</p>
+                            ${indicacao.leadSuhai ? '<span class="suhai-indicator text-white text-xs font-bold px-1.5 py-0.5 rounded-full">S</span>' : ''}
+                        </div>
+                        
+                        <!-- Checkbox Não Atendeu -->
+                        <div class="mb-2 flex items-center space-x-2">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" ${indicacao.naoAtendeu ? 'checked' : ''} onchange="toggleNaoAtendeu(${indicacao.id})" class="sr-only">
+                                <div class="relative">
+                                    <div class="w-4 h-4 bg-gray-600 rounded border border-gray-500 transition-all duration-200 ${indicacao.naoAtendeu ? 'bg-red-600 border-red-500' : ''}"></div>
+                                    ${indicacao.naoAtendeu ? '<i class="fas fa-check absolute top-0 left-0 w-4 h-4 text-white text-xs flex items-center justify-center"></i>' : ''}
+                                </div>
+                            </label>
+                            <span class="text-red-400 text-xs font-medium">Não Atendeu</span>
+                        </div>
+                        
+                        <!-- Botões de Ação -->
+                        <div class="mb-3 space-y-1">
+                            <button onclick="console.log('🔄 Clicando CONVERTER para:', '${indicacao.id}', typeof '${indicacao.id}'); converterIndicacao('${indicacao.id}')" class="w-full bg-green-600 hover:bg-green-700 text-white text-xs py-1.5 px-2 rounded transition duration-200 flex items-center justify-center">
+                                <i class="fas fa-exchange-alt mr-1"></i>CONVERTER
+                            </button>
+                            <button onclick="console.log('❌ Clicando SEM SUCESSO para:', '${indicacao.id}', typeof '${indicacao.id}'); marcarSemSucesso('${indicacao.id}')" class="w-full bg-red-600 hover:bg-red-700 text-white text-xs py-1.5 px-2 rounded transition duration-200 flex items-center justify-center">
+                                <i class="fas fa-times mr-1"></i>SEM SUCESSO
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 text-xs">${indicacao.data}</span>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            });
+        }
+
         // Dados já são carregados na inicialização do sistema
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97aa529046bdc1b6',t:'MTc1NzEyMzQ5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97aa8e50e344c1b6',t:'MTc1NzEyNTk0Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
