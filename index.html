@@ -2736,7 +2736,8 @@
                         </div>
                         <p class="text-gray-300 text-xs mb-1">${venda.produto} - ${venda.empresa}</p>
                         <p class="text-gray-400 text-xs mb-2">${venda.vendedor}</p>
-                        <p class="text-green-400 text-xs font-medium">R$ ${venda.premioLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                        <p class="text-green-400 text-xs font-medium">R$ ${(venda.comissaoVendedor || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                        <p class="text-gray-400 text-xs">Comissão</p>
                         <div class="mt-3">
                             <!-- Lead Suhai Checkbox -->
                             <div class="flex items-center justify-between mb-2">
@@ -3197,11 +3198,11 @@
             const comissaoTotal = (premioLiquido * percentualComissao) / 100;
             document.getElementById('vendaComissaoTotal').value = comissaoTotal.toFixed(2);
             
-            // Calcular comissão do vendedor (% do vendedor sobre o prêmio, NÃO sobre a comissão total)
+            // Calcular comissão do vendedor (% do vendedor sobre a comissão total)
             if (vendedorSelecionado) {
                 const vendedorData = vendedoresData.find(v => v.nome === vendedorSelecionado);
                 const percentualVendedor = vendedorData ? vendedorData.comissao : 10;
-                const comissaoVendedor = (premioLiquido * percentualVendedor) / 100;
+                const comissaoVendedor = (comissaoTotal * percentualVendedor) / 100;
                 document.getElementById('vendaComissaoVendedor').value = comissaoVendedor.toFixed(2);
             } else {
                 document.getElementById('vendaComissaoVendedor').value = '0.00';
@@ -4357,7 +4358,10 @@
             let totalComissao = 0;
             
             leadsComSuhai.forEach(venda => {
-                const comissao = venda.premioLiquido * 0.1; // 10% de comissão exemplo
+                const comissaoTotal = venda.premioLiquido * ((venda.percentualComissao || 15) / 100);
+                const vendedorData = vendedoresData.find(v => v.nome === venda.vendedor);
+                const percentualVendedor = vendedorData ? vendedorData.comissao : 10;
+                const comissao = comissaoTotal * (percentualVendedor / 100);
                 totalComissao += comissao;
                 
                 const row = document.createElement('tr');
@@ -4395,7 +4399,10 @@
                     };
                 }
                 vendedorStats[venda.vendedor].vendas++;
-                vendedorStats[venda.vendedor].comissao += venda.premioLiquido * 0.1;
+                const comissaoTotal = venda.premioLiquido * ((venda.percentualComissao || 15) / 100);
+                const vendedorData = vendedoresData.find(v => v.nome === venda.vendedor);
+                const percentualVendedor = vendedorData ? vendedorData.comissao : 10;
+                vendedorStats[venda.vendedor].comissao += comissaoTotal * (percentualVendedor / 100);
             });
             
             // Ordenar por comissão e pegar top 3
@@ -4537,8 +4544,8 @@
                 const vendedorData = vendedoresData.find(v => v.nome === venda.vendedor);
                 const percentualComissao = vendedorData ? vendedorData.comissao : 10; // 10% padrão
                 
-                const comissaoTotal = venda.premioLiquido * 0.15; // 15% comissão total da empresa
-                const comissaoVendedor = venda.premioLiquido * (percentualComissao / 100);
+                const comissaoTotal = venda.premioLiquido * ((venda.percentualComissao || 15) / 100); // % comissão total da empresa
+                const comissaoVendedor = comissaoTotal * (percentualComissao / 100); // % do vendedor sobre a comissão total
                 
                 const novaComissao = {
                     id: Date.now(),
@@ -5224,7 +5231,8 @@
                 const quantidadeVendas = vendasDoMes.length;
                 const premioLiquidoMes = vendasDoMes.reduce((sum, v) => sum + v.premioLiquido, 0);
                 const comissaoRealizadaMes = vendasDoMes.reduce((sum, v) => {
-                    return sum + (v.premioLiquido * (vendedorData.comissao / 100));
+                    const comissaoTotal = v.premioLiquido * ((v.percentualComissao || 15) / 100);
+                    return sum + (comissaoTotal * (vendedorData.comissao / 100));
                 }, 0);
                 
                 // Somar aos totais gerais
@@ -6464,15 +6472,31 @@
         }
         
         async function sendIndicacaoNotification(indicacao) {
-            // Adicionar notificação local para o vendedor
-            if (currentUser.tipo === 'admin') {
-                addUserNotification({
-                    tipo: 'indicacao',
-                    titulo: '🎯 Nova Indicação Enviada',
-                    mensagem: `${indicacao.nome} foi enviado para ${indicacao.vendedor}`,
-                    timestamp: Date.now(),
-                    lida: false
-                });
+            // Encontrar o vendedor que recebeu a indicação
+            const vendedorUser = usuarios.find(u => u.nome === indicacao.vendedor);
+            
+            if (vendedorUser) {
+                // Se o usuário atual for o próprio vendedor, adicionar notificação local
+                if (currentUser.id === vendedorUser.id) {
+                    addUserNotification({
+                        tipo: 'indicacao',
+                        titulo: '🎯 Nova Indicação Recebida!',
+                        mensagem: `${indicacao.nome} foi atribuído a você por ${indicacao.assignedBy}`,
+                        timestamp: Date.now(),
+                        lida: false
+                    });
+                }
+                
+                // Se for admin enviando para vendedor, notificar o admin sobre o envio
+                if (currentUser.tipo === 'admin' && currentUser.id !== vendedorUser.id) {
+                    addUserNotification({
+                        tipo: 'indicacao',
+                        titulo: '📤 Indicação Enviada',
+                        mensagem: `${indicacao.nome} foi enviado para ${indicacao.vendedor}`,
+                        timestamp: Date.now(),
+                        lida: false
+                    });
+                }
             }
         }
         
@@ -6495,5 +6519,5 @@
 
         // Dados já são carregados na inicialização do sistema
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97aabeb5513af1c7',t:'MTc1NzEyNzkyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97aad818b64bf1c7',t:'MTc1NzEyODk2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
